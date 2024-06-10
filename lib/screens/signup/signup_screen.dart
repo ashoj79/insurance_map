@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:insurance_map/data/local/signup_types.dart';
@@ -69,11 +70,15 @@ class _SignupScreenState extends State<SignupScreen> {
     }
 
     if (signupType == SignupTypes.businesses) {
-      return _BusinesForm(states: _states, cities: _cities, businesCategory: _businesCategories);
+      return _BusinesForm(
+          states: _states,
+          cities: _cities,
+          businesCategory: _businesCategories);
     }
 
     if (signupType == SignupTypes.representatives) {
-      return _InsuranceForm(states: _states, cities: _cities, insurances: _insurances);
+      return _InsuranceForm(
+          states: _states, cities: _cities, insurances: _insurances);
     }
 
     return Container();
@@ -277,8 +282,8 @@ class _MarketerFormState extends State<_MarketerForm> {
                 const Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
-                    decoration:
-                        InputDecoration(labelText: 'سوابق کاری', counterText: ''),
+                    decoration: InputDecoration(
+                        labelText: 'سوابق کاری', counterText: ''),
                     textDirection: TextDirection.ltr,
                     maxLines: 1,
                   ),
@@ -453,9 +458,7 @@ class _BusinesFormState extends State<_BusinesForm> {
 
 class _InsuranceForm extends StatefulWidget {
   const _InsuranceForm(
-      {required this.states,
-      required this.cities,
-      required this.insurances});
+      {required this.states, required this.cities, required this.insurances});
 
   final List<String> states, insurances;
   final List<List<String>> cities;
@@ -525,8 +528,8 @@ class _InsuranceFormState extends State<_InsuranceForm> {
                 const Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
-                    decoration: InputDecoration(
-                        labelText: 'کد شعبه', counterText: ''),
+                    decoration:
+                        InputDecoration(labelText: 'کد شعبه', counterText: ''),
                     maxLines: 1,
                   ),
                 ),
@@ -604,6 +607,218 @@ class _InsuranceFormState extends State<_InsuranceForm> {
                 'تائید',
                 style: TextStyle(color: Colors.grey[700]),
               ))
+        ],
+      ),
+    );
+  }
+}
+
+class _MotorcyclePlaque extends StatelessWidget {
+  const _MotorcyclePlaque();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.black, width: 2),
+          borderRadius: BorderRadius.circular(4)),
+      constraints: const BoxConstraints(maxWidth: 150),
+      child: Column(
+        children: [
+          Row(
+            textDirection: TextDirection.ltr,
+            children: [
+              Container(
+                color: Colors.blue[900],
+                padding: const EdgeInsets.all(4),
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/img/iran_flag.png',
+                      width: 24,
+                      height: 20,
+                      fit: BoxFit.fill,
+                    ),
+                    const SizedBox(
+                      height: 6,
+                    ),
+                    const Text(
+                      'I.R.',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w900),
+                    ),
+                    const SizedBox(
+                      height: 2,
+                    ),
+                    const Text(
+                      'IRAN',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w900),
+                    ),
+                  ],
+                ),
+              ),
+              const Expanded(
+                  child: TextField(
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: '۱۲۳',
+                    hintStyle:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                    counterText: ''),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                maxLength: 3,
+                maxLines: 1,
+                keyboardType: TextInputType.number,
+              ))
+            ],
+          ),
+          const TextField(
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: '۱۲۳۴۵',
+                hintStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                counterText: ''),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+            maxLength: 5,
+            maxLines: 1,
+            keyboardType: TextInputType.number,
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class _CarPlaque extends StatefulWidget {
+  const _CarPlaque();
+
+  @override
+  State<_CarPlaque> createState() => _CarPlaqueState();
+}
+
+class _CarPlaqueState extends State<_CarPlaque> {
+  final List<String> persianAlphabet = const [
+    'الف', 'ب', 'پ', 'ت', 'ث', 'ج', 'چ', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'ژ', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ک', 'گ', 'ل', 'م', 'ن', 'و', 'ه', 'ی'
+  ];
+
+  String selectedChar = 'الف';
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(
+        maxHeight: 88
+      ),
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.black, width: 2),
+          borderRadius: BorderRadius.circular(4)),
+      child: Row(
+        textDirection: TextDirection.ltr,
+        children: [
+          Container(
+            color: Colors.blue[900],
+            padding: const EdgeInsets.all(4),
+            child: Column(
+              children: [
+                Image.asset(
+                  'assets/img/iran_flag.png',
+                  width: 24,
+                  height: 20,
+                  fit: BoxFit.fill,
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                const Text(
+                  'I.R.',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                const Text(
+                  'IRAN',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w900),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            width: 64,
+            child: TextField(
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: '۱۲',
+                  hintStyle:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                  counterText: ''),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+              maxLength: 2,
+              maxLines: 1,
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          DropdownButton(
+            value: selectedChar,
+            items: List.generate(persianAlphabet.length, (index) => DropdownMenuItem(child: Text(persianAlphabet[index], style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),), value: persianAlphabet[index],)),
+            onChanged: (value) {
+              setState(() {
+                selectedChar = value ?? selectedChar;
+              });
+            },),
+          const SizedBox(
+            width: 96,
+            child: TextField(
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: '۱۲۳',
+                    hintStyle:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                    counterText: ''),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                maxLength: 3,
+                maxLines: 1,
+                keyboardType: TextInputType.number,
+              ),
+          ),
+          Container(
+            width: 2,
+            height: double.infinity,
+            color: Colors.black
+          ),
+          const Expanded(
+            child: Column(
+              children: [
+                Text(
+                  'ایران',
+                  style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w700),
+                ),
+          SizedBox(
+            width: 64,
+            child: TextField(
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: '۱۲',
+                  hintStyle:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                  counterText: ''),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+              maxLength: 2,
+              maxLines: 1,
+              keyboardType: TextInputType.number,
+            ),
+          ),
+              ],
+            ),
+          )
         ],
       ),
     );
