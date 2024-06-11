@@ -1,0 +1,1 @@
+const String BASE_URL = 'https://bimarzan.liara.run/api/v1/';

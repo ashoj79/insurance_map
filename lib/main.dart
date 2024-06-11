@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:insurance_map/core/app_navigator.dart';
 import 'package:insurance_map/config/theme.dart';
+import 'package:insurance_map/screens/signup/bloc/signup_bloc.dart';
+import 'package:insurance_map/utils/di.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await setup();
+
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider<SignupBloc>(create: (context) => locator()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
