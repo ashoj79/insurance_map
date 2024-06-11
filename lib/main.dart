@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:insurance_map/core/app_navigator.dart';
-import 'package:insurance_map/core/theme.dart';
+import 'package:insurance_map/config/theme.dart';
 
 void main() {
   runApp(const MyApp());
