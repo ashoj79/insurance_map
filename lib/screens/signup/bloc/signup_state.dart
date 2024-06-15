@@ -12,8 +12,13 @@ class SignupError extends SignupState {
   SignupError(this.message);
 }
 
-class SignupGetOtp extends SignupState {}
+class SignupGetOtp extends SignupState {
+  final String phone;
+  SignupGetOtp(this.phone);
+}
 
 class SignupDoSignup extends SignupState {}
+
+class SignupDoSignupStepTwo extends SignupState {}
 
 class SignupDoLogin extends SignupState {}

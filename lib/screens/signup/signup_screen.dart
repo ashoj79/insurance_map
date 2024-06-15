@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/local/signup_types.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
 import 'bloc/signup_bloc.dart';
 
@@ -17,8 +18,6 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   int _currentState = 1;
-  final _phoneController = TextEditingController(),
-  _codeController = TextEditingController();
 
   BuildContext? _alertContext;
 
@@ -61,7 +60,7 @@ class _SignupScreenState extends State<SignupScreen> {
       listener: (context, state) {
         if (state is SignupLoading) {
           showWaitDialog(context, (p0) => _alertContext = p0);
-        } else if (_alertContext != null){
+        } else if (_alertContext != null) {
           Navigator.of(_alertContext!).pop();
           _alertContext = null;
         }
@@ -71,20 +70,17 @@ class _SignupScreenState extends State<SignupScreen> {
       builder: (context, state) {
         if (state is SignupGetOtp) _currentState = 2;
         if (state is SignupDoSignup) _currentState = 3;
+        if (state is SignupDoSignupStepTwo) _currentState = 4;
 
         if (_currentState < 3) {
           return _PhoneForm(
-            phoneController: _phoneController,
-            codeController: _codeController,
             showCodeField: _currentState == 2,
-            onClicked: () {
-              if (_currentState == 1) {
-                BlocProvider.of<SignupBloc>(context).add(SignupSendOtp(_phoneController.text));
-              } else {
-                BlocProvider.of<SignupBloc>(context).add(SignupValidateOtp(phone: _phoneController.text, otp: _codeController.text));
-              }
-            },
+            phone: state is SignupGetOtp ? state.phone : '',
           );
+        }
+
+        if (_currentState == 3) {
+          return const _StepOneForm();
         }
 
         if (signupType == SignupTypes.marketers) {
@@ -114,15 +110,18 @@ class _SignupScreenState extends State<SignupScreen> {
 }
 
 class _PhoneForm extends StatelessWidget {
-  const _PhoneForm({this.showCodeField = false, required this.onClicked, required this.phoneController, required this.codeController});
+  _PhoneForm({this.showCodeField = false, this.phone = ''});
 
   final bool showCodeField;
-  final Function onClicked;
-  final TextEditingController phoneController;
-  final TextEditingController codeController;
+  final String phone;
+
+  final phoneController = TextEditingController(),
+      codeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    if (phone.isNotEmpty) phoneController.text = phone;
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -163,7 +162,13 @@ class _PhoneForm extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 48)),
               onPressed: () {
-                onClicked.call();
+                if (!showCodeField) {
+                  BlocProvider.of<SignupBloc>(context)
+                      .add(SignupSendOtp(phoneController.text));
+                } else {
+                  BlocProvider.of<SignupBloc>(context).add(SignupValidateOtp(
+                      phone: phoneController.text, otp: codeController.text));
+                }
               },
               child: Text(
                 !showCodeField ? 'ارسال کد تائید' : 'ادامه',
@@ -172,6 +177,231 @@ class _PhoneForm extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _StepOneForm extends StatefulWidget {
+  const _StepOneForm();
+
+  @override
+  State<_StepOneForm> createState() => __StepOneFormState();
+}
+
+class __StepOneFormState extends State<_StepOneForm> {
+  final _firstnameController = TextEditingController(),
+      _lastnameController = TextEditingController(),
+      _fatherNameController = TextEditingController(),
+      _nationalcodeController = TextEditingController(),
+      _birthCertificateIdController = TextEditingController(),
+      _birthDateController = TextEditingController(),
+      _placeOfBirthController = TextEditingController(),
+      _jobTitleController = TextEditingController();
+
+  final _firstnameFocusNode = FocusNode(),
+      _lastnameFocusNode = FocusNode(),
+      _fatherNameFocusNode = FocusNode(),
+      _nationalcodeFocusNode = FocusNode(),
+      _birthCertificateIdFocusNode = FocusNode(),
+      _birthDateFocusNode = FocusNode(),
+      _placeOfBirthFocusNode = FocusNode(),
+      _jobTitleFocusNode = FocusNode();
+
+  String _selectedSex = '';
+  final Map<String, String> _sexOptions = {
+    'man': 'مرد',
+    'woman': 'زن',
+    'unknown': 'ترجیح می‌دهم نگویم'
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextField(
+                      focusNode: _firstnameFocusNode,
+                      controller: _firstnameController,
+                      decoration: const InputDecoration(
+                          labelText: 'نام', counterText: ''),
+                      maxLines: 1,
+                      onSubmitted: (value) => _lastnameFocusNode.requestFocus(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextField(
+                      focusNode: _lastnameFocusNode,
+                      controller: _lastnameController,
+                      decoration: const InputDecoration(
+                          labelText: 'نام خانوادگی', counterText: ''),
+                      maxLines: 1,
+                      onSubmitted: (value) =>
+                          _fatherNameFocusNode.requestFocus(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextField(
+                      focusNode: _fatherNameFocusNode,
+                      controller: _fatherNameController,
+                      decoration: const InputDecoration(
+                          labelText: 'نام پدر', counterText: ''),
+                      maxLines: 1,
+                      onSubmitted: (value) =>
+                          _nationalcodeFocusNode.requestFocus(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextField(
+                      focusNode: _nationalcodeFocusNode,
+                      controller: _nationalcodeController,
+                      decoration: const InputDecoration(
+                          labelText: 'کد ملی', counterText: ''),
+                      maxLines: 1,
+                      maxLength: 10,
+                      keyboardType: TextInputType.number,
+                      onSubmitted: (value) =>
+                          _birthCertificateIdFocusNode.requestFocus(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextField(
+                      focusNode: _birthCertificateIdFocusNode,
+                      controller: _birthCertificateIdController,
+                      decoration: const InputDecoration(
+                          labelText: 'شناسه شناسنامه', counterText: ''),
+                      maxLines: 1,
+                      maxLength: 10,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  DropdownButton(
+                    isExpanded: true,
+                    value: _selectedSex,
+                    items: [
+                      const DropdownMenuItem(
+                        value: '',
+                        child: Text('جنسیت'),
+                      ),
+                      for (String s in _sexOptions.keys)
+                        DropdownMenuItem(
+                          value: s,
+                          child: Text(_sexOptions[s]!),
+                        )
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedSex = value!;
+                      });
+                    },
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextField(
+                      focusNode: _birthDateFocusNode,
+                      controller: _birthDateController,
+                      decoration: const InputDecoration(
+                          labelText: 'تاریخ تولد‌', counterText: ''),
+                      maxLines: 1,
+                      canRequestFocus: false,
+                      onTap: () => _showDatePicker(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextField(
+                      focusNode: _placeOfBirthFocusNode,
+                      controller: _placeOfBirthController,
+                      decoration: const InputDecoration(
+                          labelText: 'محل تولد', counterText: ''),
+                      maxLines: 1,
+                      onSubmitted: (value) => _jobTitleFocusNode.requestFocus(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextField(
+                      focusNode: _jobTitleFocusNode,
+                      controller: _jobTitleController,
+                      decoration: const InputDecoration(
+                          labelText: 'شغل', counterText: ''),
+                      maxLines: 1,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 48)),
+              onPressed: () {
+                BlocProvider.of<SignupBloc>(context).add(SignupSubmitStepOne(
+                    fname: _firstnameController.text,
+                    lname: _lastnameController.text,
+                    fatherName: _fatherNameController.text,
+                    nc: _nationalcodeController.text,
+                    certId: _birthCertificateIdController.text,
+                    sex: _selectedSex,
+                    birthDate: _birthDateController.text,
+                    place: _placeOfBirthController.text,
+                    job: _jobTitleController.text));
+              },
+              child: Text(
+                'تائید',
+                style: TextStyle(color: Colors.grey[700]),
+              ))
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showDatePicker() async {
+    Jalali? picked = await showPersianDatePicker(
+      context: context,
+      initialDate: Jalali.now(),
+      firstDate: Jalali(1300),
+      lastDate: Jalali.now(),
+    );
+    if (picked == null) return;
+
+    _birthDateController.text = '${picked.year}/${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}';
   }
 }
 
