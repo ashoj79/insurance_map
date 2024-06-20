@@ -9,6 +9,7 @@ import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/local/signup_types.dart';
 import 'package:insurance_map/data/remote/model/insurance_company.dart';
 import 'package:insurance_map/data/remote/model/province_city.dart';
+import 'package:insurance_map/data/remote/model/shop_category.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
@@ -78,10 +79,10 @@ class _SignupScreenState extends State<SignupScreen> {
         }
 
         if (signupType == SignupTypes.businesses) {
-          // return _BusinesForm(
-          //     states: _states,
-          //     cities: _cities,
-          //     businesCategory: _businesCategories);
+          return _BusinesForm(
+              provinces: (state as SignupDoSignupStepTwo).provinces,
+              categories: state.categories,
+          );
         }
 
         if (signupType == SignupTypes.representatives) {
@@ -397,314 +398,6 @@ class __StepOneFormState extends State<_StepOneForm> {
   }
 }
 
-class _MarketerForm extends StatefulWidget {
-  const _MarketerForm(
-      {required this.states,
-      required this.cities,
-      required this.educationLevels});
-
-  final List<String> states, educationLevels;
-  final List<List<String>> cities;
-
-  @override
-  State<_MarketerForm> createState() => _MarketerFormState();
-}
-
-class _MarketerFormState extends State<_MarketerForm> {
-  String selectedState = '', selectedCity = '', selectedEducation = '';
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Expanded(
-              child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: TextField(
-                    decoration:
-                        InputDecoration(labelText: 'نام', counterText: ''),
-                    maxLines: 1,
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: TextField(
-                    decoration: InputDecoration(
-                        labelText: 'نام خانوادگی', counterText: ''),
-                    maxLines: 1,
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                DropdownButton(
-                  isExpanded: true,
-                  value: selectedState,
-                  items: [
-                    const DropdownMenuItem(
-                      value: '',
-                      child: Text('انتخاب استان'),
-                    ),
-                    for (String s in widget.states)
-                      DropdownMenuItem(
-                        value: s,
-                        child: Text(s),
-                      )
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedState = value!;
-                      selectedCity = '';
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                DropdownButton(
-                  isExpanded: true,
-                  value: selectedCity,
-                  items: [
-                    const DropdownMenuItem(
-                      value: '',
-                      child: Text('انتخاب شهر'),
-                    ),
-                    if (selectedState != '')
-                      for (String s in widget
-                          .cities[widget.states.indexOf(selectedState)])
-                        DropdownMenuItem(
-                          value: s,
-                          child: Text(s),
-                        )
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedCity = value!;
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: TextField(
-                    decoration:
-                        InputDecoration(labelText: 'آدرس', counterText: ''),
-                    maxLines: 1,
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                DropdownButton(
-                  isExpanded: true,
-                  value: selectedEducation,
-                  items: [
-                    const DropdownMenuItem(
-                      value: '',
-                      child: Text('سطح تحصیلات'),
-                    ),
-                    for (String s in widget.educationLevels)
-                      DropdownMenuItem(
-                        value: s,
-                        child: Text(s),
-                      )
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedEducation = value!;
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: TextField(
-                    decoration: InputDecoration(
-                        labelText: 'سوابق کاری', counterText: ''),
-                    textDirection: TextDirection.ltr,
-                    maxLines: 1,
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-              ],
-            ),
-          )),
-          OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 48)),
-              onPressed: () {},
-              child: Text(
-                'تائید',
-                style: TextStyle(color: Colors.grey[700]),
-              ))
-        ],
-      ),
-    );
-  }
-}
-
-class _BusinesForm extends StatefulWidget {
-  const _BusinesForm(
-      {required this.states,
-      required this.cities,
-      required this.businesCategory});
-
-  final List<String> states, businesCategory;
-  final List<List<String>> cities;
-
-  @override
-  State<_BusinesForm> createState() => _BusinesFormState();
-}
-
-class _BusinesFormState extends State<_BusinesForm> {
-  String selectedState = '', selectedCity = '', selectedCategory = '';
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Expanded(
-              child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: TextField(
-                    decoration:
-                        InputDecoration(labelText: 'نام', counterText: ''),
-                    maxLines: 1,
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: TextField(
-                    decoration: InputDecoration(
-                        labelText: 'نام خانوادگی', counterText: ''),
-                    maxLines: 1,
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                DropdownButton(
-                  isExpanded: true,
-                  value: selectedState,
-                  items: [
-                    const DropdownMenuItem(
-                      value: '',
-                      child: Text('انتخاب استان'),
-                    ),
-                    for (String s in widget.states)
-                      DropdownMenuItem(
-                        value: s,
-                        child: Text(s),
-                      )
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedState = value!;
-                      selectedCity = '';
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                DropdownButton(
-                  isExpanded: true,
-                  value: selectedCity,
-                  items: [
-                    const DropdownMenuItem(
-                      value: '',
-                      child: Text('انتخاب شهر'),
-                    ),
-                    if (selectedState != '')
-                      for (String s in widget
-                          .cities[widget.states.indexOf(selectedState)])
-                        DropdownMenuItem(
-                          value: s,
-                          child: Text(s),
-                        )
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedCity = value!;
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: TextField(
-                    decoration:
-                        InputDecoration(labelText: 'آدرس', counterText: ''),
-                    maxLines: 1,
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                DropdownButton(
-                  isExpanded: true,
-                  value: selectedCategory,
-                  items: [
-                    const DropdownMenuItem(
-                      value: '',
-                      child: Text('دسته بندی کسب و کار'),
-                    ),
-                    for (String s in widget.businesCategory)
-                      DropdownMenuItem(
-                        value: s,
-                        child: Text(s),
-                      )
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedCategory = value!;
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-              ],
-            ),
-          )),
-          OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 48)),
-              onPressed: () {},
-              child: Text(
-                'تائید',
-                style: TextStyle(color: Colors.grey[700]),
-              ))
-        ],
-      ),
-    );
-  }
-}
-
 class _InsuranceForm extends StatefulWidget {
   const _InsuranceForm({required this.provinces, required this.companies});
 
@@ -911,6 +604,231 @@ class _InsuranceFormState extends State<_InsuranceForm> {
                         insuranceCompanyId: selectedInsurance,
                         officeName: _officeNameController.text,
                         officeCode: _officeCodeController.text,
+                        address: _addressController.text,
+                        postalCode: _postalCodeController.text,
+                        lat: lat,
+                        lng: lng));
+              },
+              child: Text(
+                'تائید',
+                style: TextStyle(color: Colors.grey[700]),
+              ))
+        ],
+      ),
+    );
+  }
+
+  _addMarker() {
+    _markers.clear();
+    _markers.add(
+      Marker(
+        point: LatLng(lat, lng),
+        child: const Icon(
+          Icons.location_on,
+          color: Colors.red,
+          size: 40,
+        ),
+      ),
+    );
+    setState(() {});
+  }
+}
+
+class _BusinesForm extends StatefulWidget {
+  const _BusinesForm({required this.provinces, required this.categories});
+
+  final List<ProvinceAndCity> provinces;
+  final List<ShopCategory> categories;
+
+  @override
+  State<_BusinesForm> createState() => _BusinesFormState();
+}
+
+class _BusinesFormState extends State<_BusinesForm> {
+  int selectedProvince = 0, selectedCity = 0;
+  String selectedCategory = '';
+
+  final _shopNameController = TextEditingController(),
+      _addressController = TextEditingController(),
+      _postalCodeController = TextEditingController();
+
+  final _addressFocusNode = FocusNode(),
+    _postalCodeFocusNode = FocusNode();
+
+  final List<Marker> _markers = [];
+  double lat = 0, lng = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Expanded(
+              child: SingleChildScrollView(
+            child: Column(
+              children: [
+                DropdownButton(
+                  isExpanded: true,
+                  value: selectedCategory,
+                  items: [
+                    const DropdownMenuItem(
+                      value: '',
+                      child: Text('دسته بندی'),
+                    ),
+                    for (ShopCategory item in widget.categories)
+                      DropdownMenuItem(value: item.id, child: Text(item.title))
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedCategory = value!;
+                    });
+                  },
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                DropdownButton(
+                  isExpanded: true,
+                  value: selectedProvince,
+                  items: [
+                    const DropdownMenuItem(
+                      value: 0,
+                      child: Text('انتخاب استان'),
+                    ),
+                    for (ProvinceAndCity item in widget.provinces)
+                      DropdownMenuItem(value: item.id, child: Text(item.name))
+                  ],
+                  onChanged: (value) {
+                    BlocProvider.of<SignupBloc>(context)
+                        .add(SignupGetCities(value!));
+                    setState(() {
+                      selectedProvince = value;
+                      selectedCity = 0;
+                    });
+                  },
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                BlocBuilder<SignupBloc, SignupState>(
+                  buildWhen: (previous, current) =>
+                      current is SignupUpdateCities,
+                  builder: (context, state) {
+                    List<ProvinceAndCity> cities =
+                        state is SignupUpdateCities ? state.cities : [];
+                    return DropdownButton(
+                      isExpanded: true,
+                      value: selectedCity,
+                      items: [
+                        const DropdownMenuItem(
+                          value: 0,
+                          child: Text('انتخاب شهر'),
+                        ),
+                        for (var city in cities)
+                          DropdownMenuItem(
+                            value: city.id,
+                            child: Text(city.name),
+                          )
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCity = value!;
+                        });
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: TextField(
+                    controller: _shopNameController,
+                    decoration: const InputDecoration(
+                        labelText: 'نام کسب و کار', counterText: ''),
+                    maxLines: 1,
+                    onSubmitted: (value) => _addressFocusNode.requestFocus(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: TextField(
+                    controller: _addressController,
+                    focusNode: _addressFocusNode,
+                    decoration: const InputDecoration(
+                        labelText: 'آدرس دفتر', counterText: ''),
+                    maxLines: 1,
+                    onSubmitted: (value) => _postalCodeFocusNode.requestFocus(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: TextField(
+                    controller: _postalCodeController,
+                    focusNode: _postalCodeFocusNode,
+                    decoration: const InputDecoration(
+                        labelText: 'کد پستی دفتر', counterText: ''),
+                    maxLines: 1,
+                    maxLength: 10,
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                const Text(
+                  'مکان کسب و کار',
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                SizedBox(
+                  height: 200,
+                  child: FlutterMap(
+                    options: MapOptions(
+                      initialCenter: const LatLng(35.6892, 51.3890),
+                      initialZoom: 9,
+                      onTap: (tapPosition, point) {
+                        lat = point.latitude;
+                        lng = point.longitude;
+                        _addMarker();
+                      },
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        subdomains: ['a', 'b', 'c'],
+                      ),
+                      MarkerLayer(markers: _markers),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+              ],
+            ),
+          )),
+          OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 48)),
+              onPressed: () {
+                BlocProvider.of<SignupBloc>(context).add(
+                    SignupSaveVendor(
+                        provinceId: selectedProvince,
+                        cityId: selectedCity,
+                        categoryId: selectedCategory,
+                        shopName: _shopNameController.text,
                         address: _addressController.text,
                         postalCode: _postalCodeController.text,
                         lat: lat,

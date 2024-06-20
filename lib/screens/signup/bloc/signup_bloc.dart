@@ -3,8 +3,10 @@ import 'package:insurance_map/data/local/signup_step_one_data.dart';
 import 'package:insurance_map/data/local/signup_types.dart';
 import 'package:insurance_map/data/remote/model/insurance_company.dart';
 import 'package:insurance_map/data/remote/model/province_city.dart';
+import 'package:insurance_map/data/remote/model/shop_category.dart';
 import 'package:insurance_map/repo/insurance_repository.dart';
 import 'package:insurance_map/repo/place_repository.dart';
+import 'package:insurance_map/repo/shop_repository.dart';
 import 'package:insurance_map/repo/user_repository.dart';
 import 'package:insurance_map/utils/data_state.dart';
 import 'package:meta/meta.dart';
@@ -16,9 +18,10 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   final UserRepository _userRepository;
   final InsuranceRepository _insuranceRepository;
   final PlaceRepository _placeRepository;
+  final ShopRepository _shopRepository;
   String type = '', phone = '', otp = '';
 
-  SignupBloc(this._userRepository, this._insuranceRepository, this._placeRepository) : super(SignupInitial()) {
+  SignupBloc(this._userRepository, this._insuranceRepository, this._placeRepository, this._shopRepository) : super(SignupInitial()) {
     on<SignupSendOtp>((event, emit) async {
       String phone = '0${event.phone}';
       if (int.tryParse(phone) == null || phone.length != 11) {
@@ -117,7 +120,11 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
       if (event.type == SignupTypes.representatives) {
         companies = (await _insuranceRepository.getInsuranceCampanies()).data;
       }
-      emit(SignupDoSignupStepTwo(provinces.data!, companies ?? []));
+      List<ShopCategory>? categories;
+      if (event.type == SignupTypes.businesses) {
+        categories = (await _shopRepository.getAllCategories()).data;
+      }
+      emit(SignupDoSignupStepTwo(provinces.data!, companies ?? [], categories ?? []));
     });
 
     on<SignupGetCities>((event, emit) async {
@@ -182,6 +189,56 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           event.insuranceCompanyId,
           event.officeName,
           event.officeCode,
+          event.address,
+          event.postalCode,
+          event.lat.toString(),
+          event.lng.toString());
+
+      emit(result is DataError ? SignupError(result.errorMessage!) : SignupDoLogin());
+    });
+    
+    on<SignupSaveVendor>((event, emit) async {
+      if (event.provinceId == 0) {
+        emit(SignupError('لطفا استان را انتخاب کنید'));
+        return;
+      }
+
+      if (event.cityId == 0) {
+        emit(SignupError('لطفا شهر را انتخاب کنید'));
+        return;
+      }
+
+      if (event.categoryId == '') {
+        emit(SignupError('لطفا دسته بندی را انتخاب کنید'));
+        return;
+      }
+
+      if (event.shopName == '') {
+        emit(SignupError('لطفا نام کسب و کار را وارد کنید'));
+        return;
+      }
+
+      if (event.address == '') {
+        emit(SignupError('لطفا آدرس را وارد کنید'));
+        return;
+      }
+
+      if (event.postalCode == '') {
+        emit(SignupError('لطفا کد پستی را وارد کنید'));
+        return;
+      }
+
+      if (event.lat == 0 || event.lng == 0) {
+        emit(SignupError('لطفا مکان کسب و کار را روی نقشه انتخاب کنید'));
+        return;
+      }
+
+      emit(SignupLoading());
+      DataState<void> result = await _shopRepository.saveVendor(
+          event.provinceId,
+          event.cityId,
+          event.categoryId,
+          event.shopName,
           event.address,
           event.postalCode,
           event.lat.toString(),

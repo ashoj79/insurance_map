@@ -22,7 +22,8 @@ class SignupDoSignup extends SignupState {}
 class SignupDoSignupStepTwo extends SignupState {
   final List<ProvinceAndCity> provinces;
   final List<InsuranceCompany> companies;
-  SignupDoSignupStepTwo(this.provinces, [this.companies = const []]);
+  final List<ShopCategory> categories;
+  SignupDoSignupStepTwo(this.provinces, [this.companies = const [], this.categories = const []]);
 }
 
 class SignupDoLogin extends SignupState {}

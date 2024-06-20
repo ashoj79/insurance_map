@@ -49,3 +49,18 @@ class SignupSaveInsuranceOffice extends SignupEvent {
       required this.lat,
       required this.lng});
 }
+
+class SignupSaveVendor extends SignupEvent {
+  final int provinceId, cityId;
+  final double lat, lng;
+  final String categoryId, shopName, address, postalCode;
+  SignupSaveVendor(
+      {required this.provinceId,
+      required this.cityId,
+      required this.categoryId,
+      required this.shopName,
+      required this.address,
+      required this.postalCode,
+      required this.lat,
+      required this.lng});
+}
