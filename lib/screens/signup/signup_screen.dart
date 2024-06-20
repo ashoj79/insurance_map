@@ -11,6 +11,7 @@ import 'package:insurance_map/data/remote/model/insurance_company.dart';
 import 'package:insurance_map/data/remote/model/province_city.dart';
 import 'package:insurance_map/data/remote/model/shop_category.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:location/location.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
 import 'bloc/signup_bloc.dart';
@@ -419,11 +420,17 @@ class _InsuranceFormState extends State<_InsuranceForm> {
 
   final _officeCodeFocusNode = FocusNode();
 
+  final MapController _mapController = MapController();
+  final Location _locationService = Location();
+  LocationData? _currentLocation;
+
   final List<Marker> _markers = [];
   double lat = 0, lng = 0;
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -567,23 +574,44 @@ class _InsuranceFormState extends State<_InsuranceForm> {
                 ),
                 SizedBox(
                   height: 200,
-                  child: FlutterMap(
-                    options: MapOptions(
-                      initialCenter: const LatLng(35.6892, 51.3890),
-                      initialZoom: 9,
-                      onTap: (tapPosition, point) {
-                        lat = point.latitude;
-                        lng = point.longitude;
-                        _addMarker();
-                      },
-                    ),
+                  child: Stack(
                     children: [
-                      TileLayer(
-                        urlTemplate:
-                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        subdomains: ['a', 'b', 'c'],
+                      FlutterMap(
+                        mapController: _mapController,
+                        options: MapOptions(
+                          initialCenter: const LatLng(35.6892, 51.3890),
+                          initialZoom: 9,
+                          onTap: (tapPosition, point) {
+                            lat = point.latitude;
+                            lng = point.longitude;
+                            _addMarker();
+                          },
+                        ),
+                        children: [
+                          TileLayer(
+                            urlTemplate:
+                                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            subdomains: ['a', 'b', 'c'],
+                          ),
+                          MarkerLayer(markers: _markers),
+                        ],
                       ),
-                      MarkerLayer(markers: _markers),
+                      Positioned(
+                        bottom: 8,
+                        right: 8,
+                        child: GestureDetector(
+                          onTap: () {
+                            _moveToUserLocation();
+                          },
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: ShapeDecoration(shape: CircleBorder(), color: Colors.white,),
+                            alignment: Alignment.center,
+                            child: Icon(Icons.location_searching, color: theme.primaryColor,),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -632,6 +660,39 @@ class _InsuranceFormState extends State<_InsuranceForm> {
     );
     setState(() {});
   }
+
+  Future<void> _moveToUserLocation() async {
+    bool serviceEnabled;
+    PermissionStatus permissionGranted;
+
+    serviceEnabled = await _locationService.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await _locationService.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+
+    permissionGranted = await _locationService.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await _locationService.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _currentLocation = await _locationService.getLocation();
+
+    _locationService.onLocationChanged.listen((LocationData result) {
+      _mapController.move(
+        LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!),
+        14,
+      );
+      lat = result.latitude!;
+      lng = result.longitude!;
+      _addMarker();
+    });
+  }
 }
 
 class _BusinesForm extends StatefulWidget {
@@ -655,11 +716,17 @@ class _BusinesFormState extends State<_BusinesForm> {
   final _addressFocusNode = FocusNode(),
     _postalCodeFocusNode = FocusNode();
 
+  final MapController _mapController = MapController();
+  final Location _locationService = Location();
+  LocationData? _currentLocation;
+
   final List<Marker> _markers = [];
   double lat = 0, lng = 0;
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -793,23 +860,44 @@ class _BusinesFormState extends State<_BusinesForm> {
                 ),
                 SizedBox(
                   height: 200,
-                  child: FlutterMap(
-                    options: MapOptions(
-                      initialCenter: const LatLng(35.6892, 51.3890),
-                      initialZoom: 9,
-                      onTap: (tapPosition, point) {
-                        lat = point.latitude;
-                        lng = point.longitude;
-                        _addMarker();
-                      },
-                    ),
+                  child: Stack(
                     children: [
-                      TileLayer(
-                        urlTemplate:
-                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        subdomains: ['a', 'b', 'c'],
+                      FlutterMap(
+                        mapController: _mapController,
+                        options: MapOptions(
+                          initialCenter: const LatLng(35.6892, 51.3890),
+                          initialZoom: 9,
+                          onTap: (tapPosition, point) {
+                            lat = point.latitude;
+                            lng = point.longitude;
+                            _addMarker();
+                          },
+                        ),
+                        children: [
+                          TileLayer(
+                            urlTemplate:
+                                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            subdomains: ['a', 'b', 'c'],
+                          ),
+                          MarkerLayer(markers: _markers),
+                        ],
                       ),
-                      MarkerLayer(markers: _markers),
+                      Positioned(
+                        bottom: 8,
+                        right: 8,
+                        child: GestureDetector(
+                          onTap: () {
+                            _moveToUserLocation();
+                          },
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: ShapeDecoration(shape: CircleBorder(), color: Colors.white,),
+                            alignment: Alignment.center,
+                            child: Icon(Icons.location_searching, color: theme.primaryColor,),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -856,6 +944,39 @@ class _BusinesFormState extends State<_BusinesForm> {
       ),
     );
     setState(() {});
+  }
+
+  Future<void> _moveToUserLocation() async {
+    bool serviceEnabled;
+    PermissionStatus permissionGranted;
+
+    serviceEnabled = await _locationService.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await _locationService.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+
+    permissionGranted = await _locationService.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await _locationService.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _currentLocation = await _locationService.getLocation();
+
+    _locationService.onLocationChanged.listen((LocationData result) {
+      _mapController.move(
+        LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!),
+        14,
+      );
+      lat = result.latitude!;
+      lng = result.longitude!;
+      _addMarker();
+    });
   }
 }
 
