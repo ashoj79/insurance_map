@@ -1,5 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:insurance_map/data/local/signup_step_one_data.dart';
+import 'package:insurance_map/data/local/signup_types.dart';
+import 'package:insurance_map/data/remote/model/insurance_company.dart';
+import 'package:insurance_map/data/remote/model/province_city.dart';
 import 'package:insurance_map/repo/user_repository.dart';
 import 'package:insurance_map/utils/data_state.dart';
 import 'package:meta/meta.dart';
@@ -82,22 +85,105 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
       emit(SignupLoading());
 
       SignupStepOneData data = SignupStepOneData(
-          phone,
-          otp,
-          event.fname,
-          event.lname,
-          event.fatherName,
-          event.nc,
-          event.certId,
-          event.sex,
-          event.birthDate,
-          event.place,
-          event.job);
+          phone.trim(),
+          otp.trim(),
+          event.fname.trim(),
+          event.lname.trim(),
+          event.fatherName.trim(),
+          event.nc.trim(),
+          event.certId.trim(),
+          event.sex.trim(),
+          event.birthDate.trim(),
+          event.place.trim(),
+          event.job.trim());
 
       DataState<void> result = await _repository.signupStepOne(data);
-      emit(result is DataError
-          ? SignupError(result.errorMessage!)
-          : SignupDoSignupStepTwo());
+      if (result is DataError) {
+        emit(SignupError(result.errorMessage ?? ''));
+        return;
+      }
+
+      DataState<List<ProvinceAndCity>> provinces =
+          await _repository.getAllProvinces();
+      if (provinces is DataError) {
+        emit(SignupError(provinces.errorMessage ?? ''));
+        return;
+      }
+      List<InsuranceCompany>? companies;
+      if (event.type == SignupTypes.representatives) {
+        companies = (await _repository.getInsuranceCampanies()).data;
+      }
+      emit(SignupDoSignupStepTwo(provinces.data!, companies ?? []));
+    });
+
+    on<SignupGetCities>((event, emit) async {
+      if (event.provinceId == 0) return;
+
+      emit(SignupLoading());
+
+      DataState<List<ProvinceAndCity>> result =
+          await _repository.getCities(event.provinceId);
+      if (result is DataError) {
+        emit(SignupError(result.errorMessage ?? ''));
+        return;
+      }
+      emit(SignupUpdateCities(result.data!));
+    });
+
+    on<SignupSaveInsuranceOffice>((event, emit) async {
+      if (event.provinceId == 0) {
+        emit(SignupError('لطفا استان را انتخاب کنید'));
+        return;
+      }
+
+      if (event.cityId == 0) {
+        emit(SignupError('لطفا شهر را انتخاب کنید'));
+        return;
+      }
+
+      if (event.insuranceCompanyId == '') {
+        emit(SignupError('لطفا شرکت بیمه را انتخاب کنید'));
+        return;
+      }
+
+      if (event.officeName == '') {
+        emit(SignupError('لطفا نام نمایندگی را وارد کنید'));
+        return;
+      }
+
+      if (event.officeCode == '') {
+        emit(SignupError('لطفا کد شعبه را وارد کنید'));
+        return;
+      }
+
+      if (event.address == '') {
+        emit(SignupError('لطفا آدرس را وارد کنید'));
+        return;
+      }
+
+      if (event.postalCode == '') {
+        emit(SignupError('لطفا کد پستی را وارد کنید'));
+        return;
+      }
+
+      if (event.lat == 0 || event.lng == 0) {
+        emit(SignupError('لطفا مکان نمایندگی را روی نقشه انتخاب کنید'));
+        return;
+      }
+
+      emit(SignupLoading());
+      DataState<void> result = await _repository.saveInsuranceOffice(
+          event.provinceId,
+          event.cityId,
+          event.insuranceCompanyId,
+          event.officeName,
+          event.officeCode,
+          event.address,
+          event.postalCode,
+          event.lat.toString(),
+          event.lng.toString());
+
+      emit(result is DataError ? SignupError(result.errorMessage!) : SignupDoLogin());
     });
   }
 }

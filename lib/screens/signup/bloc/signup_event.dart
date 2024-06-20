@@ -15,6 +15,7 @@ class SignupValidateOtp extends SignupEvent {
 
 class SignupSubmitStepOne extends SignupEvent {
   final String fname, lname, fatherName, nc, certId, sex, birthDate, place, job;
+  final SignupTypes type;
   SignupSubmitStepOne(
       {required this.fname,
       required this.lname,
@@ -24,5 +25,27 @@ class SignupSubmitStepOne extends SignupEvent {
       required this.sex,
       required this.birthDate,
       required this.place,
-      required this.job});
+      required this.job,
+      required this.type});
+}
+
+class SignupGetCities extends SignupEvent {
+  final int provinceId;
+  SignupGetCities(this.provinceId);
+}
+
+class SignupSaveInsuranceOffice extends SignupEvent {
+  final int provinceId, cityId;
+  final double lat, lng;
+  final String insuranceCompanyId, officeName, officeCode, address, postalCode;
+  SignupSaveInsuranceOffice(
+      {required this.provinceId,
+      required this.cityId,
+      required this.insuranceCompanyId,
+      required this.officeName,
+      required this.officeCode,
+      required this.address,
+      required this.postalCode,
+      required this.lat,
+      required this.lng});
 }

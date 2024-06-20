@@ -16,13 +16,6 @@ class IntroScreen extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                AppNavigator.push(Routes.signupRoute, args: SignupTypes.marketers);
-              },
-              child: const Text('ثبت نام بازاریابان'),
-            ),
-            const SizedBox(height: 16,),
-            ElevatedButton(
-              onPressed: () {
                 AppNavigator.push(Routes.signupRoute, args: SignupTypes.businesses);
               },
               child: const Text('ثبت نام کسب و کارها'),

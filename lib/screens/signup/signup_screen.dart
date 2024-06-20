@@ -2,9 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:insurance_map/core/app_navigator.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/local/signup_types.dart';
+import 'package:insurance_map/data/remote/model/insurance_company.dart';
+import 'package:insurance_map/data/remote/model/province_city.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
 import 'bloc/signup_bloc.dart';
@@ -21,8 +26,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   BuildContext? _alertContext;
 
-  final List<String> _states = ['اصفهان', 'تهران', 'یزد'],
-      _educationLevels = [
+  final List<String> _educationLevels = [
         'ابتدایی',
         'سیکل',
         'دیپلم',
@@ -30,24 +34,7 @@ class _SignupScreenState extends State<SignupScreen> {
         'لیسانس',
         'فوق لیسانس',
         'دکتری'
-      ],
-      _businesCategories = [
-        'دسته بندی 1',
-        'دسته بندی 2',
-        'دسته بندی 3',
-        'دسته بندی 4',
-      ],
-      _insurances = [
-        'بیمه 1',
-        'بیمه 2',
-        'بیمه 3',
-        'بیمه 4',
       ];
-  final List<List<String>> _cities = [
-    ['اصفهان', 'کاشان', 'بهارستان'],
-    ['تهران', 'ری', 'کرج'],
-    ['یزد', 'شهر ۱', 'شهر ۲'],
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +43,10 @@ class _SignupScreenState extends State<SignupScreen> {
 
     return BlocConsumer<SignupBloc, SignupState>(
       buildWhen: (previous, current) =>
-          current is! SignupError && current is! SignupLoading,
+          current is! SignupError &&
+          current is! SignupLoading &&
+          current is! SignupUpdateCities &&
+          current is! SignupDoLogin,
       listener: (context, state) {
         if (state is SignupLoading) {
           showWaitDialog(context, (p0) => _alertContext = p0);
@@ -66,6 +56,8 @@ class _SignupScreenState extends State<SignupScreen> {
         }
 
         if (state is SignupError) showSnackBar(context, state.message);
+
+        if (state is SignupDoLogin) AppNavigator.pop();
       },
       builder: (context, state) {
         if (state is SignupGetOtp) _currentState = 2;
@@ -80,27 +72,23 @@ class _SignupScreenState extends State<SignupScreen> {
         }
 
         if (_currentState == 3) {
-          return const _StepOneForm();
-        }
-
-        if (signupType == SignupTypes.marketers) {
-          return _MarketerForm(
-            states: _states,
-            cities: _cities,
-            educationLevels: _educationLevels,
+          return _StepOneForm(
+            type: signupType,
           );
         }
 
         if (signupType == SignupTypes.businesses) {
-          return _BusinesForm(
-              states: _states,
-              cities: _cities,
-              businesCategory: _businesCategories);
+          // return _BusinesForm(
+          //     states: _states,
+          //     cities: _cities,
+          //     businesCategory: _businesCategories);
         }
 
         if (signupType == SignupTypes.representatives) {
           return _InsuranceForm(
-              states: _states, cities: _cities, insurances: _insurances);
+            provinces: (state as SignupDoSignupStepTwo).provinces,
+            companies: state.companies,
+          );
         }
 
         return Container();
@@ -181,7 +169,9 @@ class _PhoneForm extends StatelessWidget {
 }
 
 class _StepOneForm extends StatefulWidget {
-  const _StepOneForm();
+  const _StepOneForm({required this.type});
+
+  final SignupTypes type;
 
   @override
   State<_StepOneForm> createState() => __StepOneFormState();
@@ -381,7 +371,8 @@ class __StepOneFormState extends State<_StepOneForm> {
                     sex: _selectedSex,
                     birthDate: _birthDateController.text,
                     place: _placeOfBirthController.text,
-                    job: _jobTitleController.text));
+                    job: _jobTitleController.text,
+                    type: widget.type));
               },
               child: Text(
                 'تائید',
@@ -401,7 +392,8 @@ class __StepOneFormState extends State<_StepOneForm> {
     );
     if (picked == null) return;
 
-    _birthDateController.text = '${picked.year}/${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}';
+    _birthDateController.text =
+        '${picked.year}/${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}';
   }
 }
 
@@ -714,18 +706,28 @@ class _BusinesFormState extends State<_BusinesForm> {
 }
 
 class _InsuranceForm extends StatefulWidget {
-  const _InsuranceForm(
-      {required this.states, required this.cities, required this.insurances});
+  const _InsuranceForm({required this.provinces, required this.companies});
 
-  final List<String> states, insurances;
-  final List<List<String>> cities;
+  final List<ProvinceAndCity> provinces;
+  final List<InsuranceCompany> companies;
 
   @override
   State<_InsuranceForm> createState() => _InsuranceFormState();
 }
 
 class _InsuranceFormState extends State<_InsuranceForm> {
-  String selectedState = '', selectedCity = '', selectedInsurance = '';
+  int selectedProvince = 0, selectedCity = 0;
+  String selectedInsurance = '';
+
+  final _officeNameController = TextEditingController(),
+      _officeCodeController = TextEditingController(),
+      _addressController = TextEditingController(),
+      _postalCodeController = TextEditingController();
+
+  final _officeCodeFocusNode = FocusNode();
+
+  final List<Marker> _markers = [];
+  double lat = 0, lng = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -737,28 +739,6 @@ class _InsuranceFormState extends State<_InsuranceForm> {
               child: SingleChildScrollView(
             child: Column(
               children: [
-                const Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: TextField(
-                    decoration:
-                        InputDecoration(labelText: 'نام', counterText: ''),
-                    maxLines: 1,
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: TextField(
-                    decoration: InputDecoration(
-                        labelText: 'نام خانوادگی', counterText: ''),
-                    maxLines: 1,
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
                 DropdownButton(
                   isExpanded: true,
                   value: selectedInsurance,
@@ -767,11 +747,8 @@ class _InsuranceFormState extends State<_InsuranceForm> {
                       value: '',
                       child: Text('شرکت بیمه'),
                     ),
-                    for (String s in widget.insurances)
-                      DropdownMenuItem(
-                        value: s,
-                        child: Text(s),
-                      )
+                    for (InsuranceCompany item in widget.companies)
+                      DropdownMenuItem(value: item.id, child: Text(item.name))
                   ],
                   onChanged: (value) {
                     setState(() {
@@ -782,12 +759,27 @@ class _InsuranceFormState extends State<_InsuranceForm> {
                 const SizedBox(
                   height: 16,
                 ),
-                const Directionality(
+                Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
-                    decoration:
-                        InputDecoration(labelText: 'کد شعبه', counterText: ''),
+                    controller: _officeNameController,
+                    decoration: const InputDecoration(
+                        labelText: 'نام شعبه', counterText: ''),
                     maxLines: 1,
+                    onSubmitted: (value) => _officeCodeFocusNode.requestFocus(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: TextField(
+                    controller: _officeCodeController,
+                    decoration: const InputDecoration(
+                        labelText: 'کد شعبه', counterText: ''),
+                    maxLines: 1,
+                    keyboardType: TextInputType.number,
                   ),
                 ),
                 const SizedBox(
@@ -795,59 +787,111 @@ class _InsuranceFormState extends State<_InsuranceForm> {
                 ),
                 DropdownButton(
                   isExpanded: true,
-                  value: selectedState,
+                  value: selectedProvince,
                   items: [
                     const DropdownMenuItem(
-                      value: '',
+                      value: 0,
                       child: Text('انتخاب استان'),
                     ),
-                    for (String s in widget.states)
-                      DropdownMenuItem(
-                        value: s,
-                        child: Text(s),
-                      )
+                    for (ProvinceAndCity item in widget.provinces)
+                      DropdownMenuItem(value: item.id, child: Text(item.name))
                   ],
                   onChanged: (value) {
+                    BlocProvider.of<SignupBloc>(context)
+                        .add(SignupGetCities(value!));
                     setState(() {
-                      selectedState = value!;
-                      selectedCity = '';
+                      selectedProvince = value;
+                      selectedCity = 0;
                     });
                   },
                 ),
                 const SizedBox(
                   height: 16,
                 ),
-                DropdownButton(
-                  isExpanded: true,
-                  value: selectedCity,
-                  items: [
-                    const DropdownMenuItem(
-                      value: '',
-                      child: Text('انتخاب شهر'),
-                    ),
-                    if (selectedState != '')
-                      for (String s in widget
-                          .cities[widget.states.indexOf(selectedState)])
-                        DropdownMenuItem(
-                          value: s,
-                          child: Text(s),
-                        )
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedCity = value!;
-                    });
+                BlocBuilder<SignupBloc, SignupState>(
+                  buildWhen: (previous, current) =>
+                      current is SignupUpdateCities,
+                  builder: (context, state) {
+                    List<ProvinceAndCity> cities =
+                        state is SignupUpdateCities ? state.cities : [];
+                    return DropdownButton(
+                      isExpanded: true,
+                      value: selectedCity,
+                      items: [
+                        const DropdownMenuItem(
+                          value: 0,
+                          child: Text('انتخاب شهر'),
+                        ),
+                        for (var city in cities)
+                          DropdownMenuItem(
+                            value: city.id,
+                            child: Text(city.name),
+                          )
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCity = value!;
+                        });
+                      },
+                    );
                   },
                 ),
                 const SizedBox(
                   height: 16,
                 ),
-                const Directionality(
+                Directionality(
                   textDirection: TextDirection.rtl,
                   child: TextField(
-                    decoration:
-                        InputDecoration(labelText: 'آدرس', counterText: ''),
+                    controller: _addressController,
+                    decoration: const InputDecoration(
+                        labelText: 'آدرس دفتر', counterText: ''),
                     maxLines: 1,
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: TextField(
+                    controller: _postalCodeController,
+                    decoration: const InputDecoration(
+                        labelText: 'کد پستی دفتر', counterText: ''),
+                    maxLines: 1,
+                    maxLength: 10,
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                const Text(
+                  'مکان دفتر',
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                SizedBox(
+                  height: 200,
+                  child: FlutterMap(
+                    options: MapOptions(
+                      initialCenter: const LatLng(35.6892, 51.3890),
+                      initialZoom: 9,
+                      onTap: (tapPosition, point) {
+                        lat = point.latitude;
+                        lng = point.longitude;
+                        _addMarker();
+                      },
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        subdomains: ['a', 'b', 'c'],
+                      ),
+                      MarkerLayer(markers: _markers),
+                    ],
                   ),
                 ),
                 const SizedBox(
@@ -859,7 +903,19 @@ class _InsuranceFormState extends State<_InsuranceForm> {
           OutlinedButton(
               style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 48)),
-              onPressed: () {},
+              onPressed: () {
+                BlocProvider.of<SignupBloc>(context).add(
+                    SignupSaveInsuranceOffice(
+                        provinceId: selectedProvince,
+                        cityId: selectedCity,
+                        insuranceCompanyId: selectedInsurance,
+                        officeName: _officeNameController.text,
+                        officeCode: _officeCodeController.text,
+                        address: _addressController.text,
+                        postalCode: _postalCodeController.text,
+                        lat: lat,
+                        lng: lng));
+              },
               child: Text(
                 'تائید',
                 style: TextStyle(color: Colors.grey[700]),
@@ -867,6 +923,21 @@ class _InsuranceFormState extends State<_InsuranceForm> {
         ],
       ),
     );
+  }
+
+  _addMarker() {
+    _markers.clear();
+    _markers.add(
+      Marker(
+        point: LatLng(lat, lng),
+        child: const Icon(
+          Icons.location_on,
+          color: Colors.red,
+          size: 40,
+        ),
+      ),
+    );
+    setState(() {});
   }
 }
 

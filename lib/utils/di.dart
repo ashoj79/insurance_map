@@ -10,9 +10,10 @@ var locator = GetIt.instance;
 
 Future<void> setup() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  DioHelper dioHelper = DioHelper();
+  SharedPrefereceHelper sharedPrefereceHelper = SharedPrefereceHelper(sharedPreferences);
+  DioHelper dioHelper = DioHelper(sharedPrefereceHelper);
 
-  locator.registerSingleton(SharedPrefereceHelper(sharedPreferences));
+  locator.registerSingleton(sharedPrefereceHelper);
   locator.registerSingleton(dioHelper.dio);
 
   //api services

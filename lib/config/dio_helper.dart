@@ -1,13 +1,15 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:insurance_map/data/local/shared_preference_helper.dart';
 import 'package:insurance_map/utils/constanse.dart';
 
 class DioHelper {
   Dio? _dio;
   Dio get dio => _dio!;
+  SharedPrefereceHelper sharedPrefereceHelper;
 
-  DioHelper() {
+  DioHelper(this.sharedPrefereceHelper) {
     _setupDio();
   }
 
@@ -18,17 +20,15 @@ class DioHelper {
         receiveTimeout: const Duration(seconds: 60));
     _dio = Dio(options)..interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
-        options.headers.addAll({'Accept': 'application/json'});
+        String token = sharedPrefereceHelper.getToken();
+        options.headers.addAll({'Accept': 'application/json', 'Authorization': 'Bearer $token'});
         return handler.next(options);
       },
 
-      onResponse: (response, handler) {
-        if ((response.statusCode ?? 200) != 403 && (response.statusCode ?? 200) != 422) {
-          return handler.next(response);
-        }
-
-        Map<String, dynamic> data = response.data is String ? jsonDecode(response.data) : response.data;
-        return handler.next(Response(requestOptions: RequestOptions(), data: data['message'], statusCode: 400));
+      onError: (error, handler) {
+        dynamic res = error.response?.data ?? '';
+        Map<String, dynamic> data = res is String ? jsonDecode(res) : res;
+        return handler.next(DioException(requestOptions: RequestOptions(), response: Response(requestOptions: RequestOptions(), data: data['message'])));
       },
     ));
   }

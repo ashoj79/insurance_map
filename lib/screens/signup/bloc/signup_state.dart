@@ -19,6 +19,15 @@ class SignupGetOtp extends SignupState {
 
 class SignupDoSignup extends SignupState {}
 
-class SignupDoSignupStepTwo extends SignupState {}
+class SignupDoSignupStepTwo extends SignupState {
+  final List<ProvinceAndCity> provinces;
+  final List<InsuranceCompany> companies;
+  SignupDoSignupStepTwo(this.provinces, [this.companies = const []]);
+}
 
 class SignupDoLogin extends SignupState {}
+
+class SignupUpdateCities extends SignupState {
+  final List<ProvinceAndCity> cities;
+  SignupUpdateCities(this.cities);
+}
