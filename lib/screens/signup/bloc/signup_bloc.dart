@@ -3,6 +3,8 @@ import 'package:insurance_map/data/local/signup_step_one_data.dart';
 import 'package:insurance_map/data/local/signup_types.dart';
 import 'package:insurance_map/data/remote/model/insurance_company.dart';
 import 'package:insurance_map/data/remote/model/province_city.dart';
+import 'package:insurance_map/repo/insurance_repository.dart';
+import 'package:insurance_map/repo/place_repository.dart';
 import 'package:insurance_map/repo/user_repository.dart';
 import 'package:insurance_map/utils/data_state.dart';
 import 'package:meta/meta.dart';
@@ -11,10 +13,12 @@ part 'signup_event.dart';
 part 'signup_state.dart';
 
 class SignupBloc extends Bloc<SignupEvent, SignupState> {
-  final UserRepository _repository;
+  final UserRepository _userRepository;
+  final InsuranceRepository _insuranceRepository;
+  final PlaceRepository _placeRepository;
   String type = '', phone = '', otp = '';
 
-  SignupBloc(this._repository) : super(SignupInitial()) {
+  SignupBloc(this._userRepository, this._insuranceRepository, this._placeRepository) : super(SignupInitial()) {
     on<SignupSendOtp>((event, emit) async {
       String phone = '0${event.phone}';
       if (int.tryParse(phone) == null || phone.length != 11) {
@@ -24,7 +28,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
       emit(SignupLoading());
 
-      DataState<String> result = await _repository.sendOtp(phone);
+      DataState<String> result = await _userRepository.sendOtp(phone);
       if (result is DataSucces) type = result.data!;
 
       emit(result is DataSucces
@@ -42,7 +46,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
       emit(SignupLoading());
 
-      DataState<void> result = await _repository.validateOtp(phone, otp, type);
+      DataState<void> result = await _userRepository.validateOtp(phone, otp, type);
       if (result is DataError) {
         emit(SignupError(result.errorMessage!));
         return;
@@ -97,21 +101,21 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           event.place.trim(),
           event.job.trim());
 
-      DataState<void> result = await _repository.signupStepOne(data);
+      DataState<void> result = await _userRepository.signupStepOne(data);
       if (result is DataError) {
         emit(SignupError(result.errorMessage ?? ''));
         return;
       }
 
       DataState<List<ProvinceAndCity>> provinces =
-          await _repository.getAllProvinces();
+          await _placeRepository.getAllProvinces();
       if (provinces is DataError) {
         emit(SignupError(provinces.errorMessage ?? ''));
         return;
       }
       List<InsuranceCompany>? companies;
       if (event.type == SignupTypes.representatives) {
-        companies = (await _repository.getInsuranceCampanies()).data;
+        companies = (await _insuranceRepository.getInsuranceCampanies()).data;
       }
       emit(SignupDoSignupStepTwo(provinces.data!, companies ?? []));
     });
@@ -122,7 +126,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
       emit(SignupLoading());
 
       DataState<List<ProvinceAndCity>> result =
-          await _repository.getCities(event.provinceId);
+          await _placeRepository.getCities(event.provinceId);
       if (result is DataError) {
         emit(SignupError(result.errorMessage ?? ''));
         return;
@@ -172,7 +176,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
       }
 
       emit(SignupLoading());
-      DataState<void> result = await _repository.saveInsuranceOffice(
+      DataState<void> result = await _insuranceRepository.saveInsuranceOffice(
           event.provinceId,
           event.cityId,
           event.insuranceCompanyId,
