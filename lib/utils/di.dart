@@ -5,11 +5,14 @@ import 'package:insurance_map/data/remote/api_service/insurance_api_service.dart
 import 'package:insurance_map/data/remote/api_service/place_api_service.dart';
 import 'package:insurance_map/data/remote/api_service/shop_api_service.dart';
 import 'package:insurance_map/data/remote/api_service/user_api_service.dart';
+import 'package:insurance_map/data/remote/api_service/vehicles_api_service.dart';
 import 'package:insurance_map/repo/insurance_repository.dart';
 import 'package:insurance_map/repo/place_repository.dart';
 import 'package:insurance_map/repo/shop_repository.dart';
 import 'package:insurance_map/repo/user_repository.dart';
+import 'package:insurance_map/repo/vehicles_repository.dart';
 import 'package:insurance_map/screens/signup/bloc/signup_bloc.dart';
+import 'package:insurance_map/screens/vehicles_screen/bloc/vehicles_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 var locator = GetIt.instance;
@@ -27,13 +30,16 @@ Future<void> setup() async {
   locator.registerSingleton(InsuranceApiService(locator()));
   locator.registerSingleton(PlaceApiService(locator()));
   locator.registerSingleton(ShopApiService(locator()));
+  locator.registerSingleton(VehiclesApiService(locator()));
 
   //repositories
   locator.registerSingleton(UserRepository(locator(), locator()));
   locator.registerSingleton(InsuranceRepository(locator()));
   locator.registerSingleton(PlaceRepository(locator()));
   locator.registerSingleton(ShopRepository(locator()));
+  locator.registerSingleton(VehiclesRepository(locator()));
 
   //bloc
   locator.registerSingleton(SignupBloc(locator(), locator(), locator(), locator()));
+  locator.registerSingleton(VehiclesBloc(locator()));
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/screens/intro/intro_screen.dart';
 import 'package:insurance_map/screens/signup/signup_screen.dart';
+import 'package:insurance_map/screens/vehicles_screen/vehicles_screen.dart';
 
 class AppNavigator {
   static ValueNotifier<List<MaterialPage>> pages =
@@ -65,6 +66,8 @@ class AppNavigator {
         return const IntroScreen();
       case Routes.signupRoute:
         return const SignupScreen();
+      case Routes.vehiclesRoute:
+        return const VehiclesScreen();
     }
     return null;
   }

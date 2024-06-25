@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:insurance_map/core/app_navigator.dart';
+import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/local/signup_types.dart';
@@ -28,16 +29,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
   BuildContext? _alertContext;
 
-  final List<String> _educationLevels = [
-        'ابتدایی',
-        'سیکل',
-        'دیپلم',
-        'فوق دیپلم',
-        'لیسانس',
-        'فوق لیسانس',
-        'دکتری'
-      ];
-
   @override
   Widget build(BuildContext context) {
     SignupTypes signupType =
@@ -48,6 +39,8 @@ class _SignupScreenState extends State<SignupScreen> {
           current is! SignupError &&
           current is! SignupLoading &&
           current is! SignupUpdateCities &&
+          current is! SignupGoToVehicles &&
+          current is! SignupGoToBankCards &&
           current is! SignupDoLogin,
       listener: (context, state) {
         if (state is SignupLoading) {
@@ -60,6 +53,10 @@ class _SignupScreenState extends State<SignupScreen> {
         if (state is SignupError) showSnackBar(context, state.message);
 
         if (state is SignupDoLogin) AppNavigator.pop();
+
+        if (state is SignupGoToVehicles) AppNavigator.push(Routes.vehiclesRoute, popTo: Routes.signupRoute);
+
+        if (state is SignupGoToBankCards) AppNavigator.push(Routes.bankCardsRoute, popTo: Routes.signupRoute);
       },
       builder: (context, state) {
         if (state is SignupGetOtp) _currentState = 2;
@@ -70,6 +67,7 @@ class _SignupScreenState extends State<SignupScreen> {
           return _PhoneForm(
             showCodeField: _currentState == 2,
             phone: state is SignupGetOtp ? state.phone : '',
+            type: signupType,
           );
         }
 
@@ -100,10 +98,11 @@ class _SignupScreenState extends State<SignupScreen> {
 }
 
 class _PhoneForm extends StatelessWidget {
-  _PhoneForm({this.showCodeField = false, this.phone = ''});
+  _PhoneForm({this.showCodeField = false, this.phone = '', required this.type});
 
   final bool showCodeField;
   final String phone;
+  final SignupTypes type;
 
   final phoneController = TextEditingController(),
       codeController = TextEditingController();
@@ -157,7 +156,7 @@ class _PhoneForm extends StatelessWidget {
                       .add(SignupSendOtp(phoneController.text));
                 } else {
                   BlocProvider.of<SignupBloc>(context).add(SignupValidateOtp(
-                      phone: phoneController.text, otp: codeController.text));
+                      phone: phoneController.text, otp: codeController.text, type: type));
                 }
               },
               child: Text(
@@ -977,255 +976,5 @@ class _BusinesFormState extends State<_BusinesForm> {
       lng = result.longitude!;
       _addMarker();
     });
-  }
-}
-
-class _MotorcyclePlaque extends StatelessWidget {
-  const _MotorcyclePlaque();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 2),
-          borderRadius: BorderRadius.circular(4)),
-      constraints: const BoxConstraints(maxWidth: 150),
-      child: Column(
-        children: [
-          Row(
-            textDirection: TextDirection.ltr,
-            children: [
-              Container(
-                color: Colors.blue[900],
-                padding: const EdgeInsets.all(4),
-                child: Column(
-                  children: [
-                    Image.asset(
-                      'assets/img/iran_flag.png',
-                      width: 24,
-                      height: 20,
-                      fit: BoxFit.fill,
-                    ),
-                    const SizedBox(
-                      height: 6,
-                    ),
-                    const Text(
-                      'I.R.',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w900),
-                    ),
-                    const SizedBox(
-                      height: 2,
-                    ),
-                    const Text(
-                      'IRAN',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w900),
-                    ),
-                  ],
-                ),
-              ),
-              const Expanded(
-                  child: TextField(
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: '۱۲۳',
-                    hintStyle:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
-                    counterText: ''),
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
-                maxLength: 3,
-                maxLines: 1,
-                keyboardType: TextInputType.number,
-              ))
-            ],
-          ),
-          const TextField(
-            decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: '۱۲۳۴۵',
-                hintStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
-                counterText: ''),
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
-            maxLength: 5,
-            maxLines: 1,
-            keyboardType: TextInputType.number,
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class _CarPlaque extends StatefulWidget {
-  const _CarPlaque();
-
-  @override
-  State<_CarPlaque> createState() => _CarPlaqueState();
-}
-
-class _CarPlaqueState extends State<_CarPlaque> {
-  final List<String> persianAlphabet = const [
-    'الف',
-    'ب',
-    'پ',
-    'ت',
-    'ث',
-    'ج',
-    'چ',
-    'ح',
-    'خ',
-    'د',
-    'ذ',
-    'ر',
-    'ز',
-    'ژ',
-    'س',
-    'ش',
-    'ص',
-    'ض',
-    'ط',
-    'ظ',
-    'ع',
-    'غ',
-    'ف',
-    'ق',
-    'ک',
-    'گ',
-    'ل',
-    'م',
-    'ن',
-    'و',
-    'ه',
-    'ی'
-  ];
-
-  String selectedChar = 'الف';
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(maxHeight: 88),
-      decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 2),
-          borderRadius: BorderRadius.circular(4)),
-      child: Row(
-        textDirection: TextDirection.ltr,
-        children: [
-          Container(
-            color: Colors.blue[900],
-            padding: const EdgeInsets.all(4),
-            child: Column(
-              children: [
-                Image.asset(
-                  'assets/img/iran_flag.png',
-                  width: 24,
-                  height: 20,
-                  fit: BoxFit.fill,
-                ),
-                const SizedBox(
-                  height: 6,
-                ),
-                const Text(
-                  'I.R.',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w900),
-                ),
-                const SizedBox(
-                  height: 2,
-                ),
-                const Text(
-                  'IRAN',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w900),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(
-            width: 64,
-            child: TextField(
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: '۱۲',
-                  hintStyle:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
-                  counterText: ''),
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
-              maxLength: 2,
-              maxLines: 1,
-              keyboardType: TextInputType.number,
-            ),
-          ),
-          DropdownButton(
-            value: selectedChar,
-            items: List.generate(
-                persianAlphabet.length,
-                (index) => DropdownMenuItem(
-                      child: Text(
-                        persianAlphabet[index],
-                        style: const TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      value: persianAlphabet[index],
-                    )),
-            onChanged: (value) {
-              setState(() {
-                selectedChar = value ?? selectedChar;
-              });
-            },
-          ),
-          const SizedBox(
-            width: 96,
-            child: TextField(
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: '۱۲۳',
-                  hintStyle:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
-                  counterText: ''),
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
-              maxLength: 3,
-              maxLines: 1,
-              keyboardType: TextInputType.number,
-            ),
-          ),
-          Container(width: 2, height: double.infinity, color: Colors.black),
-          const Expanded(
-            child: Column(
-              children: [
-                Text(
-                  'ایران',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700),
-                ),
-                SizedBox(
-                  width: 64,
-                  child: TextField(
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: '۱۲',
-                        hintStyle: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w900),
-                        counterText: ''),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
-                    maxLength: 2,
-                    maxLines: 1,
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
   }
 }

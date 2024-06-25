@@ -33,4 +33,6 @@ class UserApiService {
     });
     return await _dio.post('auth/register', data: formData);
   }
+
+  Future<Response<dynamic>> getUserInfo() async => await _dio.get('auth/user');
 }

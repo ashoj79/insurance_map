@@ -10,7 +10,8 @@ class SignupSendOtp extends SignupEvent {
 
 class SignupValidateOtp extends SignupEvent {
   final String phone, otp;
-  SignupValidateOtp({required this.phone, required this.otp});
+  final SignupTypes type;
+  SignupValidateOtp({required this.phone, required this.otp, required this.type});
 }
 
 class SignupSubmitStepOne extends SignupEvent {

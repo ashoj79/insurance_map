@@ -4,6 +4,7 @@ import 'package:insurance_map/data/local/signup_types.dart';
 import 'package:insurance_map/data/remote/model/insurance_company.dart';
 import 'package:insurance_map/data/remote/model/province_city.dart';
 import 'package:insurance_map/data/remote/model/shop_category.dart';
+import 'package:insurance_map/data/remote/model/user_info.dart';
 import 'package:insurance_map/repo/insurance_repository.dart';
 import 'package:insurance_map/repo/place_repository.dart';
 import 'package:insurance_map/repo/shop_repository.dart';
@@ -21,7 +22,9 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   final ShopRepository _shopRepository;
   String type = '', phone = '', otp = '';
 
-  SignupBloc(this._userRepository, this._insuranceRepository, this._placeRepository, this._shopRepository) : super(SignupInitial()) {
+  SignupBloc(this._userRepository, this._insuranceRepository,
+      this._placeRepository, this._shopRepository)
+      : super(SignupInitial()) {
     on<SignupSendOtp>((event, emit) async {
       String phone = '0${event.phone}';
       if (int.tryParse(phone) == null || phone.length != 11) {
@@ -49,13 +52,46 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
       emit(SignupLoading());
 
-      DataState<void> result = await _userRepository.validateOtp(phone, otp, type);
+      DataState<UserInfo> result =
+          await _userRepository.validateOtp(phone, otp, type);
       if (result is DataError) {
         emit(SignupError(result.errorMessage!));
         return;
       }
 
-      emit(type == 'register' ? SignupDoSignup() : SignupDoLogin());
+      if (type == 'register') {
+        emit(SignupDoSignup());
+        return;
+      }
+
+      if (event.type == SignupTypes.businesses &&
+          result.data!.vendorCount <= 0) {
+        emit(SignupDoSignupStepTwo(
+          await _getProvinces(),
+          categories: await _getCategories()
+        ));
+        return;
+      }
+
+      if (event.type == SignupTypes.representatives && result.data!.insuranceOfficeCount <= 0) {
+        emit(SignupDoSignupStepTwo(
+          await _getProvinces(),
+          companies: await _getCompanies()
+        ));
+        return;
+      }
+
+      if (event.type == SignupTypes.vehicles && result.data!.vehicleCount <= 0) {
+        emit(SignupGoToVehicles());
+        return;
+      }
+
+      if (event.type == SignupTypes.vehicles && result.data!.bankCartCount <= 0) {
+        emit(SignupGoToBankCards());
+        return;
+      }
+
+      emit(SignupDoLogin());
     });
 
     on<SignupSubmitStepOne>((event, emit) async {
@@ -110,21 +146,21 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
         return;
       }
 
-      DataState<List<ProvinceAndCity>> provinces =
-          await _placeRepository.getAllProvinces();
-      if (provinces is DataError) {
-        emit(SignupError(provinces.errorMessage ?? ''));
+      if (event.type == SignupTypes.vehicles) {
+        emit(SignupGoToVehicles());
         return;
       }
-      List<InsuranceCompany>? companies;
-      if (event.type == SignupTypes.representatives) {
-        companies = (await _insuranceRepository.getInsuranceCampanies()).data;
-      }
-      List<ShopCategory>? categories;
-      if (event.type == SignupTypes.businesses) {
-        categories = (await _shopRepository.getAllCategories()).data;
-      }
-      emit(SignupDoSignupStepTwo(provinces.data!, companies ?? [], categories ?? []));
+
+      List<ProvinceAndCity> provinces = await _getProvinces();
+      List<InsuranceCompany> companies =
+          event.type == SignupTypes.representatives
+              ? await _getCompanies()
+              : [];
+      List<ShopCategory> categories =
+          event.type == SignupTypes.businesses ? await _getCategories() : [];
+
+      emit(SignupDoSignupStepTwo(provinces,
+          companies: companies, categories: categories));
     });
 
     on<SignupGetCities>((event, emit) async {
@@ -194,9 +230,11 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           event.lat.toString(),
           event.lng.toString());
 
-      emit(result is DataError ? SignupError(result.errorMessage!) : SignupDoLogin());
+      emit(result is DataError
+          ? SignupError(result.errorMessage!)
+          : SignupDoLogin());
     });
-    
+
     on<SignupSaveVendor>((event, emit) async {
       if (event.provinceId == 0) {
         emit(SignupError('لطفا استان را انتخاب کنید'));
@@ -244,7 +282,27 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           event.lat.toString(),
           event.lng.toString());
 
-      emit(result is DataError ? SignupError(result.errorMessage!) : SignupDoLogin());
+      emit(result is DataError
+          ? SignupError(result.errorMessage!)
+          : SignupDoLogin());
     });
+  }
+
+  Future<List<ProvinceAndCity>> _getProvinces() async {
+    DataState<List<ProvinceAndCity>> result =
+        await _placeRepository.getAllProvinces();
+    return result is DataSucces ? result.data! : [];
+  }
+
+  Future<List<InsuranceCompany>> _getCompanies() async {
+    DataState<List<InsuranceCompany>> result =
+        await _insuranceRepository.getInsuranceCampanies();
+    return result is DataSucces ? result.data! : [];
+  }
+
+  Future<List<ShopCategory>> _getCategories() async {
+    DataState<List<ShopCategory>> result =
+        await _shopRepository.getAllCategories();
+    return result is DataSucces ? result.data! : [];
   }
 }

@@ -46,6 +46,7 @@ dependencies:
   loading_animation_widget: ^1.2.0+4
   persian_datetime_picker: ^2.7.0
   location: ^6.0.2
+  uuid: ^4.4.0
 
 dev_dependencies:
   flutter_test:
