@@ -1,0 +1,13 @@
+import 'package:dio/dio.dart';
+
+class BankApiService {
+  final Dio _dio;
+  BankApiService(this._dio);
+
+  Future<Response<dynamic>> getBanks() async => await _dio.get('banks');
+
+  Future<Response<dynamic>> saveCard(String number) async {
+    FormData data = FormData.fromMap({'number': number});
+    return await _dio.post('users/bank-cards', data: data);
+  }
+}

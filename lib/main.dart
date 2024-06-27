@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:insurance_map/core/app_navigator.dart';
 import 'package:insurance_map/config/theme.dart';
 import 'package:insurance_map/core/routes.dart';
+import 'package:insurance_map/screens/bank_cards/bloc/bank_cards_bloc.dart';
 import 'package:insurance_map/screens/signup/bloc/signup_bloc.dart';
 import 'package:insurance_map/screens/vehicles_screen/bloc/vehicles_bloc.dart';
 import 'package:insurance_map/utils/di.dart';
@@ -17,6 +18,7 @@ Future<void> main() async {
     providers: [
       BlocProvider<SignupBloc>(create: (context) => locator()),
       BlocProvider<VehiclesBloc>(create: (context) => locator()),
+      BlocProvider<BankCardsBloc>(create: (context) => locator()),
     ],
     child: const MyApp(),
   ));
@@ -38,6 +40,7 @@ class MyApp extends StatelessWidget {
               appBar: AppBar(
                 backgroundColor: appTheme.primaryColor,
                 actions: [
+                  // منوهای صفحه وسایل نقلیه
                   if (AppNavigator.getCurrentRoute() == Routes.vehiclesRoute)
                     IconButton(
                         onPressed: () {
@@ -50,9 +53,18 @@ class MyApp extends StatelessWidget {
                           BlocProvider.of<VehiclesBloc>(context).add(VehiclesAddNew());
                         },
                         icon: const Icon(Icons.add, color: Colors.white)),
+                        
+                  // منوهای صفحه کارت های بانکی
+                  if (AppNavigator.getCurrentRoute() == Routes.bankCardsRoute)
+                    IconButton(
+                        onPressed: () {
+                          BlocProvider.of<BankCardsBloc>(context).add(BankCardsSubmit());
+                        },
+                        icon: const Icon(Icons.done, color: Colors.white)),
 
                   const Spacer(flex: 200),
 
+                  // منوی بازگشت به صفحه قبلی
                   Visibility(
                     visible: AppNavigator.hasRoute(),
                     child: IconButton(

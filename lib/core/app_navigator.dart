@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:insurance_map/core/routes.dart';
+import 'package:insurance_map/screens/bank_cards/bank_cards_screen.dart';
 import 'package:insurance_map/screens/intro/intro_screen.dart';
 import 'package:insurance_map/screens/signup/signup_screen.dart';
 import 'package:insurance_map/screens/vehicles_screen/vehicles_screen.dart';
@@ -7,10 +8,10 @@ import 'package:insurance_map/screens/vehicles_screen/vehicles_screen.dart';
 class AppNavigator {
   static ValueNotifier<List<MaterialPage>> pages =
       ValueNotifier<List<MaterialPage>>(
-          [const MaterialPage(child: IntroScreen())]);
+          [const MaterialPage(child: BankCardsScreen())]);
 
   static final Map<String, MaterialPage> _currentPages = {
-    Routes.introRoute: const MaterialPage(child: IntroScreen())
+    Routes.bankCardsRoute: const MaterialPage(child: BankCardsScreen())
   };
 
   static push(String route, {String popTo = '', Object? args}) {
@@ -68,6 +69,8 @@ class AppNavigator {
         return const SignupScreen();
       case Routes.vehiclesRoute:
         return const VehiclesScreen();
+      case Routes.bankCardsRoute:
+        return const BankCardsScreen();
     }
     return null;
   }
