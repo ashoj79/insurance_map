@@ -59,7 +59,7 @@ class _SignupScreenState extends State<SignupScreen> {
         if (state is SignupGoToBankCards) AppNavigator.push(Routes.bankCardsRoute, popTo: Routes.signupRoute);
       },
       builder: (context, state) {
-        return _StepOneForm(type: SignupTypes.vehicles);
+        return _BusinesForm(provinces: [], categories: []);
         if (state is SignupGetOtp) _currentState = 2;
         if (state is SignupDoSignup) _currentState = 3;
         if (state is SignupDoSignupStepTwo) _currentState = 4;
