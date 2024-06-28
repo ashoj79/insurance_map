@@ -59,6 +59,7 @@ class _SignupScreenState extends State<SignupScreen> {
         if (state is SignupGoToBankCards) AppNavigator.push(Routes.bankCardsRoute, popTo: Routes.signupRoute);
       },
       builder: (context, state) {
+        return _StepOneForm(type: SignupTypes.vehicles);
         if (state is SignupGetOtp) _currentState = 2;
         if (state is SignupDoSignup) _currentState = 3;
         if (state is SignupDoSignupStepTwo) _currentState = 4;
@@ -186,7 +187,8 @@ class __StepOneFormState extends State<_StepOneForm> {
       _birthCertificateIdController = TextEditingController(),
       _birthDateController = TextEditingController(),
       _placeOfBirthController = TextEditingController(),
-      _jobTitleController = TextEditingController();
+      _jobTitleController = TextEditingController(),
+      _inviterController = TextEditingController();
 
   final _firstnameFocusNode = FocusNode(),
       _lastnameFocusNode = FocusNode(),
@@ -195,7 +197,8 @@ class __StepOneFormState extends State<_StepOneForm> {
       _birthCertificateIdFocusNode = FocusNode(),
       _birthDateFocusNode = FocusNode(),
       _placeOfBirthFocusNode = FocusNode(),
-      _jobTitleFocusNode = FocusNode();
+      _jobTitleFocusNode = FocusNode(),
+      _inviterFocusNode = FocusNode();
 
   String _selectedSex = '';
   final Map<String, String> _sexOptions = {
@@ -350,6 +353,20 @@ class __StepOneFormState extends State<_StepOneForm> {
                       decoration: const InputDecoration(
                           labelText: 'شغل', counterText: ''),
                       maxLines: 1,
+                      onSubmitted: (value) => _inviterFocusNode.requestFocus(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextField(
+                      focusNode: _inviterFocusNode,
+                      controller: _inviterController,
+                      decoration: const InputDecoration(
+                          labelText: 'کد معرف', counterText: ''),
+                      maxLines: 1,
                     ),
                   ),
                   const SizedBox(
@@ -373,7 +390,9 @@ class __StepOneFormState extends State<_StepOneForm> {
                     birthDate: _birthDateController.text,
                     place: _placeOfBirthController.text,
                     job: _jobTitleController.text,
-                    type: widget.type));
+                    inviterCode: _inviterController.text,
+                    type: widget.type,
+                ));
               },
               child: Text(
                 'تائید',

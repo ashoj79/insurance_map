@@ -138,7 +138,9 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           event.sex.trim(),
           event.birthDate.trim(),
           event.place.trim(),
-          event.job.trim());
+          event.job.trim(),
+          event.inviterCode.trim()
+      );
 
       DataState<void> result = await _userRepository.signupStepOne(data);
       if (result is DataError) {

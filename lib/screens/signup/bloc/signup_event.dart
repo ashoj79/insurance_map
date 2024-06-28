@@ -15,7 +15,7 @@ class SignupValidateOtp extends SignupEvent {
 }
 
 class SignupSubmitStepOne extends SignupEvent {
-  final String fname, lname, fatherName, nc, certId, sex, birthDate, place, job;
+  final String fname, lname, fatherName, nc, certId, sex, birthDate, place, job, inviterCode;
   final SignupTypes type;
   SignupSubmitStepOne(
       {required this.fname,
@@ -27,7 +27,8 @@ class SignupSubmitStepOne extends SignupEvent {
       required this.birthDate,
       required this.place,
       required this.job,
-      required this.type});
+      required this.type,
+      required this.inviterCode});
 }
 
 class SignupGetCities extends SignupEvent {

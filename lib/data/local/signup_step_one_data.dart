@@ -9,7 +9,8 @@ class SignupStepOneData{
       sex,
       birthDate,
       place,
-      job;
+      job,
+      inviterCode;
 
   SignupStepOneData(
     this.phone,
@@ -22,6 +23,7 @@ class SignupStepOneData{
     this.sex,
     this.birthDate,
     this.place,
-    this.job
+    this.job,
+    this.inviterCode
   );
 }

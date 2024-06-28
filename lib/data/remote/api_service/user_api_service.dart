@@ -30,6 +30,7 @@ class UserApiService {
       'birth_date': data.birthDate,
       'place_of_birth': data.place,
       'job_title': data.job,
+      'inviter_code': data.inviterCode
     });
     return await _dio.post('auth/register', data: formData);
   }
