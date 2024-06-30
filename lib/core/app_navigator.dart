@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/screens/bank_cards/bank_cards_screen.dart';
-import 'package:insurance_map/screens/intro/intro_screen.dart';
+import 'package:insurance_map/screens/main/main_screen.dart';
 import 'package:insurance_map/screens/signup/signup_screen.dart';
 import 'package:insurance_map/screens/vehicles_screen/vehicles_screen.dart';
 
 class AppNavigator {
   static ValueNotifier<List<MaterialPage>> pages =
       ValueNotifier<List<MaterialPage>>(
-          [const MaterialPage(child: BankCardsScreen())]);
+          [const MaterialPage(child: MainScreen())]);
 
   static final Map<String, MaterialPage> _currentPages = {
-    Routes.bankCardsRoute: const MaterialPage(child: BankCardsScreen())
+    Routes.mainRoute: const MaterialPage(child: MainScreen())
   };
 
   static push(String route, {String popTo = '', Object? args}) {
@@ -63,8 +63,8 @@ class AppNavigator {
 
   static Widget? _getRouteScreen(String route) {
     switch (route) {
-      case Routes.introRoute:
-        return const IntroScreen();
+      case Routes.mainRoute:
+        return const MainScreen();
       case Routes.signupRoute:
         return const SignupScreen();
       case Routes.vehiclesRoute:

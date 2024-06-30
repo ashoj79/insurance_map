@@ -7,7 +7,7 @@ import 'package:insurance_map/utils/constanse.dart';
 class DioHelper {
   Dio? _dio;
   Dio get dio => _dio!;
-  SharedPrefereceHelper sharedPrefereceHelper;
+  SharedPreferenceHelper sharedPrefereceHelper;
 
   DioHelper(this.sharedPrefereceHelper) {
     _setupDio();

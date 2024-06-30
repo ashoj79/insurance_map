@@ -18,7 +18,7 @@ class UserApiService {
   }
 
   Future<Response<dynamic>> registerStepOne(SignupStepOneData data) async {
-    FormData formData = FormData.fromMap({
+    Map<String, dynamic> map = {
       'mobile': data.phone,
       'otp_code': data.otp,
       'first_name': data.fname,
@@ -30,8 +30,13 @@ class UserApiService {
       'birth_date': data.birthDate,
       'place_of_birth': data.place,
       'job_title': data.job,
-      'inviter_code': data.inviterCode
-    });
+    };
+
+    if (data.inviterCode.isNotEmpty) {
+      map.addAll({'inviter_code': data.inviterCode});
+    }
+
+    FormData formData = FormData.fromMap(map);
     return await _dio.post('auth/register', data: formData);
   }
 

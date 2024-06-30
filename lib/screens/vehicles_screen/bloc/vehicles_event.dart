@@ -5,24 +5,30 @@ sealed class VehiclesEvent {}
 
 class VehiclesGetTypes extends VehiclesEvent {}
 
-class VehiclesAddNew extends VehiclesEvent {}
-
 class VehiclesGetBrands extends VehiclesEvent {
   final int typeId;
-  final String instanceId;
-  VehiclesGetBrands({required this.instanceId, required this.typeId});
+  VehiclesGetBrands({required this.typeId});
 }
 
 class VehiclesGetModels extends VehiclesEvent {
   final int typeId, brandId;
-  final String instanceId;
-  VehiclesGetModels(
-      {required this.instanceId, required this.typeId, required this.brandId});
+  VehiclesGetModels({required this.typeId, required this.brandId});
 }
 
 class VehiclesSave extends VehiclesEvent {
-  final VehiclesInfoController controller;
-  VehiclesSave({required this.controller});
+  final int type, carTypeId, carModelId, carBrandId;
+  final String license, thirdPartyInsuranceDate, carBodyInsuranceDate;
+  final bool thirdPartyInsurance, carBodyInsurance;
+  VehiclesSave(
+      {required this.type,
+      required this.carTypeId,
+      required this.carBrandId,
+      required this.carModelId,
+      required this.license,
+      required this.thirdPartyInsurance,
+      required this.carBodyInsurance,
+      required this.carBodyInsuranceDate,
+      required this.thirdPartyInsuranceDate});
 }
 
 class VehiclesSubmit extends VehiclesEvent {}

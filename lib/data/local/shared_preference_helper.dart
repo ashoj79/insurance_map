@@ -1,9 +1,23 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
-class SharedPrefereceHelper {
-  final SharedPreferences _sharedPreferences;
-  SharedPrefereceHelper(this._sharedPreferences);
+class SharedPreferenceHelper {
+  final StreamingSharedPreferences _sharedPreferences;
+  SharedPreferenceHelper(this._sharedPreferences);
 
-  saveToken(String token) async => await _sharedPreferences.setString('token', token);
-  getToken() => _sharedPreferences.getString('token') ?? '';
+  clean() async => await _sharedPreferences.clear();
+
+  Future<void> saveToken(String data) async => await _sharedPreferences.setString('token', data);
+  String getToken() => _sharedPreferences.getString('token', defaultValue: '').getValue();
+
+  Future<void> saveName(String data) async => await _sharedPreferences.setString('name', data);
+  getName() => _sharedPreferences.getString('name', defaultValue: '');
+
+  Future<void> savePhone(String data) async => await _sharedPreferences.setString('phone', data);
+  getPhone() => _sharedPreferences.getString('phone', defaultValue: '');
+
+  Future<void> saveAvatar(String data) async => await _sharedPreferences.setString('avatar', data);
+  getAvatar() => _sharedPreferences.getString('avatar', defaultValue: '');
+
+  Future<void> saveWallet(int data) async => await _sharedPreferences.setInt('wallet', data);
+  getWallet() => _sharedPreferences.getInt('wallet', defaultValue: 0);
 }

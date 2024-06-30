@@ -7,7 +7,7 @@ import 'package:insurance_map/utils/data_state.dart';
 
 class UserRepository {
   final UserApiService _apiService;
-  final SharedPrefereceHelper _sharedPrefereceHelper;
+  final SharedPreferenceHelper _sharedPrefereceHelper;
   UserRepository(this._apiService, this._sharedPrefereceHelper);
 
   Future<DataState<String>> sendOtp(String phone) async {
@@ -27,6 +27,10 @@ class UserRepository {
 
       if (type == 'login') {
         await _sharedPrefereceHelper.saveToken(response.data['token']);
+        await _sharedPrefereceHelper.saveName(response.data['user']['name']);
+        await _sharedPrefereceHelper.savePhone(response.data['user']['mobile']);
+        await _sharedPrefereceHelper.saveAvatar(response.data['user']['avatar']);
+        await _sharedPrefereceHelper.saveWallet(response.data['user']['wallet']['balance']);
         response = await _apiService.getUserInfo();
       }
 
@@ -42,11 +46,25 @@ class UserRepository {
     try {
       var response = await _apiService.registerStepOne(data);
       await _sharedPrefereceHelper.saveToken(response.data['token']);
+      await _sharedPrefereceHelper.saveName(response.data['user']['name']);
+      await _sharedPrefereceHelper.savePhone(response.data['user']['mobile']);
+      await _sharedPrefereceHelper.saveAvatar(response.data['user']['avatar']);
+      await _sharedPrefereceHelper.saveWallet(response.data['user']['wallet']['balance']);
       return DataSucces();
     } on DioException catch (e) {
       return DataError(e.response?.data?.toString() ?? '');
     } catch (_) {
       return DataError('مشکلی رخ داد لطفا مجدد امتحان کنید');
     }
+  }
+
+  Future<void> updateWalletBalance() async {
+    try {
+      if (_sharedPrefereceHelper.getToken().isNotEmpty) {
+        var response = await _apiService.getUserInfo();
+        await _sharedPrefereceHelper.saveWallet(
+            response.data['user']['wallet']['balance']);
+      }
+    } catch (_) {}
   }
 }

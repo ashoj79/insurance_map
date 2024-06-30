@@ -12,26 +12,19 @@ class VehiclesError extends VehiclesState {
   VehiclesError(this.message);
 }
 
-class VehiclesNewCar extends VehiclesState {
+class VehiclesUpdateTypes extends VehiclesState {
   final List<VehicleInfo> types;
-  VehiclesNewCar(this.types);
+  VehiclesUpdateTypes({required this.types});
 }
 
 class VehiclesUpdateBrands extends VehiclesState {
   final List<VehicleInfo> brands;
-  final String instanceId;
-  VehiclesUpdateBrands({required this.brands, required this.instanceId});
+  VehiclesUpdateBrands({required this.brands});
 }
 
 class VehiclesUpdateModels extends VehiclesState {
   final List<VehicleInfo> models;
-  final String instanceId;
-  VehiclesUpdateModels({required this.models, required this.instanceId});
+  VehiclesUpdateModels({required this.models});
 }
 
-class VehiclesSaved extends VehiclesState {
-  final String instanceId;
-  VehiclesSaved(this.instanceId);
-}
-
-class VehiclesShowAlert extends VehiclesState {}
+class VehiclesSaved extends VehiclesState {}

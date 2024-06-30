@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:insurance_map/core/app_navigator.dart';
-import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/remote/model/vehicle_info.dart';
 import 'package:insurance_map/screens/vehicles_screen/bloc/vehicles_bloc.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
-import 'package:uuid/uuid.dart';
 
 class VehiclesScreen extends StatefulWidget {
   const VehiclesScreen({super.key});
@@ -17,7 +15,13 @@ class VehiclesScreen extends StatefulWidget {
 }
 
 class _VehiclesScreenState extends State<VehiclesScreen> {
-  List<VehiclesInfoController> controllers = [];
+  int type = 1, carTypeId = 0, carModelId = 0, carBrandId = 0;
+  bool carBodyInsurance = false, thirdPartyInsurance = false;
+  List<VehicleInfo> carTypes = [], carModels = [], carBrands = [];
+  final TextEditingController thirdPartyInsuranceDate =
+          TextEditingController(text: ''),
+      carBodyInsuranceDate = TextEditingController(text: '');
+  final PlaqueController _plaqueController = PlaqueController();
 
   BuildContext? _alertContext;
 
@@ -41,348 +45,321 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
 
           if (state is VehiclesError) showSnackBar(context, state.message);
 
-          if (state is VehiclesNewCar) {
+          if (state is VehiclesUpdateTypes) {
             setState(() {
-              controllers.add(VehiclesInfoController(
-                  id: const Uuid().v4(), carTypes: state.types));
+              carTypes.clear();
+              carTypes.addAll(state.types);
             });
           }
 
           if (state is VehiclesUpdateBrands) {
-            int index = controllers
-                .indexWhere((element) => element.id == state.instanceId);
             setState(() {
-              controllers[index].carBrandId = 0;
-              controllers[index].carModelId = 0;
-              controllers[index].carModels.clear();
-              controllers[index].carBrands = state.brands;
+              carBrandId = 0;
+              carModelId = 0;
+              carModels.clear();
+              carBrands = state.brands;
             });
           }
 
           if (state is VehiclesUpdateModels) {
-            int index = controllers
-                .indexWhere((element) => element.id == state.instanceId);
             setState(() {
-              controllers[index].carModelId = 0;
-              controllers[index].carModels = state.models;
+              carModelId = 0;
+              carModels = state.models;
             });
           }
 
           if (state is VehiclesSaved) {
-            int index = controllers
-                .indexWhere((element) => element.id == state.instanceId);
+            showSnackBar(context, 'وسیله نقلیه شما ذخیره شد');
+
+            _plaqueController.clearLicense();
             setState(() {
-              controllers[index].isSaved = true;
-              controllers[index].isExpanded = false;
+              type = 1;
+              carTypeId = 0;
+              carModelId = 0;
+              carBrandId = 0;
+              carBodyInsurance = false;
+              thirdPartyInsurance = false;
+              carModels = [];
+              carBrands = [];
+              thirdPartyInsuranceDate.clear();
+              carBodyInsuranceDate.clear();
             });
           }
-
-          if (state is VehiclesShowAlert) _showAlertDialog();
         },
-        child: SingleChildScrollView(
-          child: Directionality(
-            textDirection: TextDirection.rtl,
-            child: ExpansionPanelList(
-              children: [
-                for (int i = 0; i < controllers.length; i++)
-                  ExpansionPanel(
-                    headerBuilder: (context, isExpanded) {
-                      return ListTile(
-                        title: Row(
-                          children: [
-                            Text(
-                                'پلاک ${controllers[i].type == 1 ? 'خودرو' : 'موتورسیکلت'} ${controllers[i].isSaved ? ':${controllers[i].getLicense(true)}' : ''}'),
-                            if (controllers[i].isSaved)
-                              const Text(
-                                ' ذخیره شد',
-                                style: TextStyle(
-                                    color: Colors.greenAccent, fontSize: 12),
-                              )
-                          ],
-                        ),
-                        onTap: () {
-                          if (controllers[i].isSaved) return;
-
-                          if (!controllers[i].isExpanded) {
-                            for (var element in controllers) {
-                              element.isExpanded = false;
-                            }
-                          }
-
-                          setState(() {
-                            controllers[i].isExpanded =
-                                !controllers[i].isExpanded;
-                          });
-                        },
-                      );
-                    },
-                    body: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Column(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Row(
+                        textDirection: TextDirection.rtl,
                         children: [
-                          Row(
-                            textDirection: TextDirection.rtl,
-                            children: [
-                              const Text('نوع وسیله نقلیه: '),
-                              Radio<int>(
-                                value: 1,
-                                groupValue: controllers[i].type,
-                                onChanged: (value) {
-                                  controllers[i].clearLicense();
-                                  setState(() {
-                                    controllers[i].type = 1;
-                                  });
-                                },
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  controllers[i].clearLicense();
-                                  setState(() {
-                                    controllers[i].type = 1;
-                                  });
-                                },
-                                child: const Text('ماشین'),
-                              ),
-                              const Expanded(child: SizedBox()),
-                              Radio<int>(
-                                value: 2,
-                                groupValue: controllers[i].type,
-                                onChanged: (value) {
-                                  controllers[i].clearLicense();
-                                  setState(() {
-                                    controllers[i].type = 2;
-                                  });
-                                },
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  controllers[i].clearLicense();
-                                  setState(() {
-                                    controllers[i].type = 2;
-                                  });
-                                },
-                                child: const Text('موتورسیکلت'),
-                              ),
-                              const Expanded(child: SizedBox()),
-                            ],
+                          const Text('نوع وسیله نقلیه: ', textDirection: TextDirection.rtl),
+                          Radio<int>(
+                            value: 1,
+                            groupValue: type,
+                            onChanged: (value) {
+                              _plaqueController.clearLicense();
+                              setState(() {
+                                type = 1;
+                              });
+                            },
                           ),
-                          const SizedBox(height: 16),
-                          if (controllers[i].type == 1)
-                            _CarPlaque(controller: controllers[i]),
-                          if (controllers[i].type == 2)
-                            _MotorcyclePlaque(controller: controllers[i]),
-                          const SizedBox(height: 16),
-                          if (controllers[i].type == 1)
-                            DropdownButton(
-                              isExpanded: true,
-                              value: controllers[i].carTypeId,
-                              items: [
-                                const DropdownMenuItem(
-                                  value: 0,
-                                  child: Text('نوع ماشین'),
-                                ),
-                                for (VehicleInfo type
-                                    in controllers[i].carTypes)
-                                  DropdownMenuItem(
-                                      value: type.id, child: Text(type.title))
-                              ],
-                              onChanged: (value) {
-                                setState(() {
-                                  controllers[i].carTypeId = value!;
-                                });
-                                BlocProvider.of<VehiclesBloc>(context).add(
-                                    VehiclesGetBrands(
-                                        instanceId: controllers[i].id,
-                                        typeId: controllers[i].carTypeId));
-                              },
-                            ),
-                          const SizedBox(height: 16),
-                          if (controllers[i].type == 1)
-                            DropdownButton(
-                              isExpanded: true,
-                              value: controllers[i].carBrandId,
-                              items: [
-                                const DropdownMenuItem(
-                                  value: 0,
-                                  child: Text('برند ماشین'),
-                                ),
-                                for (VehicleInfo brand
-                                    in controllers[i].carBrands)
-                                  DropdownMenuItem(
-                                      value: brand.id, child: Text(brand.title))
-                              ],
-                              onChanged: (value) {
-                                setState(() {
-                                  controllers[i].carBrandId = value!;
-                                });
-                                BlocProvider.of<VehiclesBloc>(context).add(
-                                    VehiclesGetModels(
-                                        instanceId: controllers[i].id,
-                                        typeId: controllers[i].carTypeId,
-                                        brandId: controllers[i].carBrandId));
-                              },
-                            ),
-                          const SizedBox(height: 16),
-                          if (controllers[i].type == 1)
-                            DropdownButton(
-                              isExpanded: true,
-                              value: controllers[i].carModelId,
-                              items: [
-                                const DropdownMenuItem(
-                                  value: 0,
-                                  child: Text('مدل ماشین'),
-                                ),
-                                for (VehicleInfo model
-                                    in controllers[i].carModels)
-                                  DropdownMenuItem(
-                                      value: model.id, child: Text(model.title))
-                              ],
-                              onChanged: (value) {
-                                setState(() {
-                                  controllers[i].carModelId = value!;
-                                });
-                              },
-                            ),
-                          const SizedBox(height: 16),
-                          Row(
-                            textDirection: TextDirection.rtl,
-                            children: [
-                              const Text('بیمه شخص ثالث دارد؟ '),
-                              Radio<bool>(
-                                value: false,
-                                groupValue: controllers[i].thirdPartyInsurance,
-                                onChanged: (value) {
-                                  setState(() {
-                                    controllers[i].thirdPartyInsurance = false;
-                                  });
-                                },
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    controllers[i].thirdPartyInsurance = false;
-                                  });
-                                },
-                                child: const Text('خیر'),
-                              ),
-                              const Expanded(child: SizedBox()),
-                              Radio<bool>(
-                                value: true,
-                                groupValue: controllers[i].thirdPartyInsurance,
-                                onChanged: (value) {
-                                  setState(() {
-                                    controllers[i].thirdPartyInsurance = true;
-                                  });
-                                },
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    controllers[i].thirdPartyInsurance = true;
-                                  });
-                                },
-                                child: const Text('بله'),
-                              ),
-                              const Expanded(child: SizedBox()),
-                            ],
+                          GestureDetector(
+                            onTap: () {
+                              _plaqueController.clearLicense();
+                              setState(() {
+                                type = 1;
+                              });
+                            },
+                            child: const Text('ماشین'),
                           ),
-                          const SizedBox(height: 16),
-                          if (controllers[i].thirdPartyInsurance)
-                            Directionality(
-                              textDirection: TextDirection.rtl,
-                              child: TextField(
-                                controller:
-                                    controllers[i].thirdPartyInsuranceDate,
-                                decoration: const InputDecoration(
-                                    labelText: 'تاریخ اتمام بیمه شخص ثالث',
-                                    counterText: ''),
-                                maxLines: 1,
-                                canRequestFocus: false,
-                                onTap: () => _showDatePicker(i, true),
-                              ),
-                            ),
-                          const SizedBox(height: 16),
-                          Row(
-                            textDirection: TextDirection.rtl,
-                            children: [
-                              const Text('بیمه بدنه دارد؟ '),
-                              Radio<bool>(
-                                value: false,
-                                groupValue: controllers[i].carBodyInsurance,
-                                onChanged: (value) {
-                                  setState(() {
-                                    controllers[i].carBodyInsurance = false;
-                                  });
-                                },
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    controllers[i].carBodyInsurance = false;
-                                  });
-                                },
-                                child: const Text('خیر'),
-                              ),
-                              const Expanded(child: SizedBox()),
-                              Radio<bool>(
-                                value: true,
-                                groupValue: controllers[i].carBodyInsurance,
-                                onChanged: (value) {
-                                  setState(() {
-                                    controllers[i].carBodyInsurance = true;
-                                  });
-                                },
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    controllers[i].carBodyInsurance = true;
-                                  });
-                                },
-                                child: const Text('بله'),
-                              ),
-                              const Expanded(child: SizedBox()),
-                            ],
+                          const Expanded(child: SizedBox()),
+                          Radio<int>(
+                            value: 2,
+                            groupValue: type,
+                            onChanged: (value) {
+                              _plaqueController.clearLicense();
+                              setState(() {
+                                type = 2;
+                              });
+                            },
                           ),
-                          const SizedBox(height: 16),
-                          if (controllers[i].carBodyInsurance)
-                            Directionality(
-                              textDirection: TextDirection.rtl,
-                              child: TextField(
-                                controller: controllers[i].carBodyInsuranceDate,
-                                decoration: const InputDecoration(
-                                    labelText: 'تاریخ اتمام بیمه بدنه',
-                                    counterText: ''),
-                                maxLines: 1,
-                                canRequestFocus: false,
-                                onTap: () => _showDatePicker(i, false),
-                              ),
-                            ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                              onPressed: () {
-                                BlocProvider.of<VehiclesBloc>(context).add(
-                                    VehiclesSave(controller: controllers[i]));
-                              },
-                              child: const Text('ثبت')),
-                          const SizedBox(height: 16),
+                          GestureDetector(
+                            onTap: () {
+                              _plaqueController.clearLicense();
+                              setState(() {
+                                type = 2;
+                              });
+                            },
+                            child: const Text('موتورسیکلت'),
+                          ),
+                          const Expanded(child: SizedBox()),
                         ],
                       ),
-                    ),
-                    isExpanded: controllers[i].isExpanded,
-                  )
-              ],
-            ),
+                      const SizedBox(height: 16),
+                      if (type == 1) _CarPlaque(controller: _plaqueController),
+                      if (type == 2)
+                        _MotorcyclePlaque(controller: _plaqueController),
+                      const SizedBox(height: 16),
+                      if (type == 1)
+                        DropdownButton(
+                          isExpanded: true,
+                          value: carTypeId,
+                          items: [
+                            const DropdownMenuItem(
+                              value: 0,
+                              child: Text('نوع ماشین'),
+                            ),
+                            for (VehicleInfo type in carTypes)
+                              DropdownMenuItem(
+                                  value: type.id, child: Text(type.title))
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              carTypeId = value!;
+                            });
+                            BlocProvider.of<VehiclesBloc>(context)
+                                .add(VehiclesGetBrands(typeId: carTypeId));
+                          },
+                        ),
+                      const SizedBox(height: 16),
+                      if (type == 1)
+                        DropdownButton(
+                          isExpanded: true,
+                          value: carBrandId,
+                          items: [
+                            const DropdownMenuItem(
+                              value: 0,
+                              child: Text('برند ماشین'),
+                            ),
+                            for (VehicleInfo brand in carBrands)
+                              DropdownMenuItem(
+                                  value: brand.id, child: Text(brand.title))
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              carBrandId = value!;
+                            });
+                            BlocProvider.of<VehiclesBloc>(context).add(
+                                VehiclesGetModels(
+                                    typeId: carTypeId, brandId: carBrandId));
+                          },
+                        ),
+                      const SizedBox(height: 16),
+                      if (type == 1)
+                        DropdownButton(
+                          isExpanded: true,
+                          value: carModelId,
+                          items: [
+                            const DropdownMenuItem(
+                              value: 0,
+                              child: Text('مدل ماشین'),
+                            ),
+                            for (VehicleInfo model in carModels)
+                              DropdownMenuItem(
+                                  value: model.id, child: Text(model.title))
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              carModelId = value!;
+                            });
+                          },
+                        ),
+                      const SizedBox(height: 16),
+                      Row(
+                        textDirection: TextDirection.rtl,
+                        children: [
+                          const Text('بیمه شخص ثالث دارد؟ '),
+                          Radio<bool>(
+                            value: false,
+                            groupValue: thirdPartyInsurance,
+                            onChanged: (value) {
+                              setState(() {
+                                thirdPartyInsurance = false;
+                              });
+                            },
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                thirdPartyInsurance = false;
+                              });
+                            },
+                            child: const Text('خیر'),
+                          ),
+                          const Expanded(child: SizedBox()),
+                          Radio<bool>(
+                            value: true,
+                            groupValue: thirdPartyInsurance,
+                            onChanged: (value) {
+                              setState(() {
+                                thirdPartyInsurance = true;
+                              });
+                            },
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                thirdPartyInsurance = true;
+                              });
+                            },
+                            child: const Text('بله'),
+                          ),
+                          const Expanded(child: SizedBox()),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      if (thirdPartyInsurance)
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: TextField(
+                            controller: thirdPartyInsuranceDate,
+                            decoration: const InputDecoration(
+                                labelText: 'تاریخ اتمام بیمه شخص ثالث',
+                                counterText: ''),
+                            maxLines: 1,
+                            canRequestFocus: false,
+                            onTap: () => _showDatePicker(true),
+                          ),
+                        ),
+                      const SizedBox(height: 16),
+                      Row(
+                        textDirection: TextDirection.rtl,
+                        children: [
+                          const Text('بیمه بدنه دارد؟ '),
+                          Radio<bool>(
+                            value: false,
+                            groupValue: carBodyInsurance,
+                            onChanged: (value) {
+                              setState(() {
+                                carBodyInsurance = false;
+                              });
+                            },
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                carBodyInsurance = false;
+                              });
+                            },
+                            child: const Text('خیر'),
+                          ),
+                          const Expanded(child: SizedBox()),
+                          Radio<bool>(
+                            value: true,
+                            groupValue: carBodyInsurance,
+                            onChanged: (value) {
+                              setState(() {
+                                carBodyInsurance = true;
+                              });
+                            },
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                carBodyInsurance = true;
+                              });
+                            },
+                            child: const Text('بله'),
+                          ),
+                          const Expanded(child: SizedBox()),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      if (carBodyInsurance)
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: TextField(
+                            controller: carBodyInsuranceDate,
+                            decoration: const InputDecoration(
+                                labelText: 'تاریخ اتمام بیمه بدنه',
+                                counterText: ''),
+                            maxLines: 1,
+                            canRequestFocus: false,
+                            onTap: () => _showDatePicker(false),
+                          ),
+                        ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+              ),
+              OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 48)),
+                  onPressed: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+
+                    BlocProvider.of<VehiclesBloc>(context).add(VehiclesSave(
+                        type: type,
+                        carTypeId: carTypeId,
+                        carBrandId: carBrandId,
+                        carModelId: carModelId,
+                        license: _plaqueController.getLicense(type),
+                        thirdPartyInsurance: thirdPartyInsurance,
+                        carBodyInsurance: carBodyInsurance,
+                        carBodyInsuranceDate: carBodyInsuranceDate.text,
+                        thirdPartyInsuranceDate: thirdPartyInsuranceDate.text));
+                  },
+                  child: Text(
+                    'ذخیره',
+                    style: TextStyle(color: Colors.grey[700]),
+                  )),
+            ],
           ),
         ));
   }
 
-  Future<void> _showDatePicker(int index, bool isThirdParty) async {
+  Future<void> _showDatePicker(bool isThirdParty) async {
     Jalali? picked = await showPersianDatePicker(
       context: context,
       initialDate: Jalali.now(),
       firstDate: Jalali(1300),
-      lastDate: Jalali.now(),
+      lastDate: Jalali.MAX
     );
     if (picked == null) return;
 
@@ -390,96 +367,17 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
         '${picked.year}/${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}';
 
     if (isThirdParty) {
-      controllers[index].thirdPartyInsuranceDate.text = date;
+      thirdPartyInsuranceDate.text = date;
     } else {
-      controllers[index].carBodyInsuranceDate.text = date;
+      carBodyInsuranceDate.text = date;
     }
-  }
-
-  void _showAlertDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: AlertDialog(
-            title: const Text('هشدار'),
-            content: const Text('تمام وسایل نقلیه خود را ذخیره نکرده اید. آیا از عبور از این مرحله مطمئن هستید؟'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('خیر'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: const Text('بله'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  AppNavigator.push(Routes.bankCardsRoute, popTo: Routes.vehiclesRoute);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class VehiclesInfoController {
-  int type = 1, carTypeId = 0, carModelId = 0, carBrandId = 0;
-  bool carBodyInsurance = false,
-      thirdPartyInsurance = false,
-      isSaved = false,
-      isExpanded = false;
-  String id = '', licenseSelectedChar = 'الف';
-  List<VehicleInfo> carTypes = [], carModels = [], carBrands = [];
-  final TextEditingController licenseController1 =
-          TextEditingController(text: ''),
-      licenseController2 = TextEditingController(text: ''),
-      licenseController3 = TextEditingController(text: ''),
-      thirdPartyInsuranceDate = TextEditingController(text: ''),
-      carBodyInsuranceDate = TextEditingController(text: '');
-
-  VehiclesInfoController({required this.id, required this.carTypes});
-
-  String getLicense([bool forShow = false]) {
-    String seperator = forShow ? ' ' : '';
-    if (type == 1) {
-      if (forShow) {
-        return licenseController3.text +
-            seperator +
-            licenseController2.text +
-            seperator +
-            licenseSelectedChar +
-            seperator +
-            licenseController1.text;
-      }
-      return licenseController1.text +
-          seperator +
-          licenseSelectedChar +
-          seperator +
-          licenseController2.text +
-          seperator +
-          licenseController3.text;
-    }
-
-    return licenseController1.text + seperator + licenseController2.text;
-  }
-
-  clearLicense() {
-    licenseController1.text = '';
-    licenseController2.text = '';
-    licenseController3.text = '';
-    licenseSelectedChar = 'الف';
   }
 }
 
 class _MotorcyclePlaque extends StatelessWidget {
   const _MotorcyclePlaque({required this.controller});
 
-  final VehiclesInfoController controller;
+  final PlaqueController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -563,7 +461,7 @@ class _MotorcyclePlaque extends StatelessWidget {
 class _CarPlaque extends StatefulWidget {
   const _CarPlaque({required this.controller});
 
-  final VehiclesInfoController controller;
+  final PlaqueController controller;
 
   @override
   State<_CarPlaque> createState() => _CarPlaqueState();
@@ -733,5 +631,43 @@ class _CarPlaqueState extends State<_CarPlaque> {
         ],
       ),
     );
+  }
+}
+
+class PlaqueController {
+  TextEditingController licenseController1 = TextEditingController(),
+      licenseController2 = TextEditingController(),
+      licenseController3 = TextEditingController();
+  String licenseSelectedChar = 'الف';
+
+  String getLicense(int type, [bool forShow = false]) {
+    String seperator = forShow ? ' ' : '';
+    if (type == 1) {
+      if (forShow) {
+        return licenseController3.text +
+            seperator +
+            licenseController2.text +
+            seperator +
+            licenseSelectedChar +
+            seperator +
+            licenseController1.text;
+      }
+      return licenseController1.text +
+          seperator +
+          licenseSelectedChar +
+          seperator +
+          licenseController2.text +
+          seperator +
+          licenseController3.text;
+    }
+
+    return licenseController1.text + seperator + licenseController2.text;
+  }
+
+  clearLicense() {
+    licenseController1.text = '';
+    licenseController2.text = '';
+    licenseController3.text = '';
+    licenseSelectedChar = 'الف';
   }
 }
