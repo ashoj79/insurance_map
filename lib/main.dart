@@ -58,21 +58,15 @@ class MyApp extends StatelessWidget {
                                 child: Stack(
                                   children: [
                                     Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 32),
-                                      child: Image.asset(
-                                          'assets/img/drawer_img.jpg',
-                                          fit: BoxFit.fill,
-                                          width: double.infinity),
+                                      padding: const EdgeInsets.only(bottom: 32),
+                                      child: Image.asset('assets/img/drawer_img.jpg', fit: BoxFit.fill, width: double.infinity),
                                     ),
                                     Positioned(
                                       bottom: 0,
                                       right: 8,
                                       left: 0,
                                       child: PreferenceBuilder<String>(
-                                          preference:
-                                              locator<SharedPreferenceHelper>()
-                                                  .getName(),
+                                          preference: locator<SharedPreferenceHelper>().getName(),
                                           builder: (context, nameValue) {
                                             if (nameValue.isEmpty) {
                                               return const SizedBox();
@@ -82,64 +76,36 @@ class MyApp extends StatelessWidget {
                                               textDirection: TextDirection.rtl,
                                               children: [
                                                 PreferenceBuilder<String>(
-                                                    preference: locator<
-                                                            SharedPreferenceHelper>()
-                                                        .getAvatar(),
-                                                    builder:
-                                                        (context, avatarValue) {
+                                                    preference: locator<SharedPreferenceHelper>().getAvatar(),
+                                                    builder: (context, avatarValue) {
                                                       if (avatarValue.isEmpty) {
-                                                        return Image.asset(
-                                                            'assets/img/avatar.png',
-                                                            width: 88,
-                                                            height: 88);
+                                                        return Image.asset('assets/img/avatar.png', width: 88, height: 88);
                                                       }
 
-                                                      return Image.network(
-                                                          avatarValue,
-                                                          width: 88,
-                                                          height: 88);
+                                                      return Image.network(avatarValue, width: 88, height: 88);
                                                     }),
                                                 const SizedBox(width: 16),
                                                 Column(
                                                   children: [
                                                     Text(
                                                       nameValue,
-                                                      style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.w600),
+                                                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                                                     ),
                                                     PreferenceBuilder<String>(
-                                                        preference: locator<
-                                                                SharedPreferenceHelper>()
-                                                            .getPhone(),
-                                                        builder: (context,
-                                                            phoneValue) {
+                                                        preference: locator<SharedPreferenceHelper>().getPhone(),
+                                                        builder: (context, phoneValue) {
                                                           return Text(
                                                             phoneValue,
-                                                            style: const TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600),
+                                                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                                                           );
                                                         }),
                                                     const SizedBox(height: 16),
                                                     PreferenceBuilder<int>(
-                                                        preference: locator<
-                                                                SharedPreferenceHelper>()
-                                                            .getWallet(),
-                                                        builder: (context,
-                                                            walletValue) {
+                                                        preference: locator<SharedPreferenceHelper>().getWallet(),
+                                                        builder: (context, walletValue) {
                                                           return Text(
                                                             'موجودی $walletValue تومان',
-                                                            style: const TextStyle(
-                                                                color:
-                                                                    Colors.blue,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600),
+                                                            style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
                                                           );
                                                         }),
                                                   ],
@@ -152,8 +118,7 @@ class MyApp extends StatelessWidget {
                                 ),
                               ),
                               PreferenceBuilder<String>(
-                                preference:
-                                    locator<SharedPreferenceHelper>().getName(),
+                                preference: locator<SharedPreferenceHelper>().getName(),
                                 builder: (context, value) {
                                   if (value.isNotEmpty) return const SizedBox();
 
@@ -166,9 +131,7 @@ class MyApp extends StatelessWidget {
                                           color: Colors.grey,
                                         ),
                                         SizedBox(width: 8),
-                                        Text('ثبت نام',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600))
+                                        Text('ثبت نام', style: TextStyle(fontWeight: FontWeight.w600))
                                       ],
                                     ),
                                     children: [
@@ -177,10 +140,7 @@ class MyApp extends StatelessWidget {
                                         child: InkWell(
                                           onTap: () {
                                             Navigator.of(context).pop();
-                                            AppNavigator.push(
-                                                Routes.signupRoute,
-                                                args: SignupTypes
-                                                    .representatives);
+                                            AppNavigator.push(Routes.signupRoute, args: SignupTypes.representatives);
                                           },
                                           child: const Padding(
                                             padding: EdgeInsets.all(8),
@@ -196,9 +156,7 @@ class MyApp extends StatelessWidget {
                                         child: InkWell(
                                           onTap: () {
                                             Navigator.of(context).pop();
-                                            AppNavigator.push(
-                                                Routes.signupRoute,
-                                                args: SignupTypes.businesses);
+                                            AppNavigator.push(Routes.signupRoute, args: SignupTypes.businesses);
                                           },
                                           child: const Padding(
                                             padding: EdgeInsets.all(8),
@@ -214,9 +172,7 @@ class MyApp extends StatelessWidget {
                                         child: InkWell(
                                           onTap: () {
                                             Navigator.of(context).pop();
-                                            AppNavigator.push(
-                                                Routes.signupRoute,
-                                                args: SignupTypes.vehicles);
+                                            AppNavigator.push(Routes.signupRoute, args: SignupTypes.vehicles);
                                           },
                                           child: const Padding(
                                             padding: EdgeInsets.all(8),
@@ -234,8 +190,7 @@ class MyApp extends StatelessWidget {
                               InkWell(
                                 onTap: () {},
                                 child: const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                   child: Row(
                                     textDirection: TextDirection.rtl,
                                     children: [
@@ -244,9 +199,7 @@ class MyApp extends StatelessWidget {
                                         color: Colors.grey,
                                       ),
                                       SizedBox(width: 8),
-                                      Text('دسته بندی ها',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600))
+                                      Text('دسته بندی ها', style: TextStyle(fontWeight: FontWeight.w600))
                                     ],
                                   ),
                                 ),
@@ -254,8 +207,7 @@ class MyApp extends StatelessWidget {
                               InkWell(
                                 onTap: () {},
                                 child: const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                   child: Row(
                                     textDirection: TextDirection.rtl,
                                     children: [
@@ -264,9 +216,7 @@ class MyApp extends StatelessWidget {
                                         color: Colors.grey,
                                       ),
                                       SizedBox(width: 8),
-                                      Text('قوانین و مقررات',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600))
+                                      Text('قوانین و مقررات', style: TextStyle(fontWeight: FontWeight.w600))
                                     ],
                                   ),
                                 ),
@@ -274,8 +224,7 @@ class MyApp extends StatelessWidget {
                               InkWell(
                                 onTap: () {},
                                 child: const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                   child: Row(
                                     textDirection: TextDirection.rtl,
                                     children: [
@@ -284,9 +233,7 @@ class MyApp extends StatelessWidget {
                                         color: Colors.grey,
                                       ),
                                       SizedBox(width: 8),
-                                      Text('پشتیبانی',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600))
+                                      Text('پشتیبانی', style: TextStyle(fontWeight: FontWeight.w600))
                                     ],
                                   ),
                                 ),
@@ -294,8 +241,7 @@ class MyApp extends StatelessWidget {
                               InkWell(
                                 onTap: () {},
                                 child: const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                   child: Row(
                                     textDirection: TextDirection.rtl,
                                     children: [
@@ -304,16 +250,13 @@ class MyApp extends StatelessWidget {
                                         color: Colors.grey,
                                       ),
                                       SizedBox(width: 8),
-                                      Text('معرفی بی‌مرزان',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600))
+                                      Text('معرفی بی‌مرزان', style: TextStyle(fontWeight: FontWeight.w600))
                                     ],
                                   ),
                                 ),
                               ),
                               PreferenceBuilder<String>(
-                                preference:
-                                    locator<SharedPreferenceHelper>().getName(),
+                                preference: locator<SharedPreferenceHelper>().getName(),
                                 builder: (context, value) {
                                   if (value.isEmpty) return const SizedBox();
 
@@ -322,8 +265,7 @@ class MyApp extends StatelessWidget {
                                       locator<SharedPreferenceHelper>().clean();
                                     },
                                     child: const Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
+                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                       child: Row(
                                         textDirection: TextDirection.rtl,
                                         children: [
@@ -332,9 +274,7 @@ class MyApp extends StatelessWidget {
                                             color: Colors.grey,
                                           ),
                                           SizedBox(width: 8),
-                                          Text('خروج از حساب کاربری',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w600))
+                                          Text('خروج از حساب کاربری', style: TextStyle(fontWeight: FontWeight.w600))
                                         ],
                                       ),
                                     ),
@@ -345,29 +285,24 @@ class MyApp extends StatelessWidget {
                           ),
                         ),
                   appBar: AppBar(
-                    title: const Text('بیمرزان',
-                        style: TextStyle(color: Colors.white)),
+                    title: const Text('بیمرزان', style: TextStyle(color: Colors.white)),
                     titleTextStyle: const TextStyle(color: Colors.white),
                     backgroundColor: appTheme.primaryColor,
                     iconTheme: const IconThemeData(color: Colors.white),
                     actions: [
                       // منوهای صفحه وسایل نقلیه
-                      if (AppNavigator.getCurrentRoute() ==
-                          Routes.vehiclesRoute)
+                      if (AppNavigator.getCurrentRoute() == Routes.vehiclesRoute)
                         IconButton(
                             onPressed: () {
-                              BlocProvider.of<VehiclesBloc>(context)
-                                  .add(VehiclesSubmit());
+                              BlocProvider.of<VehiclesBloc>(context).add(VehiclesSubmit());
                             },
                             icon: const Icon(Icons.done, color: Colors.white)),
 
                       // منوهای صفحه کارت های بانکی
-                      if (AppNavigator.getCurrentRoute() ==
-                          Routes.bankCardsRoute)
+                      if (AppNavigator.getCurrentRoute() == Routes.bankCardsRoute)
                         IconButton(
                             onPressed: () {
-                              BlocProvider.of<BankCardsBloc>(context)
-                                  .add(BankCardsSubmit());
+                              BlocProvider.of<BankCardsBloc>(context).add(BankCardsSubmit());
                             },
                             icon: const Icon(Icons.done, color: Colors.white)),
 
@@ -380,8 +315,7 @@ class MyApp extends StatelessWidget {
                             onPressed: () {
                               AppNavigator.pop();
                             },
-                            icon: const Icon(Icons.arrow_forward_ios,
-                                color: Colors.white)),
+                            icon: const Icon(Icons.arrow_forward_ios, color: Colors.white)),
                       ),
                     ],
                   ),
