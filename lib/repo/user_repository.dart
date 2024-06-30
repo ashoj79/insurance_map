@@ -30,7 +30,7 @@ class UserRepository {
         await _sharedPrefereceHelper.saveName(response.data['user']['name']);
         await _sharedPrefereceHelper.savePhone(response.data['user']['mobile']);
         await _sharedPrefereceHelper.saveAvatar(response.data['user']['avatar']);
-        await _sharedPrefereceHelper.saveWallet(response.data['user']['wallet']['balance']);
+        await _sharedPrefereceHelper.saveWallet(int.tryParse(response.data['user']['wallet']['balance']) ?? 0);
         response = await _apiService.getUserInfo();
       }
 
@@ -49,7 +49,7 @@ class UserRepository {
       await _sharedPrefereceHelper.saveName(response.data['user']['name']);
       await _sharedPrefereceHelper.savePhone(response.data['user']['mobile']);
       await _sharedPrefereceHelper.saveAvatar(response.data['user']['avatar']);
-      await _sharedPrefereceHelper.saveWallet(response.data['user']['wallet']['balance']);
+      await _sharedPrefereceHelper.saveWallet(int.tryParse(response.data['user']['wallet']['balance']) ?? 0);
       return DataSucces();
     } on DioException catch (e) {
       return DataError(e.response?.data?.toString() ?? '');
@@ -63,7 +63,7 @@ class UserRepository {
       if (_sharedPrefereceHelper.getToken().isNotEmpty) {
         var response = await _apiService.getUserInfo();
         await _sharedPrefereceHelper.saveWallet(
-            response.data['user']['wallet']['balance']);
+            int.tryParse(response.data['user']['wallet']['balance']) ?? 0);
       }
     } catch (_) {}
   }
