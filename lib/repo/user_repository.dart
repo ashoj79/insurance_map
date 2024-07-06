@@ -46,10 +46,10 @@ class UserRepository {
     try {
       var response = await _apiService.registerStepOne(data);
       await _sharedPrefereceHelper.saveToken(response.data['token']);
-      await _sharedPrefereceHelper.saveName(response.data['user']['name']);
-      await _sharedPrefereceHelper.savePhone(response.data['user']['mobile']);
-      await _sharedPrefereceHelper.saveAvatar(response.data['user']['avatar']);
-      await _sharedPrefereceHelper.saveWallet(int.tryParse(response.data['user']['wallet']['balance']) ?? 0);
+      await _sharedPrefereceHelper.saveName('${data.fname} ${data.lname}');
+      await _sharedPrefereceHelper.savePhone(data.phone);
+      await _sharedPrefereceHelper.saveAvatar('');
+      await _sharedPrefereceHelper.saveWallet(0);
       return DataSucces();
     } on DioException catch (e) {
       return DataError(e.response?.data?.toString() ?? '');

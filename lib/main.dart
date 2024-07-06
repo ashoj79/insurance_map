@@ -7,6 +7,8 @@ import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/data/local/shared_preference_helper.dart';
 import 'package:insurance_map/data/local/signup_types.dart';
 import 'package:insurance_map/screens/bank_cards/bloc/bank_cards_bloc.dart';
+import 'package:insurance_map/screens/categories/bloc/categories_bloc.dart';
+import 'package:insurance_map/screens/companies/bloc/companies_bloc.dart';
 import 'package:insurance_map/screens/main/bloc/main_bloc.dart';
 import 'package:insurance_map/screens/signup/bloc/signup_bloc.dart';
 import 'package:insurance_map/screens/vehicles_screen/bloc/vehicles_bloc.dart';
@@ -25,6 +27,8 @@ Future<void> main() async {
       BlocProvider<VehiclesBloc>(create: (context) => locator()),
       BlocProvider<BankCardsBloc>(create: (context) => locator()),
       BlocProvider<MainBloc>(create: (context) => locator()),
+      BlocProvider<CategoriesBloc>(create: (context) => locator()),
+      BlocProvider<CompaniesBloc>(create: (context) => locator()),
     ],
     child: const MyApp(),
   ));
@@ -313,20 +317,32 @@ class MyApp extends StatelessWidget {
                         visible: AppNavigator.hasRoute(),
                         child: IconButton(
                             onPressed: () {
-                              AppNavigator.pop();
+                              if (AppNavigator.getCurrentRoute() == Routes.categoriesRoute) {
+                                BlocProvider.of<CategoriesBloc>(context).add(CategoriesBack());
+                              } else {
+                                AppNavigator.pop();
+                              }
                             },
                             icon: const Icon(Icons.arrow_forward_ios, color: Colors.white)),
                       ),
                     ],
                   ),
                   body: SafeArea(
-                    child: Navigator(
-                      pages: value,
-                      onPopPage: (route, result) {
-                        bool isPop = route.didPop(result);
-                        if (isPop) AppNavigator.pop();
-                        return isPop;
+                    child: PopScope(
+                      canPop: AppNavigator.getCurrentRoute() != Routes.categoriesRoute,
+                      onPopInvoked: (didPop) {
+                        if (AppNavigator.getCurrentRoute() == Routes.categoriesRoute) {
+                          BlocProvider.of<CategoriesBloc>(context).add(CategoriesBack());
+                        }
                       },
+                      child: Navigator(
+                        pages: value,
+                        onPopPage: (route, result) {
+                          bool isPop = route.didPop(result);
+                          if (isPop) AppNavigator.pop();
+                          return isPop;
+                        },
+                      ),
                     ),
                   ),
                 ),

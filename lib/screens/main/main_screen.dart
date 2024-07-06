@@ -3,11 +3,15 @@ import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:insurance_map/core/app_navigator.dart';
+import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/remote/model/category.dart';
+import 'package:insurance_map/data/remote/model/insurance_company.dart';
 import 'package:insurance_map/data/remote/model/slider_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:insurance_map/screens/companies/bloc/companies_bloc.dart';
 import 'package:insurance_map/screens/main/bloc/main_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -21,6 +25,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   final List<SliderModel> sliders = [];
   final List<Category> categories = [];
+  final List<InsuranceCompany> companies = [];
 
   BuildContext? _alertContext;
 
@@ -60,6 +65,9 @@ class _MainScreenState extends State<MainScreen> {
 
           categories.clear();
           categories.addAll(state.categories);
+
+          companies.clear();
+          companies.addAll(state.companies);
         }
 
         return Container(
@@ -125,93 +133,202 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ),
                 if (categories.isNotEmpty)
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey[300]!,
-                        spreadRadius: 1.3,
-                        offset: const Offset(0, 0.8)
-                      )
-                    ]
-                  ),
-                  width: double.infinity,
-                  margin: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 16
-                        ),
-                        child: Row(
-                          textDirection: TextDirection.rtl,
-                          children: [
-                            const Text(
-                              'دسته بندی های منتخب',
-                              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-                            ),
-                            const Expanded(child: SizedBox()),
-                            GestureDetector(
-                              child: const Text('نمایش همه'),
-                            ),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
-                            )
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        color: Colors.grey[200],
-                        height: 2,
-                      ),
-                      SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: SizedBox(
-                          height: categories.length > 4 ? 200 : 100,
-                          child: GridView.builder(
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4,
-                              crossAxisSpacing: 8,
-                              mainAxisSpacing: 8,
-                              childAspectRatio: itemWidth / itemHeight
-                            ),
-                            itemCount: categories.length,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey[200]!, width: 1.5),
-                                        borderRadius: BorderRadius.circular(12)
-                                      ),
-                                      padding: EdgeInsets.all(4),
-                                      child: Image.network(
-                                        categories[index].logo,
-                                      ),
-                                      clipBehavior: Clip.antiAlias,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4,),
-                                  Text(
-                                    categories[index].title,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  )
-                                ],
-                              );
-                            },
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey[300]!,
+                              spreadRadius: 1.3,
+                              offset: const Offset(0, 0.8)
+                          )
+                        ]
+                    ),
+                    width: double.infinity,
+                    margin: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 16
+                          ),
+                          child: Row(
+                            textDirection: TextDirection.rtl,
+                            children: [
+                              const Text(
+                                'دسته بندی های منتخب',
+                                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                              ),
+                              const Expanded(child: SizedBox()),
+                              GestureDetector(
+                                onTap: () {
+                                  AppNavigator.push(Routes.categoriesRoute, args: '');
+                                },
+                                child: const Text('نمایش همه'),
+                              ),
+                              const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 16,
+                              )
+                            ],
                           ),
                         ),
-                      )
-                    ],
+                        Divider(
+                          color: Colors.grey[200],
+                          height: 2,
+                        ),
+                        SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: SizedBox(
+                            height: categories.length > 4 ? 200 : 100,
+                            child: GridView.builder(
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 4,
+                                  crossAxisSpacing: 8,
+                                  mainAxisSpacing: 8,
+                                  childAspectRatio: itemWidth / itemHeight
+                              ),
+                              itemCount: categories.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    if (categories[index].isHaveChild) {
+                                      AppNavigator.push(Routes.categoriesRoute, args: categories[index].id);
+                                    }
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(color: Colors.grey[200]!, width: 1.5),
+                                              borderRadius: BorderRadius.circular(12)
+                                          ),
+                                          padding: EdgeInsets.all(4),
+                                          child: Image.network(
+                                            categories[index].logo,
+                                          ),
+                                          clipBehavior: Clip.antiAlias,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4,),
+                                      Text(
+                                        categories[index].title,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                )
+
+                if (companies.isNotEmpty)
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey[300]!,
+                              spreadRadius: 1.3,
+                              offset: const Offset(0, 0.8)
+                          )
+                        ]
+                    ),
+                    width: double.infinity,
+                    margin: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 16
+                          ),
+                          child: Row(
+                            textDirection: TextDirection.rtl,
+                            children: [
+                              const Text(
+                                'بیمه های منتخب',
+                                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                              ),
+                              const Expanded(child: SizedBox()),
+                              GestureDetector(
+                                onTap: () {
+                                  BlocProvider.of<CompaniesBloc>(context).add(CompaniesGetData());
+                                  AppNavigator.push(Routes.companiesRoute);
+                                },
+                                child: const Text('نمایش همه'),
+                              ),
+                              const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 16,
+                              )
+                            ],
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.grey[200],
+                          height: 2,
+                        ),
+                        SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: SizedBox(
+                            height: companies.length > 4 ? 200 : 100,
+                            child: GridView.builder(
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 4,
+                                  crossAxisSpacing: 8,
+                                  mainAxisSpacing: 8,
+                                  childAspectRatio: itemWidth / itemHeight
+                              ),
+                              itemCount: companies.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    BlocProvider.of<CompaniesBloc>(context).add(CompaniesGetData());
+                                    AppNavigator.push(Routes.companiesRoute);
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(color: Colors.grey[200]!, width: 1.5),
+                                              borderRadius: BorderRadius.circular(12)
+                                          ),
+                                          padding: EdgeInsets.all(4),
+                                          child: Image.network(
+                                            companies[index].logo,
+                                          ),
+                                          clipBehavior: Clip.antiAlias,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4,),
+                                      Text(
+                                        companies[index].name,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),

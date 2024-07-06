@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:insurance_map/data/remote/model/category.dart';
+import 'package:insurance_map/data/remote/model/insurance_company.dart';
 import 'package:insurance_map/data/remote/model/slider_model.dart';
 import 'package:insurance_map/repo/main_repository.dart';
 import 'package:insurance_map/repo/user_repository.dart';
@@ -29,9 +30,15 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         return;
       }
 
+      DataState<List<InsuranceCompany>> companies = await _repository.getTopCompanies();
+      if (companies is DataError){
+        emit(MainError(companies.errorMessage!));
+        return;
+      }
+
       await _userRepository.updateWalletBalance();
 
-      emit(MainDataReceived(sliders: sliders.data!, categories: categories.data!));
+      emit(MainDataReceived(sliders: sliders.data!, categories: categories.data!, companies: companies.data!));
     });
   }
 }

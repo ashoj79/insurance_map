@@ -15,5 +15,6 @@ class MainError extends MainState {
 class MainDataReceived extends MainState {
   final List<SliderModel> sliders;
   final List<Category> categories;
-  MainDataReceived({required this.sliders, required this.categories});
+  final List<InsuranceCompany> companies;
+  MainDataReceived({required this.sliders, required this.categories, required this.companies});
 }
