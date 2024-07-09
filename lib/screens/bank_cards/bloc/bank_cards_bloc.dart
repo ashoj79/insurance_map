@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:insurance_map/data/remote/model/bank.dart';
+import 'package:insurance_map/data/remote/model/card_payment_info.dart';
 import 'package:insurance_map/repo/bank_repository.dart';
 import 'package:insurance_map/utils/data_state.dart';
 import 'package:meta/meta.dart';
@@ -50,6 +51,24 @@ class BankCardsBloc extends Bloc<BankCardsEvent, BankCardsState> {
       DataState<void> result = await _repository.addCard(event.cardNumber);
 
       emit(result is DataError ? BankCardsError(result.errorMessage!) : BankCardSaved());
+    });
+
+    on<BankCardsSubmit>((event, emit) async {
+      emit(BankCardsLoading());
+
+      DataState<CardPaymentInfo> result = await _repository.getPaymentUrl();
+
+      if (result is DataError) {
+        emit(BankCardsError(result.errorMessage!));
+        return;
+      }
+
+      if (result.data!.amount == 0){
+        emit(BankCardsDone());
+        return;
+      }
+
+      emit(BankCardsOpenGateway(result.data!));
     });
   }
 }

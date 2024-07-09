@@ -18,3 +18,10 @@ class BankCardsUpdateCard extends BankCardsState {
 }
 
 class BankCardSaved extends BankCardsState {}
+
+class BankCardsOpenGateway extends BankCardsState {
+  final CardPaymentInfo info;
+  BankCardsOpenGateway(this.info);
+}
+
+class BankCardsDone extends BankCardsState {}

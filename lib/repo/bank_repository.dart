@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:insurance_map/data/remote/api_service/bank_api_service.dart';
 import 'package:insurance_map/data/remote/model/bank.dart';
+import 'package:insurance_map/data/remote/model/card_payment_info.dart';
 import 'package:insurance_map/utils/data_state.dart';
 
 class BankRepository {
@@ -23,6 +24,17 @@ class BankRepository {
     try{
       await _apiService.saveCard(number);
       return DataSucces();
+    } on DioException catch (e) {
+      return DataError(e.response?.data?.toString() ?? '');
+    } catch (_) {
+      return DataError('مشکلی رخ داد لطفا مجدد امتحان کنید');
+    }
+  }
+
+  Future<DataState<CardPaymentInfo>> getPaymentUrl() async {
+    try{
+      var response = await _apiService.getPaymentUrl();
+      return DataSucces(CardPaymentInfo.fromJson(response.data['data']));
     } on DioException catch (e) {
       return DataError(e.response?.data?.toString() ?? '');
     } catch (_) {

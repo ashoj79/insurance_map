@@ -1,11 +1,18 @@
+import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:insurance_map/core/app_navigator.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/local/models/card_info.dart';
+import 'package:insurance_map/data/remote/model/card_payment_info.dart';
 import 'package:insurance_map/screens/bank_cards/bloc/bank_cards_bloc.dart';
+import 'package:uni_links3/uni_links.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BankCardsScreen extends StatefulWidget {
   const BankCardsScreen({super.key});
@@ -24,14 +31,28 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
       focusNode3 = FocusNode(),
       focusNode4 = FocusNode();
   final CardInfo info = CardInfo();
+  final List<String> savedCards = [];
 
   BuildContext? _alertContext;
+
+  late StreamSubscription _linkSub;
 
   @override
   void initState() {
     super.initState();
 
     BlocProvider.of<BankCardsBloc>(context).add(BankCardsGetBanks());
+
+    _linkSub = linkStream.listen((event) {
+      // AppNavigator.pop();
+      BlocProvider.of<BankCardsBloc>(context).add(BankCardsSubmit());
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _linkSub.cancel();
   }
 
   @override
@@ -60,7 +81,8 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
         }
 
         if (state is BankCardSaved) {
-          showSnackBar(context, 'کارت بانکی شما ذخیره شد');
+          showSnackBar(context, 'کارت بانکی شما ذخیره شد. در صورت تمایل می توانید کارت دیگری ثبت کنید');
+          savedCards.add('${controller1.text} ${controller2.text} ${controller3.text} ${controller4.text}');
           controller1.clear();
           controller2.clear();
           controller3.clear();
@@ -70,6 +92,12 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
             info.reset();
           });
         }
+
+        if (state is BankCardsDone) {
+          AppNavigator.pop();
+        }
+
+        if (state is BankCardsOpenGateway) _showAlertDialog(state.info);
       },
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -92,6 +120,7 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
                         child: SizedBox(
                           height: 72,
                           child: Row(
+                            textDirection: TextDirection.ltr,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               if (info.logo.isNotEmpty)
@@ -229,7 +258,19 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
                     ],
                   ),
                 )),
-            const Expanded(child: SizedBox()),
+            const SizedBox(height: 16),
+            const Align(
+              alignment: Alignment.centerRight,
+                child: Text('کارت های ذخیره شده')),
+            Expanded(child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Column(
+                children: savedCards.map<Widget>((e) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(e, style: TextStyle(fontSize: 18), textDirection: TextDirection.ltr,),
+                )).toList(),
+              ),
+            )),
             OutlinedButton(
                 style: OutlinedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 48)),
@@ -243,6 +284,33 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  _showAlertDialog(CardPaymentInfo info) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            title: const Text(''),
+            content: Text(
+              'به بی‌مرزان خوش آمدید. شما می‌توانید اعتبار خود را به مبلغ ${info.amount} تومان شارژ کنید.'
+            ),
+            actions: [
+              TextButton(onPressed: (){
+                Navigator.of(context).pop();
+                launchUrl(Uri.parse(info.link), mode: LaunchMode.externalApplication);
+              }, child: const Text('تائید')),
+              TextButton(onPressed: (){
+                Navigator.of(context).pop();
+                AppNavigator.pop();
+              }, child: const Text('فعلا نه'))
+            ],
+          ),
+        );
+      },
     );
   }
 
