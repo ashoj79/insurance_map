@@ -26,6 +26,9 @@ class DioHelper {
       },
 
       onError: (error, handler) {
+        if (error.response == null){
+          return handler.next(DioException(requestOptions: RequestOptions(), response: Response(requestOptions: RequestOptions(), data: 'مشکلی پیش آمد مجددا امتحان کنید')));
+        }
         dynamic res = error.response?.data ?? '';
         Map<String, dynamic> data = res is String ? jsonDecode(res) : res;
         return handler.next(DioException(requestOptions: RequestOptions(), response: Response(requestOptions: RequestOptions(), data: data['message'])));
