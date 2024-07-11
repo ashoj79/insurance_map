@@ -179,7 +179,7 @@ class _MainScreenState extends State<MainScreen> {
                           color: Colors.grey[200],
                           height: 2,
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: SizedBox(
@@ -197,6 +197,8 @@ class _MainScreenState extends State<MainScreen> {
                                   onTap: () {
                                     if (categories[index].isHaveChild) {
                                       AppNavigator.push(Routes.categoriesRoute, args: categories[index].id);
+                                    } else {
+                                      AppNavigator.push(Routes.mapRoute, args: {'type': 'vendor', 'id': categories[index].id});
                                     }
                                   },
                                   child: Column(
@@ -207,14 +209,14 @@ class _MainScreenState extends State<MainScreen> {
                                               border: Border.all(color: Colors.grey[200]!, width: 1.5),
                                               borderRadius: BorderRadius.circular(12)
                                           ),
-                                          padding: EdgeInsets.all(4),
+                                          padding: const EdgeInsets.all(4),
+                                          clipBehavior: Clip.antiAlias,
                                           child: Image.network(
                                             categories[index].logo,
                                           ),
-                                          clipBehavior: Clip.antiAlias,
                                         ),
                                       ),
-                                      SizedBox(height: 4,),
+                                      const SizedBox(height: 4,),
                                       Text(
                                         categories[index].title,
                                         maxLines: 1,
@@ -279,7 +281,7 @@ class _MainScreenState extends State<MainScreen> {
                           color: Colors.grey[200],
                           height: 2,
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: SizedBox(
@@ -295,8 +297,7 @@ class _MainScreenState extends State<MainScreen> {
                               itemBuilder: (context, index) {
                                 return InkWell(
                                   onTap: () {
-                                    BlocProvider.of<CompaniesBloc>(context).add(CompaniesGetData());
-                                    AppNavigator.push(Routes.companiesRoute);
+                                    AppNavigator.push(Routes.mapRoute, args: {'type': 'insurance', 'id': companies[index].id});
                                   },
                                   child: Column(
                                     children: [
@@ -306,14 +307,14 @@ class _MainScreenState extends State<MainScreen> {
                                               border: Border.all(color: Colors.grey[200]!, width: 1.5),
                                               borderRadius: BorderRadius.circular(12)
                                           ),
-                                          padding: EdgeInsets.all(4),
+                                          padding: const EdgeInsets.all(4),
+                                          clipBehavior: Clip.antiAlias,
                                           child: Image.network(
                                             companies[index].logo,
                                           ),
-                                          clipBehavior: Clip.antiAlias,
                                         ),
                                       ),
-                                      SizedBox(height: 4,),
+                                      const SizedBox(height: 4,),
                                       Text(
                                         companies[index].name,
                                         maxLines: 1,

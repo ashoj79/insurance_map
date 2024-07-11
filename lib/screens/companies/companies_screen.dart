@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:insurance_map/core/app_navigator.dart';
+import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/remote/model/insurance_company.dart';
@@ -35,7 +37,7 @@ class CompaniesScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               return InkWell(
                 onTap: () {
-
+                  AppNavigator.push(Routes.mapRoute, args: {'type': 'insurance', 'id': companies[index].id});
                 },
                 child: Container(
                   margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),

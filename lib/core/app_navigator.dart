@@ -4,6 +4,7 @@ import 'package:insurance_map/screens/bank_cards/bank_cards_screen.dart';
 import 'package:insurance_map/screens/categories/categories_screen.dart';
 import 'package:insurance_map/screens/companies/companies_screen.dart';
 import 'package:insurance_map/screens/main/main_screen.dart';
+import 'package:insurance_map/screens/map_screen/map_screen.dart';
 import 'package:insurance_map/screens/signup/signup_screen.dart';
 import 'package:insurance_map/screens/vehicles_screen/vehicles_screen.dart';
 
@@ -77,6 +78,8 @@ class AppNavigator {
         return const CategoriesScreen();
       case Routes.companiesRoute:
         return const CompaniesScreen();
+      case Routes.mapRoute:
+        return const MapScreen();
     }
     return null;
   }

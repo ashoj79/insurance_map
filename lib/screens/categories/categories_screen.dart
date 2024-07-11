@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:insurance_map/core/app_navigator.dart';
+import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/data/remote/model/category.dart';
 import 'package:insurance_map/screens/categories/bloc/categories_bloc.dart';
 
@@ -25,6 +27,8 @@ class CategoriesScreen extends StatelessWidget {
                 onTap: () {
                   if (categories[index].isHaveChild){
                     BlocProvider.of<CategoriesBloc>(context).add(CategoriesFetch(categories[index].id));
+                  } else {
+                    AppNavigator.push(Routes.mapRoute, args: {'type': 'vendor', 'id': categories[index].id});
                   }
                 },
                 child: Container(

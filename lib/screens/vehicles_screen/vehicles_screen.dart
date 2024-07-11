@@ -69,7 +69,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
           }
 
           if (state is VehiclesSaved) {
-            showSnackBar(context, 'وسیله نقلیه شما ذخیره شد');
+            showSnackBar(context, 'وسیله نقلیه شما ذخیره شد. در صورت داشتن وسیله نقلیه بعدی را وارد کنید و در غیر اینصورت به مرحله بعد بروید');
 
             _plaqueController.clearLicense();
             setState(() {

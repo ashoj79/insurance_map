@@ -5,4 +5,5 @@ class Routes {
   static const String bankCardsRoute = '/bank_cards';
   static const String categoriesRoute = '/categories';
   static const String companiesRoute = '/companies';
+  static const String mapRoute = '/map';
 }

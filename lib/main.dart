@@ -10,6 +10,7 @@ import 'package:insurance_map/screens/bank_cards/bloc/bank_cards_bloc.dart';
 import 'package:insurance_map/screens/categories/bloc/categories_bloc.dart';
 import 'package:insurance_map/screens/companies/bloc/companies_bloc.dart';
 import 'package:insurance_map/screens/main/bloc/main_bloc.dart';
+import 'package:insurance_map/screens/map_screen/bloc/map_bloc.dart';
 import 'package:insurance_map/screens/signup/bloc/signup_bloc.dart';
 import 'package:insurance_map/screens/vehicles_screen/bloc/vehicles_bloc.dart';
 import 'package:insurance_map/utils/di.dart';
@@ -29,6 +30,7 @@ Future<void> main() async {
       BlocProvider<MainBloc>(create: (context) => locator()),
       BlocProvider<CategoriesBloc>(create: (context) => locator()),
       BlocProvider<CompaniesBloc>(create: (context) => locator()),
+      BlocProvider<MapBloc>(create: (context) => locator()),
     ],
     child: const MyApp(),
   ));

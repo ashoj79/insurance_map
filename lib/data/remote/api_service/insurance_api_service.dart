@@ -21,4 +21,9 @@ class InsuranceApiService {
   }
 
   Future<Response<dynamic>> getCompanies() async => await _dio.get('insurance/companies');
+
+  Future<Response<dynamic>> getOffices({required String company, String fromLat = '', String fromLng = '', String toLat = '', String toLng = ''}) async {
+    String params = 'filters[insuranceCompany][id][\$eq]=$company&filters[latitude][\$between][0]=$fromLat&filters[longitude][\$between][0]=$fromLng&filters[latitude][\$between][1]=$toLat&filters[longitude][\$between][1]=$toLng';
+    return await _dio.get('insurance/offices?$params');
+  }
 }
