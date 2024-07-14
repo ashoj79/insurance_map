@@ -3,7 +3,7 @@ part of 'bank_cards_bloc.dart';
 @immutable
 sealed class BankCardsEvent {}
 
-class BankCardsGetBanks extends BankCardsEvent {}
+class BankCardsGetData extends BankCardsEvent {}
 
 class BankCardsSubmit extends BankCardsEvent {}
 

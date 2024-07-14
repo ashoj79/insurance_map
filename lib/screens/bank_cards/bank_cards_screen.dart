@@ -41,7 +41,7 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
   void initState() {
     super.initState();
 
-    BlocProvider.of<BankCardsBloc>(context).add(BankCardsGetBanks());
+    BlocProvider.of<BankCardsBloc>(context).add(BankCardsGetData());
 
     _linkSub = linkStream.listen((event) {
       // AppNavigator.pop();
@@ -61,7 +61,7 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
 
     return BlocListener<BankCardsBloc, BankCardsState>(
       listener: (context, state) {
-        if (state is BackButtonDispatcher) {
+        if (state is BankCardsLoading) {
           showWaitDialog(context, (p0) => _alertContext = p0);
         } else if (_alertContext != null) {
           Navigator.of(_alertContext!).pop();
@@ -98,6 +98,36 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
         }
 
         if (state is BankCardsOpenGateway) _showAlertDialog(state.info);
+
+        if (state is BankCardsShowNumbers) {
+          var numbers = state.numbers.map((e) {
+            String seg1 = '', seg2 = '', seg3 = '', seg4 = '';
+            for (var i = 0; i < 4; i++) {
+              for (var j = i; j < i + 4; j++) {
+                switch (i) {
+                  case 0:
+                    seg1 += e[j];
+                    break;
+                  case 1:
+                    seg2 += e[j];
+                    break;
+                  case 2:
+                    seg3 += e[j];
+                    break;
+                  case 3:
+                    seg4 += e[j];
+                    break;
+                }
+              }
+            } 
+
+            return '$seg1 $seg2 $seg3 $seg4';
+          });
+
+          setState(() {
+            savedCards.addAll(numbers);
+          });
+        }
       },
       child: Padding(
         padding: const EdgeInsets.all(16),

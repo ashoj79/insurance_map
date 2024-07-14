@@ -13,7 +13,7 @@ class BankCardsBloc extends Bloc<BankCardsEvent, BankCardsState> {
   final List<Bank> _banks = [];
 
   BankCardsBloc(this._repository) : super(BankCardsInitial()) {
-    on<BankCardsGetBanks>((event, emit) async {
+    on<BankCardsGetData>((event, emit) async {
       emit(BankCardsLoading());
       DataState<List<Bank>> result = await _repository.getBanks();
       if (result is DataError) {
@@ -24,7 +24,9 @@ class BankCardsBloc extends Bloc<BankCardsEvent, BankCardsState> {
       _banks.clear();
       _banks.addAll(result.data!);
 
-      emit(BankCardsInitial());
+      DataState<List<String>> result1 = await _repository.getUserCards();
+
+      emit(BankCardsShowNumbers(result1.data ?? []));
     });
 
     on<BankCardCheckNumber>((event, emit) {

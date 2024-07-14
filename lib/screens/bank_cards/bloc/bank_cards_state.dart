@@ -12,6 +12,11 @@ class BankCardsError extends BankCardsState {
   BankCardsError(this.message);
 }
 
+class BankCardsShowNumbers extends BankCardsState {
+  final List<String> numbers;
+  BankCardsShowNumbers(this.numbers);
+}
+
 class BankCardsUpdateCard extends BankCardsState {
   final Bank? bank;
   BankCardsUpdateCard({this.bank});

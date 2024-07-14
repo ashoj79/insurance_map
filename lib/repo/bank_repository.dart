@@ -20,6 +20,18 @@ class BankRepository {
     }
   }
 
+  Future<DataState<List<String>>> getUserCards() async {
+    try{
+      var response = await _apiService.getUserCards();
+      List<String> data = List.generate(response.data['data'].length, (index) => response.data['data'][index]['number']);
+      return DataSucces(data);
+    } on DioException catch (e) {
+      return DataError(e.response?.data?.toString() ?? '');
+    } catch (_) {
+      return DataError('مشکلی رخ داد لطفا مجدد امتحان کنید');
+    }
+  }
+
   Future<DataState<void>> addCard(String number) async {
     try{
       await _apiService.saveCard(number);
