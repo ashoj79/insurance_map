@@ -4,3 +4,5 @@ part of 'main_bloc.dart';
 sealed class MainEvent {}
 
 class MainGetData extends MainEvent {}
+
+class MainGoToBankCards extends MainEvent {}

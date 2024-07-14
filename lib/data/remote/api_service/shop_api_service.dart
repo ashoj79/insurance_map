@@ -24,7 +24,8 @@ class ShopApiService {
   }
 
   Future<Response<dynamic>> getVendors({required String category, String fromLat = '', String fromLng = '', String toLat = '', String toLng = ''}) async {
-    String params = 'filters[shopCategory][\$eq]=$category&filters[latitude][\$between][0]=$fromLat&filters[longitude][\$between][0]=$fromLng&filters[latitude][\$between][1]=$toLat&filters[longitude][\$between][1]=$toLng';
+    String params = category.isNotEmpty ? 'filters[shopCategory][id][\$eq]=$category&' : '';
+    params = 'filters[latitude][\$between][0]=$fromLat&filters[longitude][\$between][0]=$fromLng&filters[latitude][\$between][1]=$toLat&filters[longitude][\$between][1]=$toLng';
     return await _dio.get('shop/vendors?$params');
   }
 }

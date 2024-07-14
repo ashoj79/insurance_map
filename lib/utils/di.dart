@@ -59,5 +59,5 @@ Future<void> setup() async {
   locator.registerSingleton(MainBloc(locator(), locator()));
   locator.registerSingleton(CategoriesBloc(locator()));
   locator.registerSingleton(CompaniesBloc(locator()));
-  locator.registerSingleton(MapBloc(locator(), locator()));
+  locator.registerSingleton(MapBloc(locator(), locator(), locator()));
 }

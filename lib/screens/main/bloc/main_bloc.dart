@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:insurance_map/core/app_navigator.dart';
+import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/data/remote/model/category.dart';
 import 'package:insurance_map/data/remote/model/insurance_company.dart';
 import 'package:insurance_map/data/remote/model/slider_model.dart';
@@ -39,6 +41,15 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       await _userRepository.updateWalletBalance();
 
       emit(MainDataReceived(sliders: sliders.data!, categories: categories.data!, companies: companies.data!));
+    });
+
+    on<MainGoToBankCards>((event, emit) {
+      if (!_userRepository.isUserLoggedIn()) {
+        emit(MainError('ابتدا وارد اکانت خود شود'));
+        return;
+      }
+
+      AppNavigator.push(Routes.bankCardsRoute);
     });
   }
 }

@@ -10,6 +10,8 @@ class UserRepository {
   final SharedPreferenceHelper _sharedPrefereceHelper;
   UserRepository(this._apiService, this._sharedPrefereceHelper);
 
+  bool isUserLoggedIn() => _sharedPrefereceHelper.getToken().isNotEmpty;
+
   Future<DataState<String>> sendOtp(String phone) async {
     try {
       var response = await _apiService.sendOtp(phone);
