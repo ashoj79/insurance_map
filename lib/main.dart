@@ -268,7 +268,8 @@ class MyApp extends StatelessWidget {
 
                                   return InkWell(
                                     onTap: () {
-                                      locator<SharedPreferenceHelper>().clean();
+                                      Navigator.of(context).pop();
+                                      _showAlertDialog(context);
                                     },
                                     child: const Padding(
                                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -352,5 +353,31 @@ class MyApp extends StatelessWidget {
             );
           },
         ));
+  }
+
+  _showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            title: const Text(''),
+            content: const Text(
+              'آیا می خواهید از حساب کاربری خود خارج شوید؟'
+            ),
+            actions: [
+              TextButton(onPressed: (){
+                Navigator.of(context).pop();
+                locator<SharedPreferenceHelper>().clean();
+              }, child: const Text('بله')),
+              TextButton(onPressed: (){
+                Navigator.of(context).pop();
+              }, child: const Text('خیر'))
+            ],
+          ),
+        );
+      },
+    );
   }
 }
