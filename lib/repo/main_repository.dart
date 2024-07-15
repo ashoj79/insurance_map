@@ -2,11 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:insurance_map/data/remote/api_service/main_api_service.dart';
 import 'package:insurance_map/data/remote/model/category.dart';
 import 'package:insurance_map/data/remote/model/insurance_company.dart';
-import 'package:insurance_map/data/remote/model/insurance_company.dart';
-import 'package:insurance_map/data/remote/model/insurance_company.dart';
-import 'package:insurance_map/data/remote/model/insurance_company.dart';
-import 'package:insurance_map/data/remote/model/insurance_company.dart';
-import 'package:insurance_map/data/remote/model/insurance_company.dart';
 import 'package:insurance_map/data/remote/model/slider_model.dart';
 import 'package:insurance_map/utils/data_state.dart';
 
