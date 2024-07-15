@@ -29,4 +29,6 @@ class MainApiService{
   }
 
   Future<Response<dynamic>> getPageContent(String page) async => await _dio.get('pages/$page');
+
+  Future<Response<dynamic>> getMessages(String type) async => await _dio.get('notification-messages?filters[type]=$type');
 }

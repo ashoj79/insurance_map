@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:insurance_map/data/local/temp_db.dart';
 import 'package:insurance_map/data/remote/api_service/main_api_service.dart';
 import 'package:insurance_map/data/remote/model/category.dart';
 import 'package:insurance_map/data/remote/model/insurance_company.dart';
@@ -78,5 +79,12 @@ class MainRepository{
     } catch (_) {
       return DataError('مشکلی رخ داد لطفا مجدد امتحان کنید');
     }
+  }
+
+  Future<void> getMessages() async {
+    try {
+      var response = await _apiService.getMessages('in-app-text');
+      TempDB.saveMessages(response.data);
+    } catch (_) {}
   }
 }

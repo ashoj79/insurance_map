@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:insurance_map/data/remote/model/bank.dart';
 import 'package:insurance_map/data/remote/model/card_payment_info.dart';
 import 'package:insurance_map/repo/bank_repository.dart';
+import 'package:insurance_map/repo/user_repository.dart';
 import 'package:insurance_map/utils/data_state.dart';
 import 'package:meta/meta.dart';
 
@@ -10,9 +11,11 @@ part 'bank_cards_state.dart';
 
 class BankCardsBloc extends Bloc<BankCardsEvent, BankCardsState> {
   final BankRepository _repository;
+  final UserRepository _userRepository;
+
   final List<Bank> _banks = [];
 
-  BankCardsBloc(this._repository) : super(BankCardsInitial()) {
+  BankCardsBloc(this._repository, this._userRepository) : super(BankCardsInitial()) {
     on<BankCardsGetData>((event, emit) async {
       emit(BankCardsLoading());
       DataState<List<Bank>> result = await _repository.getBanks();
@@ -66,6 +69,7 @@ class BankCardsBloc extends Bloc<BankCardsEvent, BankCardsState> {
       }
 
       if (result.data!.amount == 0){
+        await _userRepository.updateWalletBalance();
         emit(BankCardsDone());
         return;
       }

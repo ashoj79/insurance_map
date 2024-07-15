@@ -325,9 +325,7 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
           textDirection: TextDirection.rtl,
           child: AlertDialog(
             title: const Text(''),
-            content: Text(
-              'به بی‌مرزان خوش آمدید. شما می‌توانید اعتبار خود را به مبلغ ${info.amount} تومان شارژ کنید.'
-            ),
+            content: Text(info.getMessage()),
             actions: [
               TextButton(onPressed: (){
                 Navigator.of(context).pop();

@@ -56,7 +56,7 @@ Future<void> setup() async {
   //bloc
   locator.registerSingleton(SignupBloc(locator(), locator(), locator(), locator()));
   locator.registerSingleton(VehiclesBloc(locator()));
-  locator.registerSingleton(BankCardsBloc(locator()));
+  locator.registerSingleton(BankCardsBloc(locator(), locator()));
   locator.registerSingleton(MainBloc(locator(), locator()));
   locator.registerSingleton(CategoriesBloc(locator()));
   locator.registerSingleton(CompaniesBloc(locator()));
