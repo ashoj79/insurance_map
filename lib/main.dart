@@ -9,6 +9,7 @@ import 'package:insurance_map/data/local/signup_types.dart';
 import 'package:insurance_map/screens/bank_cards/bloc/bank_cards_bloc.dart';
 import 'package:insurance_map/screens/categories/bloc/categories_bloc.dart';
 import 'package:insurance_map/screens/companies/bloc/companies_bloc.dart';
+import 'package:insurance_map/screens/content_view/bloc/content_view_bloc.dart';
 import 'package:insurance_map/screens/main/bloc/main_bloc.dart';
 import 'package:insurance_map/screens/map_screen/bloc/map_bloc.dart';
 import 'package:insurance_map/screens/signup/bloc/signup_bloc.dart';
@@ -31,6 +32,7 @@ Future<void> main() async {
       BlocProvider<CategoriesBloc>(create: (context) => locator()),
       BlocProvider<CompaniesBloc>(create: (context) => locator()),
       BlocProvider<MapBloc>(create: (context) => locator()),
+      BlocProvider<ContentViewBloc>(create: (context) => locator())
     ],
     child: const MyApp(),
   ));
@@ -245,7 +247,11 @@ class MyApp extends StatelessWidget {
                                 ),
                               ),
                               InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  BlocProvider.of<ContentViewBloc>(context).add(ContentViewGet('about-us'));
+                                  AppNavigator.push(Routes.contentViewRoute);
+                                },
                                 child: const Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                   child: Row(

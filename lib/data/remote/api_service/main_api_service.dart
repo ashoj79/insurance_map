@@ -27,4 +27,6 @@ class MainApiService{
 
     return await _dio.get('insurance/companies', queryParameters: params);
   }
+
+  Future<Response<dynamic>> getPageContent(String page) async => await _dio.get('pages/$page');
 }

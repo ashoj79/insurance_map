@@ -68,4 +68,15 @@ class MainRepository{
       return DataError('مشکلی رخ داد لطفا مجدد امتحان کنید');
     }
   }
+
+  Future<DataState<String>> getPageContent(String page) async {
+    try {
+      var response = await _apiService.getPageContent(page);
+      return DataSucces(response.data['data']['content']);
+    } on DioException catch (e) {
+      return DataError(e.response?.data?.toString() ?? '');
+    } catch (_) {
+      return DataError('مشکلی رخ داد لطفا مجدد امتحان کنید');
+    }
+  }
 }
