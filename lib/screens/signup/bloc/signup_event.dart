@@ -39,7 +39,7 @@ class SignupGetCities extends SignupEvent {
 class SignupSaveInsuranceOffice extends SignupEvent {
   final int provinceId, cityId;
   final double lat, lng;
-  final String insuranceCompanyId, officeName, officeCode, address, postalCode;
+  final String insuranceCompanyId, officeName, officeCode, address, postalCode, phone;
   SignupSaveInsuranceOffice(
       {required this.provinceId,
       required this.cityId,
@@ -49,13 +49,14 @@ class SignupSaveInsuranceOffice extends SignupEvent {
       required this.address,
       required this.postalCode,
       required this.lat,
-      required this.lng});
+      required this.lng,
+      required this.phone});
 }
 
 class SignupSaveVendor extends SignupEvent {
   final int provinceId, cityId;
   final double lat, lng;
-  final String categoryId, shopName, address, postalCode;
+  final String categoryId, shopName, address, postalCode, phone;
   SignupSaveVendor(
       {required this.provinceId,
       required this.cityId,
@@ -64,5 +65,6 @@ class SignupSaveVendor extends SignupEvent {
       required this.address,
       required this.postalCode,
       required this.lat,
-      required this.lng});
+      required this.lng,
+      required this.phone});
 }

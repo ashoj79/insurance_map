@@ -20,9 +20,9 @@ class ShopRepository {
     }
   }
 
-  Future<DataState<void>> saveVendor(int provinceId, int cityId, String categoryId, String shopName, String address, String postalCode, String lat, String lng) async {
+  Future<DataState<void>> saveVendor(int provinceId, int cityId, String categoryId, String shopName, String address, String postalCode, String lat, String lng, String phone) async {
     try {
-      await _apiService.saveVendor(provinceId, cityId, categoryId, shopName, address, postalCode, lat, lng);
+      await _apiService.saveVendor(provinceId, cityId, categoryId, shopName, address, postalCode, lat, lng, phone);
       return DataSucces();
     } on DioException catch (e) {
       return DataError(e.response?.data?.toString() ?? '');

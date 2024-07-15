@@ -4,7 +4,7 @@ class InsuranceApiService {
   final Dio _dio;
   InsuranceApiService(this._dio);
   
-  Future<Response<dynamic>> saveInsuranceOffice(int provinceId, int cityId, String insuranceCompanyId, String officeName, String officeCode, String address, String postalCode, String lat, String lng) async {
+  Future<Response<dynamic>> saveInsuranceOffice(int provinceId, int cityId, String insuranceCompanyId, String officeName, String officeCode, String address, String postalCode, String lat, String lng, String phone) async {
     FormData data = FormData.fromMap({
       'province_id': provinceId,
       'city_id': cityId,
@@ -14,7 +14,8 @@ class InsuranceApiService {
       'address': address,
       'postal_code': postalCode,
       'latitude': lat,
-      'longitude': lng
+      'longitude': lng,
+      'phone_number': phone
     });
 
     return await _dio.post('insurance/offices', data: data);

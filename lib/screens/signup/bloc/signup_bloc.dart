@@ -230,7 +230,8 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           event.address,
           event.postalCode,
           event.lat.toString(),
-          event.lng.toString());
+          event.lng.toString(),
+          event.phone);
 
       emit(result is DataError
           ? SignupError(result.errorMessage!)
@@ -282,7 +283,8 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           event.address,
           event.postalCode,
           event.lat.toString(),
-          event.lng.toString());
+          event.lng.toString(),
+          event.phone);
 
       emit(result is DataError
           ? SignupError(result.errorMessage!)

@@ -20,9 +20,9 @@ class InsuranceRepository {
     }
   }
 
-  Future<DataState<void>> saveInsuranceOffice(int provinceId, int cityId, String insuranceCompanyId, String officeName, String officeCode, String address, String postalCode, String lat, String lng) async {
+  Future<DataState<void>> saveInsuranceOffice(int provinceId, int cityId, String insuranceCompanyId, String officeName, String officeCode, String address, String postalCode, String lat, String lng, String phone) async {
     try {
-      await _apiService.saveInsuranceOffice(provinceId, cityId, insuranceCompanyId, officeName, officeCode, address, postalCode, lat, lng);
+      await _apiService.saveInsuranceOffice(provinceId, cityId, insuranceCompanyId, officeName, officeCode, address, postalCode, lat, lng, phone);
       return DataSucces();
     } on DioException catch (e) {
       return DataError(e.response?.data?.toString() ?? '');

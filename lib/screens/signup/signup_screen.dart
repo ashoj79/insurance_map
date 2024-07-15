@@ -433,7 +433,8 @@ class _InsuranceFormState extends State<_InsuranceForm> {
   final _officeNameController = TextEditingController(),
       _officeCodeController = TextEditingController(),
       _addressController = TextEditingController(),
-      _postalCodeController = TextEditingController();
+      _postalCodeController = TextEditingController(),
+      _phoneController = TextEditingController();
 
   final _officeCodeFocusNode = FocusNode();
 
@@ -582,6 +583,19 @@ class _InsuranceFormState extends State<_InsuranceForm> {
                 const SizedBox(
                   height: 16,
                 ),
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: TextField(
+                    controller: _phoneController,
+                    decoration: const InputDecoration(
+                        labelText: 'تلفن دفتر', counterText: ''),
+                    maxLines: 1,
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
                 const Text(
                   'مکان دفتر',
                   style: TextStyle(fontSize: 16),
@@ -652,7 +666,8 @@ class _InsuranceFormState extends State<_InsuranceForm> {
                         address: _addressController.text,
                         postalCode: _postalCodeController.text,
                         lat: lat,
-                        lng: lng));
+                        lng: lng,
+                        phone: _phoneController.text));
               },
               child: Text(
                 'تائید',
@@ -728,10 +743,12 @@ class _BusinesFormState extends State<_BusinesForm> {
 
   final _shopNameController = TextEditingController(),
       _addressController = TextEditingController(),
-      _postalCodeController = TextEditingController();
+      _postalCodeController = TextEditingController(),
+      _phoneController = TextEditingController();
 
   final _addressFocusNode = FocusNode(),
-    _postalCodeFocusNode = FocusNode();
+    _postalCodeFocusNode = FocusNode(),
+    _phoneFocusNode = FocusNode();
 
   final MapController _mapController = MapController();
   final Location _locationService = Location();
@@ -863,6 +880,21 @@ class _BusinesFormState extends State<_BusinesForm> {
                     maxLines: 1,
                     maxLength: 10,
                     keyboardType: TextInputType.number,
+                    onSubmitted: (value) => _phoneFocusNode.requestFocus(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: TextField(
+                    controller: _phoneController,
+                    focusNode: _phoneFocusNode,
+                    decoration: const InputDecoration(
+                        labelText: 'تلفن دفتر', counterText: ''),
+                    maxLines: 1,
+                    keyboardType: TextInputType.number,
                   ),
                 ),
                 const SizedBox(
@@ -937,7 +969,8 @@ class _BusinesFormState extends State<_BusinesForm> {
                         address: _addressController.text,
                         postalCode: _postalCodeController.text,
                         lat: lat,
-                        lng: lng));
+                        lng: lng,
+                        phone: _phoneController.text));
               },
               child: Text(
                 'تائید',
