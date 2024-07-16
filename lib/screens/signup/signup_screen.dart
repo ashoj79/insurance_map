@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -29,6 +31,15 @@ class _SignupScreenState extends State<SignupScreen> {
 
   BuildContext? _alertContext;
 
+  Timer? _timer;
+  ValueNotifier<int> resendTime = ValueNotifier(0);
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timer?.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     SignupTypes signupType =
@@ -57,6 +68,11 @@ class _SignupScreenState extends State<SignupScreen> {
         if (state is SignupGoToVehicles) AppNavigator.push(Routes.vehiclesRoute, popTo: Routes.signupRoute);
 
         if (state is SignupGoToBankCards) AppNavigator.push(Routes.bankCardsRoute, popTo: Routes.signupRoute);
+
+        if (state is SignupGetOtp) {
+          resendTime.value = 120;
+          _startTimer();
+        }
       },
       builder: (context, state) {
         if (state is SignupGetOtp) _currentState = 2;
@@ -68,6 +84,7 @@ class _SignupScreenState extends State<SignupScreen> {
             showCodeField: _currentState == 2,
             phone: state is SignupGetOtp ? state.phone : '',
             type: signupType,
+            resendTime: resendTime,
           );
         }
 
@@ -95,14 +112,22 @@ class _SignupScreenState extends State<SignupScreen> {
       },
     );
   }
+
+  _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      resendTime.value = resendTime.value - 1;
+      if (resendTime.value == 0) timer.cancel();
+    });
+  }
 }
 
 class _PhoneForm extends StatelessWidget {
-  _PhoneForm({this.showCodeField = false, this.phone = '', required this.type});
+  _PhoneForm({this.showCodeField = false, this.phone = '', required this.type, required this.resendTime});
 
   final bool showCodeField;
   final String phone;
   final SignupTypes type;
+  final ValueNotifier<int> resendTime;
 
   final phoneController = TextEditingController(),
       codeController = TextEditingController();
@@ -145,6 +170,27 @@ class _PhoneForm extends StatelessWidget {
                 maxLength: 6,
                 keyboardType: TextInputType.number,
               ),
+            ),
+          const SizedBox(height: 16),
+          if (showCodeField)
+            ValueListenableBuilder(
+              valueListenable: resendTime,
+              builder: (context, value, child) {
+                if (value > 0) {
+                  String m = (value ~/ 60).toString().padLeft(2, '0'), s = (value % 60).toString().padLeft(2, '0');
+                  return Text(
+                    'ارسال مجدد در $s : $m',
+                    textDirection: TextDirection.rtl,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.grey, fontSize: 18),
+                  );
+                }
+
+                return TextButton(onPressed: () {
+                  BlocProvider.of<SignupBloc>(context)
+                      .add(SignupSendOtp(phoneController.text));
+                }, child: const Text('ارسال مجدد', style: TextStyle(fontSize: 18),));
+              },
             ),
           const Expanded(child: SizedBox()),
           OutlinedButton(
@@ -635,7 +681,7 @@ class _InsuranceFormState extends State<_InsuranceForm> {
                           child: Container(
                             width: 32,
                             height: 32,
-                            decoration: ShapeDecoration(shape: CircleBorder(), color: Colors.white,),
+                            decoration: const ShapeDecoration(shape: CircleBorder(), color: Colors.white,),
                             alignment: Alignment.center,
                             child: Icon(Icons.location_searching, color: theme.primaryColor,),
                           ),
@@ -937,7 +983,7 @@ class _BusinesFormState extends State<_BusinesForm> {
                           child: Container(
                             width: 32,
                             height: 32,
-                            decoration: ShapeDecoration(shape: CircleBorder(), color: Colors.white,),
+                            decoration: const ShapeDecoration(shape: CircleBorder(), color: Colors.white,),
                             alignment: Alignment.center,
                             child: Icon(Icons.location_searching, color: theme.primaryColor,),
                           ),
