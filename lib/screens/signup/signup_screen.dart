@@ -620,9 +620,7 @@ class _InsuranceFormState extends State<_InsuranceForm> {
                         ),
                         children: [
                           TileLayer(
-                            urlTemplate:
-                                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                            subdomains: ['a', 'b', 'c'],
+                            urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                           ),
                           MarkerLayer(markers: _markers),
                         ],
@@ -924,9 +922,7 @@ class _BusinesFormState extends State<_BusinesForm> {
                         ),
                         children: [
                           TileLayer(
-                            urlTemplate:
-                                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                            subdomains: ['a', 'b', 'c'],
+                            urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                           ),
                           MarkerLayer(markers: _markers),
                         ],

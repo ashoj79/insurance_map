@@ -105,8 +105,7 @@ class _MapScreenState extends State<MapScreen> {
               children: [
                 TileLayer(
                   urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: ['a', 'b', 'c'],
+                      "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 ),
                 MarkerLayer(
                   markers: _markers,
@@ -227,10 +226,11 @@ class _MapScreenState extends State<MapScreen> {
     for (MapPositionData pos in _positions) {
       _markers.add(
         Marker(
+          key: ValueKey(pos.id),
           point: LatLng(pos.lat, pos.lng),
           child: GestureDetector(
               onTap: () {
-                _popupController.togglePopup(_markers[0]);
+                _popupController.togglePopup(_markers[_markers.indexWhere((element) => (element.key as ValueKey).value == pos.id)]);
               },
               child: const Icon(
                 Icons.location_on,
@@ -243,9 +243,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _getDialogWidget(Marker marker) {
-    int index = _positions.indexWhere((element) =>
-        element.lat == marker.point.latitude &&
-        element.lng == marker.point.longitude);
+    int index = _positions.indexWhere((element) => element.id == (marker.key as ValueKey).value);
     var data = _positions[index].getData();
     return Column(
       mainAxisSize: MainAxisSize.min,

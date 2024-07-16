@@ -84,7 +84,9 @@ class MainRepository{
   Future<void> getMessages() async {
     try {
       var response = await _apiService.getMessages('in-app-text');
-      TempDB.saveMessages(response.data);
-    } catch (_) {}
+      TempDB.saveMessages(response.data['data'].cast<Map<String, dynamic>>());
+    } catch (_) {
+      print('object');
+    }
   }
 }
