@@ -1,4 +1,4 @@
-package com.example.insurance_map
+package ir.bimarzan.app
 
 import io.flutter.embedding.android.FlutterActivity
 
