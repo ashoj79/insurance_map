@@ -26,7 +26,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
       this._placeRepository, this._shopRepository)
       : super(SignupInitial()) {
     on<SignupSendOtp>((event, emit) async {
-      String phone = '0${event.phone}';
+      String phone = event.phone;
       if (int.tryParse(phone) == null || phone.length != 11) {
         emit(SignupError('شماره وارد شده غلط است'));
         return;
@@ -43,7 +43,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     });
 
     on<SignupValidateOtp>((event, emit) async {
-      phone = '0${event.phone}';
+      phone = event.phone;
       otp = event.otp;
       if (int.tryParse(otp) == null || otp.length != 6) {
         emit(SignupError('کد وارد شده غلط است'));

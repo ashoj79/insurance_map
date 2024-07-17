@@ -127,7 +127,7 @@ class _PhoneForm extends StatelessWidget {
   _PhoneForm({this.showCodeField = false, this.phone = '', required this.type, required this.resendTime});
 
   final bool showCodeField;
-  final String phone;.
+  final String phone;
   final SignupTypes type;
   final ValueNotifier<int> resendTime;
 
@@ -154,14 +154,13 @@ class _PhoneForm extends StatelessWidget {
               controller: phoneController,
               decoration: const InputDecoration(
                   labelText: 'شماره موبایل',
-                  hintText: '9131234567',
+                  hintText: '09121231111',
                   hintTextDirection: TextDirection.ltr,
                   hintStyle: TextStyle(color: Colors.grey),
                   suffixStyle: TextStyle(color: Colors.black),
-                  suffixText: ' 98+',
                   counterText: ''),
               textDirection: TextDirection.ltr,
-              maxLength: 10,
+              maxLength: 11,
               keyboardType: TextInputType.phone,
               enabled: !showCodeField,
             ),

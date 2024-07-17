@@ -349,10 +349,12 @@ class MyApp extends StatelessWidget {
                   ),
                   body: SafeArea(
                     child: PopScope(
-                      canPop: AppNavigator.getCurrentRoute() != Routes.categoriesRoute,
+                      canPop: !AppNavigator.hasRoute(),
                       onPopInvoked: (didPop) {
                         if (AppNavigator.getCurrentRoute() == Routes.categoriesRoute) {
                           BlocProvider.of<CategoriesBloc>(context).add(CategoriesBack());
+                        } else if (AppNavigator.hasRoute()) {
+                          AppNavigator.pop();
                         }
                       },
                       child: Navigator(
