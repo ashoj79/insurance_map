@@ -12,9 +12,9 @@ class UserRepository {
 
   bool isUserLoggedIn() => _sharedPrefereceHelper.getToken().isNotEmpty;
 
-  Future<DataState<String>> sendOtp(String phone) async {
+  Future<DataState<String>> sendOtp(String phone, String hash) async {
     try {
-      var response = await _apiService.sendOtp(phone);
+      var response = await _apiService.sendOtp(phone, hash);
       return DataSucces(response.data['type']);
     } on DioException catch (e) {
       return DataError(e.response?.data?.toString() ?? '');

@@ -5,8 +5,8 @@ class UserApiService {
   final Dio _dio;
   UserApiService(this._dio);
 
-  Future<Response<dynamic>> sendOtp(String phone) async {
-    FormData data = FormData.fromMap({'mobile': phone});
+  Future<Response<dynamic>> sendOtp(String phone, String hash) async {
+    FormData data = FormData.fromMap({'mobile': phone, 'hash': hash});
     return await _dio.post('auth/send-otp-to-mobile', data: data);
   }
 

@@ -134,9 +134,15 @@ class _PhoneForm extends StatelessWidget {
   final phoneController = TextEditingController(),
       codeController = TextEditingController();
 
+  String signature = '';
+
   @override
   Widget build(BuildContext context) {
     if (phone.isNotEmpty) phoneController.text = phone;
+
+    SmsAutoFill().getAppSignature.then((value) {
+      signature = value;
+    });
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -150,6 +156,8 @@ class _PhoneForm extends StatelessWidget {
                   labelText: 'شماره موبایل',
                   hintText: '9131234567',
                   hintTextDirection: TextDirection.ltr,
+                  hintStyle: TextStyle(color: Colors.grey),
+                  suffixStyle: TextStyle(color: Colors.black),
                   suffixText: ' 98+',
                   counterText: ''),
               textDirection: TextDirection.ltr,
@@ -164,8 +172,10 @@ class _PhoneForm extends StatelessWidget {
           if (showCodeField)
             Directionality(
               textDirection: TextDirection.rtl,
-              child: TextField(
-                controller: codeController,
+              child: TextFieldPinAutoFill(
+                onCodeChanged: (p0) {
+                  codeController.text = p0;
+                },
                 decoration: const InputDecoration(
                     labelText: 'کد تائید', counterText: ''),
               ),
@@ -187,7 +197,7 @@ class _PhoneForm extends StatelessWidget {
 
                 return TextButton(onPressed: () {
                   BlocProvider.of<SignupBloc>(context)
-                      .add(SignupSendOtp(phoneController.text));
+                      .add(SignupSendOtp(phone: phoneController.text, hash: signature));
                 }, child: const Text('ارسال مجدد', style: TextStyle(fontSize: 18),));
               },
             ),
@@ -198,7 +208,7 @@ class _PhoneForm extends StatelessWidget {
               onPressed: () {
                 if (!showCodeField) {
                   BlocProvider.of<SignupBloc>(context)
-                      .add(SignupSendOtp(phoneController.text));
+                      .add(SignupSendOtp(phone: phoneController.text, hash: signature));
                 } else {
                   BlocProvider.of<SignupBloc>(context).add(SignupValidateOtp(
                       phone: phoneController.text, otp: codeController.text, type: type));

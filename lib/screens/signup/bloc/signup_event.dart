@@ -4,8 +4,8 @@ part of 'signup_bloc.dart';
 sealed class SignupEvent {}
 
 class SignupSendOtp extends SignupEvent {
-  final String phone;
-  SignupSendOtp(this.phone);
+  final String phone, hash;
+  SignupSendOtp({required this.phone, required this.hash});
 }
 
 class SignupValidateOtp extends SignupEvent {

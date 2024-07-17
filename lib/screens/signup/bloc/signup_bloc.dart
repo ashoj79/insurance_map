@@ -34,7 +34,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
       emit(SignupLoading());
 
-      DataState<String> result = await _userRepository.sendOtp(phone);
+      DataState<String> result = await _userRepository.sendOtp(phone, event.hash);
       if (result is DataSucces) type = result.data!;
 
       emit(result is DataSucces
