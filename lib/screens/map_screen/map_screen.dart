@@ -36,6 +36,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
+    _moveToUserLocation();
     BlocProvider.of<MapBloc>(context).add(MapGetProvinces());
 
     Timer(const Duration(seconds: 1), () {
