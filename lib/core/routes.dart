@@ -7,4 +7,5 @@ class Routes {
   static const String companiesRoute = '/companies';
   static const String mapRoute = '/map';
   static const String contentViewRoute = '/content_view';
+  static const String ticketRoute = '/ticket';
 }

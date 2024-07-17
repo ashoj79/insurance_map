@@ -13,6 +13,7 @@ import 'package:insurance_map/screens/content_view/bloc/content_view_bloc.dart';
 import 'package:insurance_map/screens/main/bloc/main_bloc.dart';
 import 'package:insurance_map/screens/map_screen/bloc/map_bloc.dart';
 import 'package:insurance_map/screens/signup/bloc/signup_bloc.dart';
+import 'package:insurance_map/screens/ticket/bloc/ticket_bloc.dart';
 import 'package:insurance_map/screens/vehicles_screen/bloc/vehicles_bloc.dart';
 import 'package:insurance_map/utils/di.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,7 +33,8 @@ Future<void> main() async {
       BlocProvider<CategoriesBloc>(create: (context) => locator()),
       BlocProvider<CompaniesBloc>(create: (context) => locator()),
       BlocProvider<MapBloc>(create: (context) => locator()),
-      BlocProvider<ContentViewBloc>(create: (context) => locator())
+      BlocProvider<ContentViewBloc>(create: (context) => locator()),
+      BlocProvider<TicketBloc>(create: (context) => locator()),
     ],
     child: const MyApp(),
   ));
@@ -153,7 +155,7 @@ class MyApp extends StatelessWidget {
                                           child: const Padding(
                                             padding: EdgeInsets.all(8),
                                             child: Text(
-                                              'ثبت نام نمایندگان',
+                                              'ثبت نام نمایندگان بیمه',
                                               textAlign: TextAlign.start,
                                             ),
                                           ),
@@ -213,6 +215,26 @@ class MyApp extends StatelessWidget {
                                 ),
                               ),
                               InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  AppNavigator.push(Routes.vehiclesRoute);
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  child: Row(
+                                    textDirection: TextDirection.rtl,
+                                    children: [
+                                      Icon(
+                                        Icons.add,
+                                        color: Colors.grey,
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text('ثبت خودرو', style: TextStyle(fontWeight: FontWeight.w600))
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              InkWell(
                                 onTap: () {},
                                 child: const Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -229,22 +251,31 @@ class MyApp extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              InkWell(
-                                onTap: () {},
-                                child: const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                  child: Row(
-                                    textDirection: TextDirection.rtl,
-                                    children: [
-                                      Icon(
-                                        Icons.support_agent_outlined,
-                                        color: Colors.grey,
+                              PreferenceBuilder<String>(
+                                preference: locator<SharedPreferenceHelper>().getName(),
+                                builder: (context, value) {
+                                  if (value.isEmpty) return const SizedBox();
+
+                                  return InkWell(
+                                    onTap: () {
+                                      AppNavigator.push(Routes.ticketRoute);
+                                    },
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                      child: Row(
+                                        textDirection: TextDirection.rtl,
+                                        children: [
+                                          Icon(
+                                            Icons.support_agent_outlined,
+                                            color: Colors.grey,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text('پشتیبانی', style: TextStyle(fontWeight: FontWeight.w600))
+                                        ],
                                       ),
-                                      SizedBox(width: 8),
-                                      Text('پشتیبانی', style: TextStyle(fontWeight: FontWeight.w600))
-                                    ],
-                                  ),
-                                ),
+                                    ),
+                                  );
+                                },
                               ),
                               InkWell(
                                 onTap: () {
@@ -298,29 +329,9 @@ class MyApp extends StatelessWidget {
                           ),
                         ),
                   appBar: AppBar(
-                    title: const Text('بیمرزان', style: TextStyle(color: Colors.white)),
-                    titleTextStyle: const TextStyle(color: Colors.white),
                     backgroundColor: appTheme.primaryColor,
                     iconTheme: const IconThemeData(color: Colors.white),
                     actions: [
-                      // منوهای صفحه وسایل نقلیه
-                      if (AppNavigator.getCurrentRoute() == Routes.vehiclesRoute)
-                        IconButton(
-                            onPressed: () {
-                              BlocProvider.of<VehiclesBloc>(context).add(VehiclesSubmit());
-                            },
-                            icon: const Icon(Icons.done, color: Colors.white)),
-
-                      // منوهای صفحه کارت های بانکی
-                      if (AppNavigator.getCurrentRoute() == Routes.bankCardsRoute)
-                        IconButton(
-                            onPressed: () {
-                              BlocProvider.of<BankCardsBloc>(context).add(BankCardsSubmit());
-                            },
-                            icon: const Icon(Icons.done, color: Colors.white)),
-
-                      const Spacer(flex: 200),
-
                       // منوی بازگشت به صفحه قبلی
                       Visibility(
                         visible: AppNavigator.hasRoute(),

@@ -22,6 +22,7 @@ import 'package:insurance_map/screens/content_view/bloc/content_view_bloc.dart';
 import 'package:insurance_map/screens/main/bloc/main_bloc.dart';
 import 'package:insurance_map/screens/map_screen/bloc/map_bloc.dart';
 import 'package:insurance_map/screens/signup/bloc/signup_bloc.dart';
+import 'package:insurance_map/screens/ticket/bloc/ticket_bloc.dart';
 import 'package:insurance_map/screens/vehicles_screen/bloc/vehicles_bloc.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
@@ -62,4 +63,5 @@ Future<void> setup() async {
   locator.registerSingleton(CompaniesBloc(locator()));
   locator.registerSingleton(MapBloc(locator(), locator(), locator()));
   locator.registerSingleton(ContentViewBloc(locator()));
+  locator.registerSingleton(TicketBloc(locator()));
 }

@@ -81,12 +81,21 @@ class MainRepository{
     }
   }
 
+  Future<DataState<void>> sendTicket(String title, String message, String priority) async {
+    try {
+      await _apiService.sendTicket(title, message, priority);
+      return DataSucces();
+    } on DioException catch (e) {
+      return DataError(e.response?.data?.toString() ?? '');
+    } catch (_) {
+      return DataError('مشکلی رخ داد لطفا مجدد امتحان کنید');
+    }
+  }
+
   Future<void> getMessages() async {
     try {
       var response = await _apiService.getMessages('in-app-text');
       TempDB.saveMessages(response.data['data'].cast<Map<String, dynamic>>());
-    } catch (_) {
-      print('object');
-    }
+    } catch (_) {}
   }
 }

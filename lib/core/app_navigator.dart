@@ -7,6 +7,7 @@ import 'package:insurance_map/screens/content_view/content_view.dart';
 import 'package:insurance_map/screens/main/main_screen.dart';
 import 'package:insurance_map/screens/map_screen/map_screen.dart';
 import 'package:insurance_map/screens/signup/signup_screen.dart';
+import 'package:insurance_map/screens/ticket/ticket.dart';
 import 'package:insurance_map/screens/vehicles_screen/vehicles_screen.dart';
 
 class AppNavigator {
@@ -83,6 +84,8 @@ class AppNavigator {
         return const MapScreen();
       case Routes.contentViewRoute:
         return const ContentViewScreen();
+      case Routes.ticketRoute:
+        return const TicketScreen();
     }
     return null;
   }
