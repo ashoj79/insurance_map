@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_persian_calendar/flutter_persian_calendar.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/remote/model/vehicle_info.dart';
 import 'package:insurance_map/screens/vehicles_screen/bloc/vehicles_bloc.dart';
-import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+import 'package:shamsi_date/shamsi_date.dart';
+// import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
 class VehiclesScreen extends StatefulWidget {
   const VehiclesScreen({super.key});
@@ -376,22 +378,38 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
   }
 
   Future<void> _showDatePicker(bool isThirdParty) async {
-    Jalali? picked = await showPersianDatePicker(
-      context: context,
-      initialDate: Jalali.now(),
-      firstDate: Jalali(1300),
-      lastDate: Jalali.MAX
+    showDialog(context: context, builder: (context) {
+      return Dialog(child: shamsiDateCalendarWidget(context, isThirdParty));
+    });
+  }
+
+  PersianCalendar shamsiDateCalendarWidget(BuildContext context, bool isThirdParty) {
+    Jalali? picked;
+
+    return PersianCalendar(
+      calendarHeight: 376,
+      calendarWidth: 360,
+      onDateChanged: (newDate) {
+        picked = newDate;
+      },
+      onConfirmButtonPressed: () {
+        Navigator.pop(context);
+        if (picked == null) return;
+
+        String date =
+            '${picked?.year}/${picked?.month.toString().padLeft(2, '0')}/${picked?.day.toString().padLeft(2, '0')}';
+
+        if (isThirdParty) {
+          thirdPartyInsuranceDate.text = date;
+        } else {
+          carBodyInsuranceDate.text = date;
+        }
+      },
+      calendarStartDate: Jalali(1300),
+      calendarEndDate: Jalali.max,
+      calendarTheme: PersianCalendarTheme(textStyle: const TextStyle(), backgroundColor: Colors.white),
+      selectedDate: Jalali.now()
     );
-    if (picked == null) return;
-
-    String date =
-        '${picked.year}/${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}';
-
-    if (isThirdParty) {
-      thirdPartyInsuranceDate.text = date;
-    } else {
-      carBodyInsuranceDate.text = date;
-    }
   }
 }
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_persian_calendar/flutter_persian_calendar.dart';
 import 'package:insurance_map/core/app_navigator.dart';
 import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
@@ -15,7 +16,8 @@ import 'package:insurance_map/data/remote/model/province_city.dart';
 import 'package:insurance_map/data/remote/model/shop_category.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
-import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+import 'package:shamsi_date/shamsi_date.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 import 'bloc/signup_bloc.dart';
 
@@ -125,7 +127,7 @@ class _PhoneForm extends StatelessWidget {
   _PhoneForm({this.showCodeField = false, this.phone = '', required this.type, required this.resendTime});
 
   final bool showCodeField;
-  final String phone;
+  final String phone;.
   final SignupTypes type;
   final ValueNotifier<int> resendTime;
 
@@ -166,9 +168,6 @@ class _PhoneForm extends StatelessWidget {
                 controller: codeController,
                 decoration: const InputDecoration(
                     labelText: 'کد تائید', counterText: ''),
-                textDirection: TextDirection.ltr,
-                maxLength: 6,
-                keyboardType: TextInputType.number,
               ),
             ),
           const SizedBox(height: 16),
@@ -449,16 +448,32 @@ class __StepOneFormState extends State<_StepOneForm> {
   }
 
   Future<void> _showDatePicker() async {
-    Jalali? picked = await showPersianDatePicker(
-      context: context,
-      initialDate: Jalali.now(),
-      firstDate: Jalali(1300),
-      lastDate: Jalali.now(),
-    );
-    if (picked == null) return;
+    showDialog(context: context, builder: (context) {
+      return Dialog(child: shamsiDateCalendarWidget(context));
+    });
+  }
 
-    _birthDateController.text =
-        '${picked.year}/${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}';
+  PersianCalendar shamsiDateCalendarWidget(BuildContext context) {
+    Jalali? picked;
+
+    return PersianCalendar(
+        calendarHeight: 376,
+        calendarWidth: 360,
+        onDateChanged: (newDate) {
+          picked = newDate;
+        },
+        onConfirmButtonPressed: () {
+          Navigator.pop(context);
+          if (picked == null) return;
+
+          _birthDateController.text =
+          '${picked?.year}/${picked?.month.toString().padLeft(2, '0')}/${picked?.day.toString().padLeft(2, '0')}';
+        },
+        calendarStartDate: Jalali(1300),
+        calendarEndDate: Jalali.max,
+        calendarTheme: PersianCalendarTheme(textStyle: const TextStyle(), backgroundColor: Colors.white),
+        selectedDate: Jalali.now()
+    );
   }
 }
 

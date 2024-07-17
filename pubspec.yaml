@@ -43,7 +43,6 @@ dependencies:
   bloc: ^8.1.4
   dio: ^5.4.3+1
   loading_animation_widget: ^1.2.0+4
-  persian_datetime_picker: ^2.7.0
   location: ^6.0.2
   uuid: ^4.4.0
   carousel_slider: ^4.2.1
@@ -52,6 +51,9 @@ dependencies:
   url_launcher: ^6.3.0
   uni_links3: ^0.5.3
   flutter_html: ^3.0.0-beta.2
+  sms_autofill: ^2.4.0
+  flutter_persian_calendar: ^0.0.2
+  shamsi_date: ^1.0.2
 
 dev_dependencies:
   flutter_test:
