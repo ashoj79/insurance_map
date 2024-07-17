@@ -70,10 +70,11 @@ class MainRepository{
     }
   }
 
-  Future<DataState<String>> getPageContent(String page) async {
+  Future<DataState<void>> getPageContent(String page) async {
     try {
       var response = await _apiService.getPageContent(page);
-      return DataSucces(response.data['data']['content']);
+      TempDB.savePage(page, response.data['data']['content']);
+      return DataSucces();
     } on DioException catch (e) {
       return DataError(e.response?.data?.toString() ?? '');
     } catch (_) {
