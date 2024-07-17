@@ -173,7 +173,8 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
                         style: TextStyle(
                             color: Colors.blue[400],
                             fontWeight: FontWeight.w900,
-                            fontSize: 22),
+                            fontSize: 19),
+                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
                       Row(
@@ -301,16 +302,35 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
                 )).toList(),
               ),
             )),
-            OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 48)),
-                onPressed: () {
-                  BlocProvider.of<BankCardsBloc>(context).add(BankCardSaveCard(cardNumber: _getCardNumber()));
-                },
-                child: Text(
-                  'ذخیره',
-                  style: TextStyle(color: Colors.grey[700]),
-                ))
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 48)),
+                      onPressed: () {
+                        BlocProvider.of<BankCardsBloc>(context).add(BankCardSaveCard(cardNumber: _getCardNumber()));
+                      },
+                      child: Text(
+                        'ذخیره کارت',
+                        style: TextStyle(color: Colors.grey[700]),
+                      )),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 48)),
+                      onPressed: () {
+                        BlocProvider.of<BankCardsBloc>(context).add(BankCardsSubmit());
+                      },
+                      child: Text(
+                        'تائید نهایی‌',
+                        style: TextStyle(color: Colors.grey[700]),
+                      )),
+                ),
+              ],
+            )
           ],
         ),
       ),

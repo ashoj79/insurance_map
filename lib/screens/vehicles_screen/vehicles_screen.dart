@@ -328,27 +328,48 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                   ),
                 ),
               ),
-              OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 48)),
-                  onPressed: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 48)),
+                        onPressed: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
 
-                    BlocProvider.of<VehiclesBloc>(context).add(VehiclesSave(
-                        type: type,
-                        carTypeId: carTypeId,
-                        carBrandId: carBrandId,
-                        carModelId: carModelId,
-                        license: _plaqueController.getLicense(type),
-                        thirdPartyInsurance: thirdPartyInsurance,
-                        carBodyInsurance: carBodyInsurance,
-                        carBodyInsuranceDate: carBodyInsuranceDate.text,
-                        thirdPartyInsuranceDate: thirdPartyInsuranceDate.text));
-                  },
-                  child: Text(
-                    'ذخیره',
-                    style: TextStyle(color: Colors.grey[700]),
-                  )),
+                          BlocProvider.of<VehiclesBloc>(context).add(VehiclesSave(
+                              type: type,
+                              carTypeId: carTypeId,
+                              carBrandId: carBrandId,
+                              carModelId: carModelId,
+                              license: _plaqueController.getLicense(type),
+                              thirdPartyInsurance: thirdPartyInsurance,
+                              carBodyInsurance: carBodyInsurance,
+                              carBodyInsuranceDate: carBodyInsuranceDate.text,
+                              thirdPartyInsuranceDate: thirdPartyInsuranceDate.text));
+                        },
+                        child: Text(
+                          'ذخیره وسیله نقلیه',
+                          style: TextStyle(color: Colors.grey[700]),
+                        )),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 48)),
+                        onPressed: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+
+                          BlocProvider.of<VehiclesBloc>(context).add(VehiclesSubmit());
+                        },
+                        child: Text(
+                          'تائید نهایی',
+                          style: TextStyle(color: Colors.grey[700]),
+                        )),
+                  ),
+                ],
+              )
             ],
           ),
         ));
