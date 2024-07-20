@@ -5,12 +5,13 @@ sealed class SignupEvent {}
 
 class SignupSendOtp extends SignupEvent {
   final String phone, hash;
-  SignupSendOtp({required this.phone, required this.hash});
+  final bool isSignup;
+  SignupSendOtp({required this.phone, required this.hash, required this.isSignup});
 }
 
 class SignupValidateOtp extends SignupEvent {
   final String phone, otp;
-  final SignupTypes type;
+  final SignupTypes? type;
   SignupValidateOtp({required this.phone, required this.otp, required this.type});
 }
 

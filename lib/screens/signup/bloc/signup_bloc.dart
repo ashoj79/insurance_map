@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:insurance_map/data/local/shared_preference_helper.dart';
 import 'package:insurance_map/data/local/signup_step_one_data.dart';
 import 'package:insurance_map/data/local/signup_types.dart';
 import 'package:insurance_map/data/remote/model/insurance_company.dart';
@@ -10,6 +11,7 @@ import 'package:insurance_map/repo/place_repository.dart';
 import 'package:insurance_map/repo/shop_repository.dart';
 import 'package:insurance_map/repo/user_repository.dart';
 import 'package:insurance_map/utils/data_state.dart';
+import 'package:insurance_map/utils/di.dart';
 import 'package:meta/meta.dart';
 
 part 'signup_event.dart';
@@ -33,6 +35,22 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
       }
 
       emit(SignupLoading());
+      
+      DataState<bool> existsResult = await _userRepository.isMobileExists(phone, event.hash);
+      if (existsResult is DataError) {
+        emit(SignupError(existsResult.errorMessage!));
+        return;
+      }
+
+      if (existsResult.data! && event.isSignup) {
+        emit(SignupError('این شماره قبلا ثبت نام کرده است. لطفا از گزینه ورود وارد حساب کاربری خود شوید'));
+        return;
+      }
+
+      if (!existsResult.data! && !event.isSignup) {
+        emit(SignupError('این شماره در سیستم ثبت نشده است. لطفا ابتدا ثبت نام کنید'));
+        return;
+      }
 
       DataState<String> result = await _userRepository.sendOtp(phone, event.hash);
       if (result is DataSucces) type = result.data!;
@@ -81,15 +99,21 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
         return;
       }
 
-      if (event.type == SignupTypes.vehicles && result.data!.vehicleCount <= 0) {
-        emit(SignupGoToVehicles());
-        return;
+      String topMessage = '';
+
+      if (result.data!.vehicleCount <= 0) {
+        topMessage = 'برای ثبت اطلاعات وسایل نقلیه';
       }
 
-      if (event.type == SignupTypes.vehicles && result.data!.bankCartCount <= 0) {
-        emit(SignupGoToBankCards());
-        return;
+      if (result.data!.bankCartCount <= 0) {
+        topMessage = topMessage.isEmpty ? 'برای ثبت اطلاعات کارت های بانکی' : '$topMessage و کارت های بانکی';
       }
+
+      if (topMessage.isNotEmpty) {
+        topMessage += ' از گزینه کارت ها و وسایل نقلیه استفاده کنید';
+      }
+
+      locator<SharedPreferenceHelper>().saveTopMessage(topMessage);
 
       emit(SignupDoLogin());
     });

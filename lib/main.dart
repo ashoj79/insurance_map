@@ -134,6 +134,33 @@ class MyApp extends StatelessWidget {
                                 ),
                               ),
                               PreferenceBuilder<String>(
+                                  preference: locator<SharedPreferenceHelper>().getName(),
+                                  builder: (context, value) {
+                                    if (value.isNotEmpty) return const SizedBox();
+
+                                    return InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      AppNavigator.push(Routes.signupRoute);
+                                    },
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                      child: Row(
+                                        textDirection: TextDirection.rtl,
+                                        children: [
+                                          Icon(
+                                            Icons.person,
+                                            color: Colors.grey,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text('ورود', style: TextStyle(fontWeight: FontWeight.w600))
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }
+                              ),
+                              PreferenceBuilder<String>(
                                 preference: locator<SharedPreferenceHelper>().getName(),
                                 builder: (context, value) {
                                   if (value.isNotEmpty) return const SizedBox();

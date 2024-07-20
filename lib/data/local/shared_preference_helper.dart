@@ -23,4 +23,7 @@ class SharedPreferenceHelper {
 
   Future<void> saveInviteCode(String data) async => await _sharedPreferences.setString('invite_code', data);
   getInviteCode() => _sharedPreferences.getString('invite_code', defaultValue: '').getValue();
+
+  Future<void> saveTopMessage(String data) async => await _sharedPreferences.setString('top_message', data);
+  getTopMessage() => _sharedPreferences.getString('top_message', defaultValue: '');
 }

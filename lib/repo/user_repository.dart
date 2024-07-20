@@ -23,6 +23,17 @@ class UserRepository {
     }
   }
 
+  Future<DataState<bool>> isMobileExists(String phone, String hash) async {
+    try {
+      var response = await _apiService.checkMobileExists(phone, hash);
+      return DataSucces(response.data['exists']);
+    } on DioException catch (e) {
+      return DataError(e.response?.data?.toString() ?? '');
+    } catch (_) {
+      return DataError('مشکلی رخ داد لطفا مجدد امتحان کنید');
+    }
+  }
+
   Future<DataState<UserInfo>> validateOtp(String phone, String otp, String type) async {
     try {
       var response = await _apiService.valiidateOtp(phone, otp, type);

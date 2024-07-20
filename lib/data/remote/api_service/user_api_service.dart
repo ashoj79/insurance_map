@@ -10,6 +10,11 @@ class UserApiService {
     return await _dio.post('auth/send-otp-to-mobile', data: data);
   }
 
+  Future<Response<dynamic>> checkMobileExists(String phone, String hash) async {
+    FormData data = FormData.fromMap({'mobile': phone, 'hash': hash});
+    return await _dio.post('auth/check-mobile-exists', data: data);
+  }
+
   Future<Response<dynamic>> valiidateOtp(
       String phone, String otp, String type) async {
     FormData data = FormData.fromMap({'mobile': phone, 'otp_code': otp});

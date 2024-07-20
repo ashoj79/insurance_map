@@ -6,6 +6,7 @@ import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/local/shared_preference_helper.dart';
+import 'package:insurance_map/data/local/signup_types.dart';
 import 'package:insurance_map/data/remote/model/category.dart';
 import 'package:insurance_map/data/remote/model/insurance_company.dart';
 import 'package:insurance_map/data/remote/model/slider_model.dart';
@@ -87,6 +88,32 @@ class _MainScreenState extends State<MainScreen> {
                 SingleChildScrollView(
                   child: Column(
                     children: [
+                      PreferenceBuilder<String>(
+                        preference: locator<SharedPreferenceHelper>().getTopMessage(),
+                        builder: (context, value) {
+                          if (value.isEmpty) return const SizedBox();
+
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.red),
+                              color: Colors.red.withOpacity(0.4)
+                            ),
+                            margin: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              textDirection: TextDirection.rtl,
+                              children: [
+                                IconButton(onPressed: (){
+                                  locator<SharedPreferenceHelper>().saveTopMessage('');
+                                }, icon: const Icon(Icons.close)),
+                                const SizedBox(width: 8),
+                                Expanded(child: Text(value))
+                              ],
+                            ),
+                          );
+                        }
+                      ),
                       SizedBox(
                         height: 200,
                         child: Stack(
@@ -373,7 +400,7 @@ class _MainScreenState extends State<MainScreen> {
                             if (value.isEmpty)
                               InkWell(
                                 onTap: () {
-                                  BlocProvider.of<MainBloc>(context).add(MainGoToBankCards());
+                                  _showAlertDialog();
                                 },
                                 child: Column(
                                   children: [
@@ -397,6 +424,55 @@ class _MainScreenState extends State<MainScreen> {
                 )
               ],
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  _showAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            title: const Text('ثبت نام به عنوان:'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    AppNavigator.push(Routes.signupRoute, args: SignupTypes.representatives);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text('نماینده بیمه'),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    AppNavigator.push(Routes.signupRoute, args: SignupTypes.businesses);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text('کسب و کار'),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    AppNavigator.push(Routes.signupRoute, args: SignupTypes.vehicles);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text('صاحب وسیله نقلیه'),
+                  ),
+                ),
+              ],
+            )
           ),
         );
       },

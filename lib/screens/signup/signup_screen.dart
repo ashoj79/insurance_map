@@ -44,8 +44,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SignupTypes signupType =
-        ModalRoute.of(context)!.settings.arguments as SignupTypes;
+    var args = ModalRoute.of(context)!.settings.arguments;
+    SignupTypes? signupType = args != null ? args as SignupTypes : null;
 
     return BlocConsumer<SignupBloc, SignupState>(
       buildWhen: (previous, current) =>
@@ -92,7 +92,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
         if (_currentState == 3) {
           return _StepOneForm(
-            type: signupType,
+            type: signupType!,
           );
         }
 
@@ -128,7 +128,7 @@ class _PhoneForm extends StatelessWidget {
 
   final bool showCodeField;
   final String phone;
-  final SignupTypes type;
+  final SignupTypes? type;
   final ValueNotifier<int> resendTime;
 
   final phoneController = TextEditingController(),
@@ -196,7 +196,7 @@ class _PhoneForm extends StatelessWidget {
 
                 return TextButton(onPressed: () {
                   BlocProvider.of<SignupBloc>(context)
-                      .add(SignupSendOtp(phone: phoneController.text, hash: signature));
+                      .add(SignupSendOtp(phone: phoneController.text, hash: signature, isSignup: type != null));
                 }, child: const Text('ارسال مجدد', style: TextStyle(fontSize: 18),));
               },
             ),
@@ -207,7 +207,7 @@ class _PhoneForm extends StatelessWidget {
               onPressed: () {
                 if (!showCodeField) {
                   BlocProvider.of<SignupBloc>(context)
-                      .add(SignupSendOtp(phone: phoneController.text, hash: signature));
+                      .add(SignupSendOtp(phone: phoneController.text, hash: signature, isSignup: type != null));
                 } else {
                   BlocProvider.of<SignupBloc>(context).add(SignupValidateOtp(
                       phone: phoneController.text, otp: codeController.text, type: type));
