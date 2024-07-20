@@ -27,7 +27,7 @@ class CardsAndVehiclesScreen extends StatelessWidget {
       },
       builder: (context, state) {
         return Padding(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             left: 16,
             right: 16,
             top: 16,
@@ -38,12 +38,12 @@ class CardsAndVehiclesScreen extends StatelessWidget {
                 textDirection: TextDirection.rtl,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('کارت های بانکی', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                  const Text('کارت های بانکی', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                   InkWell(
                     onTap: () {
                       AppNavigator.push(Routes.bankCardsRoute);
                     },
-                    child: Icon(
+                    child: const Icon(
                       Icons.add,
                       color: Colors.black,
                     ),
@@ -52,11 +52,11 @@ class CardsAndVehiclesScreen extends StatelessWidget {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  child: state is! CAVShowData ? SizedBox() : Column(
+                  child: state is! CAVShowData ? const SizedBox() : Column(
                     children: [
                       for (String val in state.cards)
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 4),
+                          padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Text(val),
                         )
                     ],
@@ -67,12 +67,12 @@ class CardsAndVehiclesScreen extends StatelessWidget {
                 textDirection: TextDirection.rtl,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('وسایل نقلیه', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                  const Text('وسایل نقلیه', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                   InkWell(
                     onTap: () {
                       AppNavigator.push(Routes.vehiclesRoute);
                     },
-                    child: Icon(
+                    child: const Icon(
                       Icons.add,
                       color: Colors.black,
                     ),
@@ -81,11 +81,11 @@ class CardsAndVehiclesScreen extends StatelessWidget {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  child: state is! CAVShowData ? SizedBox() : Column(
+                  child: state is! CAVShowData ? const SizedBox() : Column(
                     children: [
                       for (String val in state.vehicles)
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 4),
+                          padding: const EdgeInsets.symmetric(vertical: 4),
                           child: val.toLicenseWidget(),
                         )
                     ],
