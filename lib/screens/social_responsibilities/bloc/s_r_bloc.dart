@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:insurance_map/data/remote/model/province_city.dart';
+import 'package:insurance_map/data/remote/model/social_responsibility.dart';
 import 'package:insurance_map/repo/place_repository.dart';
 import 'package:insurance_map/repo/social_repository.dart';
 import 'package:insurance_map/utils/data_state.dart';
@@ -17,7 +18,7 @@ class SRBloc extends Bloc<SREvent, SRState> {
       emit(SRLoading());
 
       DataState<List<ProvinceAndCity>> result1 = await _placeRepository.getAllProvinces();
-      DataState<List<String>> result2 = await _socialRepository.getResponsibilities();
+      DataState<List<SocialResponsibility>> result2 = await _socialRepository.getResponsibilities();
 
       emit(SRShowProvinces(result1.data ?? []));
       await Future.delayed(const Duration(seconds: 1));
@@ -28,7 +29,7 @@ class SRBloc extends Bloc<SREvent, SRState> {
       emit(SRLoading());
 
       DataState<List<ProvinceAndCity>> result1 = await _placeRepository.getCities(event.provinceId);
-      DataState<List<String>> result2 = await _socialRepository.getResponsibilities(provinceId: event.provinceId.toString());
+      DataState<List<SocialResponsibility>> result2 = await _socialRepository.getResponsibilities(provinceId: event.provinceId.toString());
 
       emit(SRShowCities(result1.data ?? []));
       await Future.delayed(const Duration(seconds: 1));
@@ -38,7 +39,7 @@ class SRBloc extends Bloc<SREvent, SRState> {
     on<SRGetCityData>((event, emit) async {
       emit(SRLoading());
 
-      DataState<List<String>> result = await _socialRepository.getResponsibilities(cityId: event.cityId.toString());
+      DataState<List<SocialResponsibility>> result = await _socialRepository.getResponsibilities(cityId: event.cityId.toString());
 
       emit(SRShowResponsibilities(result.data ?? []));
     });

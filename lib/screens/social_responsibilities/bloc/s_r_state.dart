@@ -23,6 +23,6 @@ class SRShowCities extends SRState {
 }
 
 class SRShowResponsibilities extends SRState {
-  final List<String> data;
+  final List<SocialResponsibility> data;
   SRShowResponsibilities(this.data);
 }

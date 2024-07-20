@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/remote/model/province_city.dart';
+import 'package:insurance_map/data/remote/model/social_responsibility.dart';
 import 'package:insurance_map/screens/social_responsibilities/bloc/s_r_bloc.dart';
 
 class SocialResponsibilitiesScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class _SocialResponsibilitiesScreenState extends State<SocialResponsibilitiesScr
   int _selectedProvince = 0, _selectedCity = 0;
   BuildContext? _alertContext;
   final List<ProvinceAndCity> _provinces = [], _cities = [];
-  final List<String> _responsibilities = [];
+  final List<SocialResponsibility> _responsibilities = [];
 
   @override
   void initState() {
@@ -65,54 +66,48 @@ class _SocialResponsibilitiesScreenState extends State<SocialResponsibilitiesScr
               Row(
                 children: [
                   Expanded(
-                    child: ColoredBox(
-                      color: Colors.white,
-                      child: DropdownButton(
-                        value: _selectedProvince,
-                        items: [
-                          const DropdownMenuItem(
-                            value: 0,
-                            child: Text('انتخاب استان'),
-                          ),
-                          for (var p in _provinces)
-                            DropdownMenuItem(value: p.id, child: Text(p.name))
-                        ],
-                        onChanged: (value) {
-                          if (value! > 0) {
-                            BlocProvider.of<SRBloc>(context).add(SRGetProvinceData(value));
-                          }
-                          setState(() {
-                            _selectedProvince = value;
-                            _selectedCity = 0;
-                            _cities.clear();
-                          });
-                        },
-                      ),
+                    child: DropdownButton(
+                      value: _selectedProvince,
+                      items: [
+                        const DropdownMenuItem(
+                          value: 0,
+                          child: Text('انتخاب استان'),
+                        ),
+                        for (var p in _provinces)
+                          DropdownMenuItem(value: p.id, child: Text(p.name))
+                      ],
+                      onChanged: (value) {
+                        if (value! > 0) {
+                          BlocProvider.of<SRBloc>(context).add(SRGetProvinceData(value));
+                        }
+                        setState(() {
+                          _selectedProvince = value;
+                          _selectedCity = 0;
+                          _cities.clear();
+                        });
+                      },
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: ColoredBox(
-                      color: Colors.white,
-                      child: DropdownButton(
-                        value: _selectedCity,
-                        items: [
-                          const DropdownMenuItem(
-                            value: 0,
-                            child: Text('انتخاب شهر'),
-                          ),
-                          for (var c in _cities)
-                            DropdownMenuItem(value: c.id, child: Text(c.name))
-                        ],
-                        onChanged: (value) {
-                          if (value! > 0) {
-                            BlocProvider.of<SRBloc>(context).add(SRGetCityData(value));
-                          }
-                          setState(() {
-                            _selectedCity = value;
-                          });
-                        },
-                      ),
+                    child: DropdownButton(
+                      value: _selectedCity,
+                      items: [
+                        const DropdownMenuItem(
+                          value: 0,
+                          child: Text('انتخاب شهر'),
+                        ),
+                        for (var c in _cities)
+                          DropdownMenuItem(value: c.id, child: Text(c.name))
+                      ],
+                      onChanged: (value) {
+                        if (value! > 0) {
+                          BlocProvider.of<SRBloc>(context).add(SRGetCityData(value));
+                        }
+                        setState(() {
+                          _selectedCity = value;
+                        });
+                      },
                     ),
                   ),
                 ],
@@ -131,7 +126,7 @@ class _SocialResponsibilitiesScreenState extends State<SocialResponsibilitiesScr
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12)
                       ),
-                      child: Text(_responsibilities[index], style: const TextStyle(color: Colors.black)),
+                      child: Text('${_responsibilities[index].title} (${_responsibilities[index].province.name})', style: const TextStyle(color: Colors.black)),
                     );
                   },
                 ),
