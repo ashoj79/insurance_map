@@ -4,6 +4,8 @@ class VehiclesApiService{
   final Dio _dio;
   VehiclesApiService(this._dio);
 
+  Future<Response<dynamic>> getUserVehicles() async => await _dio.get('users/vehicles');
+
   Future<Response<dynamic>> getCarTypes() async => await _dio.get('cars/types');
 
   Future<Response<dynamic>> getCarBrands(int type) async => await _dio.get('cars/types/$type/brands');
@@ -37,5 +39,10 @@ class VehiclesApiService{
     FormData data = FormData.fromMap(map);
 
     return await _dio.post('users/vehicles', data: data);
+  }
+
+  Future<Response<dynamic>> saveRequest(String id, String description) async {
+    FormData data = FormData.fromMap({'user_vehicle_id': id, 'description': description});
+    return await _dio.post('insurances/vehicles/requests', data: data);
   }
 }

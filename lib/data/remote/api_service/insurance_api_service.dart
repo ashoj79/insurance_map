@@ -18,14 +18,14 @@ class InsuranceApiService {
       'phone_number': phone
     });
 
-    return await _dio.post('insurance/offices', data: data);
+    return await _dio.post('insurances/offices', data: data);
   }
 
-  Future<Response<dynamic>> getCompanies() async => await _dio.get('insurance/companies');
+  Future<Response<dynamic>> getCompanies() async => await _dio.get('insurances/companies');
 
   Future<Response<dynamic>> getOffices({required String company, String fromLat = '', String fromLng = '', String toLat = '', String toLng = ''}) async {
     String params = company.isNotEmpty ? 'filters[insuranceCompany][id][\$eq]=$company&' : '';
     params = 'filters[latitude][\$between][0]=$fromLat&filters[longitude][\$between][0]=$fromLng&filters[latitude][\$between][1]=$toLat&filters[longitude][\$between][1]=$toLng';
-    return await _dio.get('insurance/offices?$params');
+    return await _dio.get('insurances/offices?$params');
   }
 }

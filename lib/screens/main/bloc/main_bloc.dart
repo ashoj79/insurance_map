@@ -51,7 +51,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         return;
       }
 
-      AppNavigator.push(Routes.bankCardsRoute);
+      AppNavigator.push(Routes.cardsAndVehiclesRoute);
     });
   }
 }

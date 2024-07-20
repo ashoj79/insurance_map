@@ -33,6 +33,7 @@ class UserRepository {
         await _sharedPrefereceHelper.savePhone(response.data['user']['mobile']);
         await _sharedPrefereceHelper.saveAvatar(response.data['user']['avatar']);
         await _sharedPrefereceHelper.saveWallet(int.tryParse(response.data['user']['wallet']['balance']) ?? 0);
+        await _sharedPrefereceHelper.saveInviteCode(response.data['user']['invitation_codes'][0]['code']);
         response = await _apiService.getUserInfo();
       }
 
@@ -52,6 +53,7 @@ class UserRepository {
       await _sharedPrefereceHelper.savePhone(data.phone);
       await _sharedPrefereceHelper.saveAvatar('');
       await _sharedPrefereceHelper.saveWallet(0);
+      await _sharedPrefereceHelper.saveInviteCode(response.data['user']['invitation_codes'][0]['code']);
       return DataSucces();
     } on DioException catch (e) {
       return DataError(e.response?.data?.toString() ?? '');

@@ -5,13 +5,17 @@ import 'package:insurance_map/core/app_navigator.dart';
 import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
+import 'package:insurance_map/data/local/shared_preference_helper.dart';
 import 'package:insurance_map/data/remote/model/category.dart';
 import 'package:insurance_map/data/remote/model/insurance_company.dart';
 import 'package:insurance_map/data/remote/model/slider_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:insurance_map/screens/cards_and_vehicles/bloc/c_a_v_bloc.dart';
 import 'package:insurance_map/screens/companies/bloc/companies_bloc.dart';
 import 'package:insurance_map/screens/main/bloc/main_bloc.dart';
+import 'package:insurance_map/utils/di.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -74,10 +78,7 @@ class _MainScreenState extends State<MainScreen> {
           color: theme.primaryColor,
           padding: const EdgeInsets.only(top: 8),
           child: Container(
-            decoration: const BoxDecoration(
-              color: Color(0xFFF3F7FA),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24))
-            ),
+            decoration: const BoxDecoration(color: Color(0xFFF3F7FA), borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
             width: double.infinity,
             height: double.infinity,
             padding: const EdgeInsets.only(top: 32),
@@ -104,8 +105,7 @@ class _MainScreenState extends State<MainScreen> {
                               ),
                               items: sliders.map<Widget>((e) {
                                 return Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(16)),
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
                                     margin: const EdgeInsets.symmetric(horizontal: 24),
                                     clipBehavior: Clip.antiAlias,
                                     child: Image.network(
@@ -122,11 +122,7 @@ class _MainScreenState extends State<MainScreen> {
                                 child: AnimatedSmoothIndicator(
                                   activeIndex: sliderIndex,
                                   count: sliders.length,
-                                  effect: const ScrollingDotsEffect(
-                                      activeDotColor: Colors.white,
-                                      dotColor: Colors.grey,
-                                      dotHeight: 10,
-                                      dotWidth: 10),
+                                  effect: const ScrollingDotsEffect(activeDotColor: Colors.white, dotColor: Colors.grey, dotHeight: 10, dotWidth: 10),
                                 ),
                               ),
                             )
@@ -136,25 +132,13 @@ class _MainScreenState extends State<MainScreen> {
                       if (categories.isNotEmpty)
                         Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.grey[300]!,
-                                    spreadRadius: 1.3,
-                                    offset: const Offset(0, 0.8)
-                                )
-                              ]
-                          ),
+                              borderRadius: BorderRadius.circular(16), color: Colors.white, boxShadow: [BoxShadow(color: Colors.grey[300]!, spreadRadius: 1.3, offset: const Offset(0, 0.8))]),
                           width: double.infinity,
                           margin: const EdgeInsets.all(24),
                           child: Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                    horizontal: 16
-                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                                 child: Row(
                                   textDirection: TextDirection.rtl,
                                   children: [
@@ -186,12 +170,7 @@ class _MainScreenState extends State<MainScreen> {
                                 child: SizedBox(
                                   height: categories.length > 4 ? 200 : 100,
                                   child: GridView.builder(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 4,
-                                        crossAxisSpacing: 8,
-                                        mainAxisSpacing: 8,
-                                        childAspectRatio: itemWidth / itemHeight
-                                    ),
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, crossAxisSpacing: 8, mainAxisSpacing: 8, childAspectRatio: itemWidth / itemHeight),
                                     itemCount: categories.length,
                                     itemBuilder: (context, index) {
                                       return InkWell(
@@ -206,10 +185,7 @@ class _MainScreenState extends State<MainScreen> {
                                           children: [
                                             Expanded(
                                               child: Container(
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(color: Colors.grey[200]!, width: 1.5),
-                                                    borderRadius: BorderRadius.circular(12)
-                                                ),
+                                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!, width: 1.5), borderRadius: BorderRadius.circular(12)),
                                                 padding: const EdgeInsets.all(4),
                                                 clipBehavior: Clip.antiAlias,
                                                 child: Image.network(
@@ -217,7 +193,9 @@ class _MainScreenState extends State<MainScreen> {
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(height: 4,),
+                                            const SizedBox(
+                                              height: 4,
+                                            ),
                                             Text(
                                               categories[index].title,
                                               maxLines: 1,
@@ -233,29 +211,16 @@ class _MainScreenState extends State<MainScreen> {
                             ],
                           ),
                         ),
-                  
                       if (companies.isNotEmpty)
                         Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.grey[300]!,
-                                    spreadRadius: 1.3,
-                                    offset: const Offset(0, 0.8)
-                                )
-                              ]
-                          ),
+                              borderRadius: BorderRadius.circular(16), color: Colors.white, boxShadow: [BoxShadow(color: Colors.grey[300]!, spreadRadius: 1.3, offset: const Offset(0, 0.8))]),
                           width: double.infinity,
                           margin: const EdgeInsets.symmetric(horizontal: 24),
                           child: Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                    horizontal: 16
-                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                                 child: Row(
                                   textDirection: TextDirection.rtl,
                                   children: [
@@ -288,12 +253,7 @@ class _MainScreenState extends State<MainScreen> {
                                 child: SizedBox(
                                   height: companies.length > 4 ? 200 : 100,
                                   child: GridView.builder(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 4,
-                                        crossAxisSpacing: 8,
-                                        mainAxisSpacing: 8,
-                                        childAspectRatio: itemWidth / itemHeight
-                                    ),
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, crossAxisSpacing: 8, mainAxisSpacing: 8, childAspectRatio: itemWidth / itemHeight),
                                     itemCount: companies.length,
                                     itemBuilder: (context, index) {
                                       return InkWell(
@@ -304,10 +264,7 @@ class _MainScreenState extends State<MainScreen> {
                                           children: [
                                             Expanded(
                                               child: Container(
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(color: Colors.grey[200]!, width: 1.5),
-                                                    borderRadius: BorderRadius.circular(12)
-                                                ),
+                                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!, width: 1.5), borderRadius: BorderRadius.circular(12)),
                                                 padding: const EdgeInsets.all(4),
                                                 clipBehavior: Clip.antiAlias,
                                                 child: Image.network(
@@ -315,7 +272,9 @@ class _MainScreenState extends State<MainScreen> {
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(height: 4,),
+                                            const SizedBox(
+                                              height: 4,
+                                            ),
                                             Text(
                                               companies[index].name,
                                               maxLines: 1,
@@ -341,80 +300,98 @@ class _MainScreenState extends State<MainScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     color: Colors.white,
-                    child: Row(
-                      textDirection: TextDirection.ltr,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            AppNavigator.push(Routes.mapRoute, args: {'type': 'insurance', 'id': ''});
-                          },
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.purple,
-                                  borderRadius: BorderRadius.circular(4)
-                                ),
-                                padding: const EdgeInsets.all(4),
-                                child: const Icon(
-                                  Icons.apartment,
-                                  color: Colors.white,
+                    child: PreferenceBuilder<String>(
+                      preference: locator<SharedPreferenceHelper>().getName(),
+                      builder: (context, value) {
+                        return Row(
+                          textDirection: TextDirection.ltr,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                AppNavigator.push(Routes.SRRoute);
+                              },
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(color: Colors.purple, borderRadius: BorderRadius.circular(4)),
+                                    padding: const EdgeInsets.all(4),
+                                    child: const Icon(
+                                      Icons.volunteer_activism,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const Text('مسئولیت اجتماعی')
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                if (locator<SharedPreferenceHelper>().getToken() == ''){
+                                  showSnackBar(context, 'لطفا وارد اکانت خود شوید');
+                                } else {
+                                  AppNavigator.push(Routes.insuranceRequestRoute);
+                                }
+                              },
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(color: Colors.yellow[800], borderRadius: BorderRadius.circular(4)),
+                                    padding: const EdgeInsets.all(4),
+                                    child: const Icon(
+                                      Icons.credit_card,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const Text('صدور بیمه')
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                if (locator<SharedPreferenceHelper>().getToken() == ''){
+                                  showSnackBar(context, 'لطفا وارد اکانت خود شوید');
+                                } else {
+                                  BlocProvider.of<CAVBloc>(context).add(CAVGetData());
+                                  AppNavigator.push(Routes.cardsAndVehiclesRoute);
+                                }
+                              },
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(4)),
+                                    padding: const EdgeInsets.all(4),
+                                    child: const Icon(
+                                      Icons.payments_outlined,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const Text('کارت ها و وسایل نقلیه')
+                                ],
+                              ),
+                            ),
+                            if (value.isEmpty)
+                              InkWell(
+                                onTap: () {
+                                  BlocProvider.of<MainBloc>(context).add(MainGoToBankCards());
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(4)),
+                                      padding: const EdgeInsets.all(4),
+                                      child: const Icon(
+                                        Icons.account_circle,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const Text('ثبت نام')
+                                  ],
                                 ),
                               ),
-                              const Text(
-                                'بیمه ها'
-                              )
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            AppNavigator.push(Routes.mapRoute, args: {'type': 'vendor', 'id': ''});
-                          },
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.yellow[800],
-                                  borderRadius: BorderRadius.circular(4)
-                                ),
-                                padding: const EdgeInsets.all(4),
-                                child: const Icon(
-                                  Icons.store,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const Text(
-                                'فروشگاه ها'
-                              )
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            BlocProvider.of<MainBloc>(context).add(MainGoToBankCards());
-                          },
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(4)
-                                ),
-                                padding: const EdgeInsets.all(4),
-                                child: const Icon(
-                                  Icons.payments_outlined,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const Text(
-                                'کارت های بانکی'
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
+                          ],
+                        );
+                      },
                     ),
                   ),
                 )

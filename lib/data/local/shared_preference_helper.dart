@@ -20,4 +20,7 @@ class SharedPreferenceHelper {
 
   Future<void> saveWallet(int data) async => await _sharedPreferences.setInt('wallet', data);
   getWallet() => _sharedPreferences.getInt('wallet', defaultValue: 0);
+
+  Future<void> saveInviteCode(String data) async => await _sharedPreferences.setString('invite_code', data);
+  getInviteCode() => _sharedPreferences.getString('invite_code', defaultValue: '').getValue();
 }

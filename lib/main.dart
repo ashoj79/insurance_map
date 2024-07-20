@@ -7,12 +7,15 @@ import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/data/local/shared_preference_helper.dart';
 import 'package:insurance_map/data/local/signup_types.dart';
 import 'package:insurance_map/screens/bank_cards/bloc/bank_cards_bloc.dart';
+import 'package:insurance_map/screens/cards_and_vehicles/bloc/c_a_v_bloc.dart';
 import 'package:insurance_map/screens/categories/bloc/categories_bloc.dart';
 import 'package:insurance_map/screens/companies/bloc/companies_bloc.dart';
 import 'package:insurance_map/screens/content_view/bloc/content_view_bloc.dart';
+import 'package:insurance_map/screens/insurance_request/bloc/insurance_request_bloc.dart';
 import 'package:insurance_map/screens/main/bloc/main_bloc.dart';
 import 'package:insurance_map/screens/map_screen/bloc/map_bloc.dart';
 import 'package:insurance_map/screens/signup/bloc/signup_bloc.dart';
+import 'package:insurance_map/screens/social_responsibilities/bloc/s_r_bloc.dart';
 import 'package:insurance_map/screens/ticket/bloc/ticket_bloc.dart';
 import 'package:insurance_map/screens/vehicles_screen/bloc/vehicles_bloc.dart';
 import 'package:insurance_map/utils/di.dart';
@@ -35,6 +38,9 @@ Future<void> main() async {
       BlocProvider<MapBloc>(create: (context) => locator()),
       BlocProvider<ContentViewBloc>(create: (context) => locator()),
       BlocProvider<TicketBloc>(create: (context) => locator()),
+      BlocProvider<CAVBloc>(create: (context) => locator()),
+      BlocProvider<InsuranceRequestBloc>(create: (context) => locator()),
+      BlocProvider<SRBloc>(create: (context) => locator()),
     ],
     child: const MyApp(),
   ));
@@ -294,6 +300,26 @@ class MyApp extends StatelessWidget {
                                       ),
                                       SizedBox(width: 8),
                                       Text('معرفی بی‌مرزان', style: TextStyle(fontWeight: FontWeight.w600))
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  AppNavigator.push(Routes.inviteRoute);
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  child: Row(
+                                    textDirection: TextDirection.rtl,
+                                    children: [
+                                      Icon(
+                                        Icons.share,
+                                        color: Colors.grey,
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text('معرفی به دوستان', style: TextStyle(fontWeight: FontWeight.w600))
                                     ],
                                   ),
                                 ),

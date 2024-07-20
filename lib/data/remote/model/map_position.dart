@@ -6,7 +6,7 @@ class MapPositionData {
   MapPositionData.insurance(Map<String, dynamic> data)
       : _type = MapPositionType.Insurance,
         id = data['id'],
-        name = data['user']['name'] ?? '',
+        name = data['user'] != null ? data['user']['name'] ?? '' : '',
         address = data['address'] ?? '',
         officePhone = data['phone_number'] ?? '',
         mobile = '',
@@ -18,7 +18,7 @@ class MapPositionData {
   MapPositionData.vendor(Map<String, dynamic> data)
       : _type = MapPositionType.Vendor,
         id = data['id'],
-        name = data['user']['name'] ?? '',
+        name = data['user'] != null ? data['user']['name'] ?? '' : '',
         address = data['address'] ?? '',
         officePhone = data['phone_number'] ?? '',
         mobile = '',

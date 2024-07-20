@@ -8,4 +8,8 @@ class Routes {
   static const String mapRoute = '/map';
   static const String contentViewRoute = '/content_view';
   static const String ticketRoute = '/ticket';
+  static const String inviteRoute = '/invite';
+  static const String cardsAndVehiclesRoute = '/cards_and_vehicles';
+  static const String insuranceRequestRoute = '/insurance_request';
+  static const String SRRoute = '/sr';
 }

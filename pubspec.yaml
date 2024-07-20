@@ -54,6 +54,7 @@ dependencies:
   sms_autofill: ^2.4.0
   flutter_persian_calendar: ^0.0.2
   shamsi_date: ^1.0.2
+  geolocator: ^11.1.0
 
 dev_dependencies:
   flutter_test:

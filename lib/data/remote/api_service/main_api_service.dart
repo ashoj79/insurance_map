@@ -16,7 +16,7 @@ class MainApiService{
     if (parentId.isNotEmpty) {
       params.addAll({'parent_id': parentId});
     }
-    return await _dio.get('shop/categories', queryParameters: params);
+    return await _dio.get('shops/categories', queryParameters: params);
   }
 
   Future<Response<dynamic>> getCompanies({bool topCategories = false}) async {
@@ -25,7 +25,7 @@ class MainApiService{
       params.addAll({'top_categories': 1});
     }
 
-    return await _dio.get('insurance/companies', queryParameters: params);
+    return await _dio.get('insurances/companies', queryParameters: params);
   }
 
   Future<Response<dynamic>> getPageContent(String page) async => await _dio.get('pages/$page');

@@ -4,9 +4,9 @@ class ShopApiService {
   final Dio _dio;
   ShopApiService(this._dio);
 
-  Future<Response<dynamic>> getAllVendors() async => await _dio.get('shop/vendors');
+  Future<Response<dynamic>> getAllVendors() async => await _dio.get('shops/vendors');
 
-  Future<Response<dynamic>> getAllCategories() async => await _dio.get('shop/categories');
+  Future<Response<dynamic>> getAllCategories() async => await _dio.get('shops/categories');
   
   Future<Response<dynamic>> saveVendor(int provinceId, int cityId, String categoryId, String shopName, String address, String postalCode, String lat, String lng, String phone) async {
     FormData data = FormData.fromMap({
@@ -21,12 +21,12 @@ class ShopApiService {
       'phone_number': phone,
     });
 
-    return await _dio.post('shop/vendors', data: data);
+    return await _dio.post('shops/vendors', data: data);
   }
 
   Future<Response<dynamic>> getVendors({required String category, String fromLat = '', String fromLng = '', String toLat = '', String toLng = ''}) async {
     String params = category.isNotEmpty ? 'filters[shopCategory][id][\$eq]=$category&' : '';
     params = 'filters[latitude][\$between][0]=$fromLat&filters[longitude][\$between][0]=$fromLng&filters[latitude][\$between][1]=$toLat&filters[longitude][\$between][1]=$toLng';
-    return await _dio.get('shop/vendors?$params');
+    return await _dio.get('shops/vendors?$params');
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/remote/model/map_position.dart';
 import 'package:insurance_map/data/remote/model/province_city.dart';
@@ -32,6 +33,7 @@ class _MapScreenState extends State<MapScreen> {
 
   BuildContext? _alertContext;
   final Location _locationService = Location();
+  Position? userLocation;
 
   @override
   void initState() {
@@ -224,6 +226,15 @@ class _MapScreenState extends State<MapScreen> {
 
   _addMarker() {
     _markers.clear();
+
+    if (userLocation != null) {
+      _markers.add(Marker(point: LatLng(userLocation!.latitude!, userLocation!.longitude!), child: Container(
+        decoration: ShapeDecoration(shape: CircleBorder(), color: Colors.blue),
+        height: 18,
+        width: 18,
+      )));
+    }
+
     for (MapPositionData pos in _positions) {
       _markers.add(
         Marker(
@@ -276,26 +287,55 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _moveToUserLocation() async {
     bool serviceEnabled;
-    PermissionStatus permissionGranted;
+    LocationPermission permission;
 
-    serviceEnabled = await _locationService.serviceEnabled();
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       serviceEnabled = await _locationService.requestService();
       if (!serviceEnabled) {
+        _showAlertDialog('سرویس لوکیشن شما غیرفعال است. لطفا آن را فعال کرده و بر روی گزینه موقعیت پایین صفحه بزنید');
         return;
       }
     }
 
-    permissionGranted = await _locationService.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await _locationService.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        _showAlertDialog('اجازه دسترسی به موقعیت به برنامه داده نشد. لطفا مجوز لازم را به برنامه بدهید');
         return;
       }
     }
 
-    var currentLoc = await _locationService.getLocation();
+    if (permission == LocationPermission.deniedForever) {
+      _showAlertDialog('اجازه دسترسی به موقعیت برای همیشه از برنامه گرفته شده است لطفا از طریق تنظیمات مجوز لازم را بدهید');
+      return;
+    }
+
+    userLocation = await Geolocator.getCurrentPosition();
+
     _mapController.move(
-        LatLng(currentLoc.latitude!, currentLoc.longitude!), 12);
+        LatLng(userLocation!.latitude, userLocation!.longitude), 16);
+    _addMarker();
+  }
+
+  _showAlertDialog(String text) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            title: const Text(''),
+            content: Text(text),
+            actions: [
+              TextButton(onPressed: (){
+                Navigator.of(context).pop();
+              }, child: const Text('متوجه شدم')),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

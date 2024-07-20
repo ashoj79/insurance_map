@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/screens/bank_cards/bank_cards_screen.dart';
+import 'package:insurance_map/screens/cards_and_vehicles/cards_and_vehicles.dart';
 import 'package:insurance_map/screens/categories/categories_screen.dart';
 import 'package:insurance_map/screens/companies/companies_screen.dart';
 import 'package:insurance_map/screens/content_view/content_view.dart';
+import 'package:insurance_map/screens/insurance_request/insurance_request_screen.dart';
+import 'package:insurance_map/screens/invite/invite_screen.dart';
 import 'package:insurance_map/screens/main/main_screen.dart';
 import 'package:insurance_map/screens/map_screen/map_screen.dart';
 import 'package:insurance_map/screens/signup/signup_screen.dart';
+import 'package:insurance_map/screens/social_responsibilities/social_responsibilities_screen.dart';
 import 'package:insurance_map/screens/ticket/ticket.dart';
 import 'package:insurance_map/screens/vehicles_screen/vehicles_screen.dart';
 
@@ -86,6 +90,14 @@ class AppNavigator {
         return const ContentViewScreen();
       case Routes.ticketRoute:
         return const TicketScreen();
+      case Routes.inviteRoute:
+        return const InviteScreen();
+      case Routes.cardsAndVehiclesRoute:
+        return const CardsAndVehiclesScreen();
+      case Routes.insuranceRequestRoute:
+        return const InsuranceRequestScreen();
+      case Routes.SRRoute:
+        return const SocialResponsibilitiesScreen();
     }
     return null;
   }
