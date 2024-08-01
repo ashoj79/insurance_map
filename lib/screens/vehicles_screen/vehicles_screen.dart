@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_persian_calendar/flutter_persian_calendar.dart';
+import 'package:insurance_map/core/app_navigator.dart';
+import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/remote/model/vehicle_info.dart';
@@ -36,6 +38,9 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var args = ModalRoute.of(context)!.settings.arguments;
+    bool fromSignup = args != null ? args as bool : false;
+
     return BlocListener<VehiclesBloc, VehiclesState>(
         listener: (context, state) {
           if (state is VehiclesLoading) {
@@ -86,6 +91,14 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
               thirdPartyInsuranceDate.clear();
               carBodyInsuranceDate.clear();
             });
+          }
+
+          if (state is VehiclesSubmitted) {
+            if (fromSignup) {
+              AppNavigator.push(Routes.bankCardsRoute, popTo: Routes.vehiclesRoute);
+            } else {
+              AppNavigator.pop();
+            }
           }
         },
         child: Padding(

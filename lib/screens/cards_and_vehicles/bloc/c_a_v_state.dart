@@ -13,6 +13,7 @@ class CAVError extends CAVState {
 }
 
 class CAVShowData extends CAVState {
-  final List<String> cards, vehicles;
+  final Map<String, Bank> cards;
+  final List<String> vehicles;
   CAVShowData({required this.cards, required this.vehicles});
 }

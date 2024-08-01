@@ -15,6 +15,7 @@ import 'package:insurance_map/screens/cards_and_vehicles/bloc/c_a_v_bloc.dart';
 import 'package:insurance_map/screens/companies/bloc/companies_bloc.dart';
 import 'package:insurance_map/screens/main/bloc/main_bloc.dart';
 import 'package:insurance_map/utils/di.dart';
+import 'package:insurance_map/utils/location_service.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
@@ -42,6 +43,8 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
 
     BlocProvider.of<MainBloc>(context).add(MainGetData());
+
+    LocationService.getLocation();
   }
 
   @override
@@ -49,6 +52,7 @@ class _MainScreenState extends State<MainScreen> {
     var theme = Theme.of(context);
     Size screenSize = MediaQuery.of(context).size;
     itemWidth = (screenSize.width - 72) / 4;
+    double navItemsTextSize = screenSize.width < 350 ? 11 : 14;
 
     return BlocConsumer<MainBloc, MainState>(
       listener: (context, state) {
@@ -82,10 +86,13 @@ class _MainScreenState extends State<MainScreen> {
             decoration: const BoxDecoration(color: Color(0xFFF3F7FA), borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
             width: double.infinity,
             height: double.infinity,
-            padding: const EdgeInsets.only(top: 32),
             child: Stack(
               children: [
                 SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    top: 32,
+                    bottom: 120
+                  ),
                   child: Column(
                     children: [
                       PreferenceBuilder<String>(
@@ -170,7 +177,7 @@ class _MainScreenState extends State<MainScreen> {
                                   textDirection: TextDirection.rtl,
                                   children: [
                                     const Text(
-                                      'دسته بندی های منتخب',
+                                      'فروشگاه های طرف قرارداد',
                                       style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                                     ),
                                     const Expanded(child: SizedBox()),
@@ -252,7 +259,7 @@ class _MainScreenState extends State<MainScreen> {
                                   textDirection: TextDirection.rtl,
                                   children: [
                                     const Text(
-                                      'بیمه های منتخب',
+                                      'بیمه های طرف قرارداد',
                                       style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                                     ),
                                     const Expanded(child: SizedBox()),
@@ -348,7 +355,7 @@ class _MainScreenState extends State<MainScreen> {
                                       color: Colors.white,
                                     ),
                                   ),
-                                  const Text('مسئولیت اجتماعی')
+                                  Text('مسئولیت اجتماعی', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
                                 ],
                               ),
                             ),
@@ -370,7 +377,7 @@ class _MainScreenState extends State<MainScreen> {
                                       color: Colors.white,
                                     ),
                                   ),
-                                  const Text('صدور بیمه')
+                                  Text('صدور بیمه', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
                                 ],
                               ),
                             ),
@@ -393,7 +400,7 @@ class _MainScreenState extends State<MainScreen> {
                                       color: Colors.white,
                                     ),
                                   ),
-                                  const Text('کارت ها و وسایل نقلیه')
+                                  Text('کارت ها و وسایل نقلیه', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
                                 ],
                               ),
                             ),
@@ -412,7 +419,27 @@ class _MainScreenState extends State<MainScreen> {
                                         color: Colors.white,
                                       ),
                                     ),
-                                    const Text('ثبت نام')
+                                    Text('ثبت نام', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
+                                  ],
+                                ),
+                              ),
+
+                            if (value.isNotEmpty)
+                              InkWell(
+                                onTap: () {
+                                  AppNavigator.push(Routes.categoriesRoute, args: '');
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(4)),
+                                      padding: const EdgeInsets.all(4),
+                                      child: const Icon(
+                                        Icons.store,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text('فروشگاه ها', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
                                   ],
                                 ),
                               ),
@@ -468,7 +495,7 @@ class _MainScreenState extends State<MainScreen> {
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text('صاحب وسیله نقلیه'),
+                    child: Text('صاحبان وسیله نقلیه',),
                   ),
                 ),
               ],

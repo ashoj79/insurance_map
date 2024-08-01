@@ -174,6 +174,10 @@ class _PhoneForm extends StatelessWidget {
               child: TextFieldPinAutoFill(
                 onCodeChanged: (p0) {
                   codeController.text = p0;
+                  if (codeController.text.length == 6) {
+                    BlocProvider.of<SignupBloc>(context).add(SignupValidateOtp(
+                        phone: phoneController.text, otp: codeController.text, type: type));
+                  }
                 },
                 decoration: const InputDecoration(
                     labelText: 'کد تائید', counterText: ''),

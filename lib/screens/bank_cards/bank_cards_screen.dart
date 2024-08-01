@@ -9,8 +9,10 @@ import 'package:insurance_map/core/app_navigator.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/local/models/card_info.dart';
+import 'package:insurance_map/data/remote/model/bank.dart';
 import 'package:insurance_map/data/remote/model/card_payment_info.dart';
 import 'package:insurance_map/screens/bank_cards/bloc/bank_cards_bloc.dart';
+import 'package:insurance_map/utils/extensions_method.dart';
 import 'package:uni_links3/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,7 +33,7 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
       focusNode3 = FocusNode(),
       focusNode4 = FocusNode();
   final CardInfo info = CardInfo();
-  final List<String> savedCards = [];
+  final Map<String, Bank> savedCards = {};
 
   BuildContext? _alertContext;
 
@@ -82,7 +84,9 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
 
         if (state is BankCardSaved) {
           showSnackBar(context, 'کارت بانکی شما ذخیره شد. در صورت تمایل می توانید کارت دیگری ثبت کنید');
-          savedCards.add('${controller1.text} ${controller2.text} ${controller3.text} ${controller4.text}');
+          savedCards.addAll(
+            {'${controller1.text} ${controller2.text} ${controller3.text} ${controller4.text}': state.bank}
+          );
           controller1.clear();
           controller2.clear();
           controller3.clear();
@@ -100,28 +104,8 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
         if (state is BankCardsOpenGateway) _showAlertDialog(state.info);
 
         if (state is BankCardsShowNumbers) {
-          var numbers = state.numbers.map((e) {
-            String seg1 = '', seg2 = '', seg3 = '', seg4 = '';
-            for (var i = 0; i < 4; i++) {
-              for (var j = i; j < i + 4; j++) {
-                switch (i) {
-                  case 0:
-                    seg1 += e[j];
-                    break;
-                  case 1:
-                    seg2 += e[j];
-                    break;
-                  case 2:
-                    seg3 += e[j];
-                    break;
-                  case 3:
-                    seg4 += e[j];
-                    break;
-                }
-              }
-            } 
-
-            return '$seg1 $seg2 $seg3 $seg4';
+          var numbers = state.numbers.map((n, b) {
+            return MapEntry(n.formatCardNumber(), b);
           });
 
           setState(() {
@@ -294,12 +278,28 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
               alignment: Alignment.centerRight,
                 child: Text('کارت های ذخیره شده')),
             Expanded(child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               child: Column(
-                children: savedCards.map<Widget>((e) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(e, style: TextStyle(fontSize: 18), textDirection: TextDirection.ltr,),
-                )).toList(),
+                children: [
+                  for (var n in savedCards.keys) 
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8)
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Row(
+                        textDirection: TextDirection.ltr,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.network(savedCards[n]!.logo, height: 24,),
+                          const SizedBox(width: 16,),
+                          Text(n, textDirection: TextDirection.ltr, style: const TextStyle(fontSize: 18))
+                        ],
+                      ),
+                    )
+                ],
               ),
             )),
             Row(
@@ -316,7 +316,7 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
                         style: TextStyle(color: Colors.grey[700]),
                       )),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: OutlinedButton(
                       style: OutlinedButton.styleFrom(

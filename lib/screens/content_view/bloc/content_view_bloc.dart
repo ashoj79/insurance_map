@@ -11,8 +11,8 @@ class ContentViewBloc extends Bloc<ContentViewEvent, ContentViewState> {
   final MainRepository _repository;
 
   ContentViewBloc(this._repository) : super(ContentViewInitial()) {
-    on<ContentViewEvent>((event, emit) async {
-      emit(ContentViewShow(TempDB.getPage('about-us')));
+    on<ContentViewGet>((event, emit) async {
+      emit(ContentViewShow(TempDB.getPage(event.page)));
     });
   }
 }

@@ -10,5 +10,6 @@ ThemeData appTheme = ThemeData(
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(24)
     )
-  )
+  ),
+  fontFamily: "vazirmatn"
 );

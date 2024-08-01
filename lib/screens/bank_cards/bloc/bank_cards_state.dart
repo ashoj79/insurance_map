@@ -13,7 +13,7 @@ class BankCardsError extends BankCardsState {
 }
 
 class BankCardsShowNumbers extends BankCardsState {
-  final List<String> numbers;
+  final Map<String, Bank> numbers;
   BankCardsShowNumbers(this.numbers);
 }
 
@@ -22,7 +22,10 @@ class BankCardsUpdateCard extends BankCardsState {
   BankCardsUpdateCard({this.bank});
 }
 
-class BankCardSaved extends BankCardsState {}
+class BankCardSaved extends BankCardsState {
+  final Bank bank;
+  BankCardSaved(this.bank);
+}
 
 class BankCardsOpenGateway extends BankCardsState {
   final CardPaymentInfo info;

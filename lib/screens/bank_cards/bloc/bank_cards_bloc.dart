@@ -14,6 +14,7 @@ class BankCardsBloc extends Bloc<BankCardsEvent, BankCardsState> {
   final UserRepository _userRepository;
 
   final List<Bank> _banks = [];
+  final List<String> _savedCarts = [];
 
   BankCardsBloc(this._repository, this._userRepository) : super(BankCardsInitial()) {
     on<BankCardsGetData>((event, emit) async {
@@ -26,10 +27,20 @@ class BankCardsBloc extends Bloc<BankCardsEvent, BankCardsState> {
 
       _banks.clear();
       _banks.addAll(result.data!);
+      _savedCarts.clear();
 
       DataState<List<String>> result1 = await _repository.getUserCards();
 
-      emit(BankCardsShowNumbers(result1.data ?? []));
+      Map<String, Bank> data = {};
+      if (result1 is DataSucces) {
+        for (String num in result1.data!){
+          int bankIndex = _banks.indexWhere((element) => element.prefixs.contains(num.substring(0, 6)));
+          data.addAll({num: _banks[bankIndex]});
+          _savedCarts.add(num);
+        }
+      }
+
+      emit(BankCardsShowNumbers(data));
     });
 
     on<BankCardCheckNumber>((event, emit) {
@@ -51,11 +62,20 @@ class BankCardsBloc extends Bloc<BankCardsEvent, BankCardsState> {
         return;
       }
 
+      if (_savedCarts.contains(event.cardNumber)) {
+        emit(BankCardsError('شماره کارت قبلا ثبت شده است'));
+        return;
+      }
+
       emit(BankCardsLoading());
 
       DataState<void> result = await _repository.addCard(event.cardNumber);
 
-      emit(result is DataError ? BankCardsError(result.errorMessage!) : BankCardSaved());
+      if (result is DataSucces) _savedCarts.add(event.cardNumber);
+
+      int bankIndex = _banks.indexWhere((element) => element.prefixs.contains(event.cardNumber.substring(0, 6)));
+
+      emit(result is DataError ? BankCardsError(result.errorMessage!) : BankCardSaved(_banks[bankIndex]));
     });
 
     on<BankCardsSubmit>((event, emit) async {

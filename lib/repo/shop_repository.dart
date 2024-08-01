@@ -34,7 +34,7 @@ class ShopRepository {
   Future<DataState<List<MapPositionData>>> getVendor(String category, String fromLat, String fromLng, String toLat, String toLng) async {
     try {
       var response = await _apiService.getVendors(category: category, fromLat: fromLat, fromLng: fromLng, toLat: toLat, toLng: toLng);
-      List<MapPositionData> data = List.generate(response.data['data'].length, (index) => MapPositionData.insurance(response.data['data'][index]));
+      List<MapPositionData> data = List.generate(response.data['data'].length, (index) => MapPositionData.vendor(response.data['data'][index]));
       return DataSucces(data);
     } on DioException catch (e) {
       return DataError(e.response?.data?.toString() ?? '');

@@ -11,6 +11,7 @@ import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/remote/model/map_position.dart';
 import 'package:insurance_map/data/remote/model/province_city.dart';
 import 'package:insurance_map/screens/map_screen/bloc/map_bloc.dart';
+import 'package:insurance_map/utils/location_service.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 
@@ -38,10 +39,11 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    _moveToUserLocation();
+    _positions.clear();
     BlocProvider.of<MapBloc>(context).add(MapGetProvinces());
 
     Timer(const Duration(seconds: 1), () {
+      _moveToUserLocation();
       _fetchPositions();
     });
 
@@ -228,8 +230,8 @@ class _MapScreenState extends State<MapScreen> {
     _markers.clear();
 
     if (userLocation != null) {
-      _markers.add(Marker(point: LatLng(userLocation!.latitude!, userLocation!.longitude!), child: Container(
-        decoration: ShapeDecoration(shape: CircleBorder(), color: Colors.blue),
+      _markers.add(Marker(key: const ValueKey("self"), point: LatLng(userLocation!.latitude!, userLocation!.longitude!), child: Container(
+        decoration: const ShapeDecoration(shape: CircleBorder(), color: Colors.blue),
         height: 18,
         width: 18,
       )));
@@ -240,14 +242,19 @@ class _MapScreenState extends State<MapScreen> {
         Marker(
           key: ValueKey(pos.id),
           point: LatLng(pos.lat, pos.lng),
-          child: GestureDetector(
+          child: InkWell(
               onTap: () {
                 _popupController.togglePopup(_markers[_markers.indexWhere((element) => (element.key as ValueKey).value == pos.id)]);
               },
-              child: const Icon(
-                Icons.location_on,
-                color: Colors.red,
-                size: 48,
+              child: Container(
+                height: 80,
+                width: 80,
+                child: Image.asset(
+                  "assets/img/marker.png",
+                  height: double.infinity,
+                  width: double.infinity,
+                  fit: BoxFit.fill,
+                ),
               )),
         ),
       );
@@ -286,6 +293,14 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<void> _moveToUserLocation() async {
+    if (LocationService.location != null) {
+      userLocation = LocationService.location!;
+      _mapController.move(
+          LatLng(userLocation!.latitude, userLocation!.longitude), 16);
+      _addMarker();
+      return;
+    }
+
     bool serviceEnabled;
     LocationPermission permission;
 

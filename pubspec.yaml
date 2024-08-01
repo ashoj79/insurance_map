@@ -55,6 +55,7 @@ dependencies:
   flutter_persian_calendar: ^0.0.2
   shamsi_date: ^1.0.2
   geolocator: ^11.1.0
+  social_share: ^2.3.1
 
 dev_dependencies:
   flutter_test:
@@ -94,12 +95,16 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+  fonts:
+    - family: vazirmatn
+      fonts:
+        - asset: assets/font/vazirmatn-regular.ttf
+        - asset: assets/font/vazirmatn-light.ttf
+          weight: 300
+        - asset: assets/font/vazirmatn-semibold.ttf
+          weight: 600
+        - asset: assets/font/vazirmatn-bold.ttf
+          weight: 700
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

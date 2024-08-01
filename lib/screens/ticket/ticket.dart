@@ -84,9 +84,12 @@ class _TicketScreenState extends State<TicketScreen> {
                       controller: _messageController,
                       decoration: const InputDecoration(
                         labelText: 'متن پیام‌',
+
                       ),
                       maxLines: null,
                       keyboardType: TextInputType.multiline,
+                      minLines: 6,
+                      textAlignVertical: TextAlignVertical.top,
                     ),
                   ),
                 ],

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/data/local/shared_preference_helper.dart';
+import 'package:insurance_map/data/local/temp_db.dart';
 import 'package:insurance_map/utils/di.dart';
+import 'package:social_share/social_share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class InviteScreen extends StatelessWidget {
   const InviteScreen({super.key});
@@ -73,6 +76,9 @@ class InviteScreen extends StatelessWidget {
             textDirection: TextDirection.ltr,
             children: [
               GestureDetector(
+                onTap: () {
+                  SocialShare.shareTelegram(_getMessage());
+                },
                 child: Column(
                   children: [
                     Container(
@@ -95,6 +101,9 @@ class InviteScreen extends StatelessWidget {
                 ),
               ),
               GestureDetector(
+                onTap: () {
+                  SocialShare.shareSms(_getMessage());
+                },
                 child: Column(
                   children: [
                     Container(
@@ -117,6 +126,9 @@ class InviteScreen extends StatelessWidget {
                 ),
               ),
               GestureDetector(
+                onTap: () {
+                  shareViaEmail();
+                },
                 child: Column(
                   children: [
                     Container(
@@ -139,6 +151,9 @@ class InviteScreen extends StatelessWidget {
                 ),
               ),
               GestureDetector(
+                onTap: () {
+                  SocialShare.shareOptions(_getMessage());
+                },
                 child: Column(
                   children: [
                     Container(
@@ -166,5 +181,21 @@ class InviteScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+  
+  String _getMessage() {
+    String text = TempDB.getMessage('in-app-text-share-app'),
+        code = locator<SharedPreferenceHelper>().getInviteCode();
+    text = text.replaceAll(':code', code);
+    return text;
+  }
+
+  void shareViaEmail() async {
+    String subject = 'معرفی اپلیکیشن بیمرزان', body = _getMessage();
+    final Uri uri = Uri(
+      scheme: 'mailto',
+      query: 'subject=$subject&body=$body'
+    );
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 }

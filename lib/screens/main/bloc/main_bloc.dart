@@ -40,6 +40,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
       await _repository.getMessages();
       await _repository.getPageContent('about-us');
+      await _repository.getPageContent('terms');
       await _userRepository.updateWalletBalance();
 
       emit(MainDataReceived(sliders: sliders.data!, categories: categories.data!, companies: companies.data!));

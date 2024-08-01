@@ -11,6 +11,7 @@ part 'vehicles_state.dart';
 
 class VehiclesBloc extends Bloc<VehiclesEvent, VehiclesState> {
   final VehiclesRepository _repository;
+  List<String> _savedLicenses = [];
 
   VehiclesBloc(this._repository) : super(VehiclesInitial()) {
     on<VehiclesGetTypes>((event, emit) async {
@@ -20,6 +21,8 @@ class VehiclesBloc extends Bloc<VehiclesEvent, VehiclesState> {
         emit(VehiclesError(result.errorMessage!));
         return;
       }
+
+      _savedLicenses = (await _repository.getVehiclesLicense()).data ?? [];
       
       emit(VehiclesUpdateTypes(types: result.data!));
     });
@@ -67,6 +70,11 @@ class VehiclesBloc extends Bloc<VehiclesEvent, VehiclesState> {
         emit(VehiclesError('تاریخ اتمام بیمه بدنه را وارد کنید'));
         return;
       }
+
+      if (_savedLicenses.contains(license)) {
+        emit(VehiclesError('این پلاک قبلا ثبت شده است'));
+        return;
+      }
       
       DataState<void> result = await _repository.saveVehicle(
         type,
@@ -83,8 +91,6 @@ class VehiclesBloc extends Bloc<VehiclesEvent, VehiclesState> {
       emit(result is DataError ? VehiclesError(result.errorMessage!) : VehiclesSaved());
     });
 
-    on<VehiclesSubmit>((event, emit) {
-      AppNavigator.push(Routes.bankCardsRoute, popTo: Routes.vehiclesRoute);
-    });
+    on<VehiclesSubmit>((event, emit) => emit(VehiclesSubmitted()));
   }
 }

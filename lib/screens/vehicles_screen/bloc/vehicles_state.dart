@@ -28,3 +28,5 @@ class VehiclesUpdateModels extends VehiclesState {
 }
 
 class VehiclesSaved extends VehiclesState {}
+
+class VehiclesSubmitted extends VehiclesState {}
