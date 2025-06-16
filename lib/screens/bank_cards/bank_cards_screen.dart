@@ -13,7 +13,7 @@ import 'package:insurance_map/data/remote/model/bank.dart';
 import 'package:insurance_map/data/remote/model/card_payment_info.dart';
 import 'package:insurance_map/screens/bank_cards/bloc/bank_cards_bloc.dart';
 import 'package:insurance_map/utils/extensions_method.dart';
-import 'package:uni_links3/uni_links.dart';
+import 'package:app_links/app_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BankCardsScreen extends StatefulWidget {
@@ -37,7 +37,8 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
 
   BuildContext? _alertContext;
 
-  late StreamSubscription _linkSub;
+  AppLinks? _appLinks;
+  StreamSubscription<Uri>? _linkSub;
 
   @override
   void initState() {
@@ -45,16 +46,19 @@ class _BankCardsScreenState extends State<BankCardsScreen> {
 
     BlocProvider.of<BankCardsBloc>(context).add(BankCardsGetData());
 
-    _linkSub = linkStream.listen((event) {
-      // AppNavigator.pop();
-      BlocProvider.of<BankCardsBloc>(context).add(BankCardsSubmit());
+    _appLinks = AppLinks();
+    _linkSub = _appLinks!.uriLinkStream.listen((Uri? uri) {
+      if (uri != null) {
+        // AppNavigator.pop();
+        BlocProvider.of<BankCardsBloc>(context).add(BankCardsSubmit());
+      }
     });
   }
 
   @override
   void dispose() {
+    _linkSub?.cancel();
     super.dispose();
-    _linkSub.cancel();
   }
 
   @override

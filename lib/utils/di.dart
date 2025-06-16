@@ -25,8 +25,10 @@ import 'package:insurance_map/screens/content_view/bloc/content_view_bloc.dart';
 import 'package:insurance_map/screens/insurance_request/bloc/insurance_request_bloc.dart';
 import 'package:insurance_map/screens/main/bloc/main_bloc.dart';
 import 'package:insurance_map/screens/map_screen/bloc/map_bloc.dart';
+import 'package:insurance_map/screens/shop_details/bloc/shop_details_bloc.dart';
 import 'package:insurance_map/screens/signup/bloc/signup_bloc.dart';
 import 'package:insurance_map/screens/social_responsibilities/bloc/s_r_bloc.dart';
+import 'package:insurance_map/screens/sr_details/bloc/sr_details_bloc.dart';
 import 'package:insurance_map/screens/ticket/bloc/ticket_bloc.dart';
 import 'package:insurance_map/screens/vehicles_screen/bloc/vehicles_bloc.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
@@ -72,6 +74,8 @@ Future<void> setup() async {
   locator.registerSingleton(ContentViewBloc(locator()));
   locator.registerSingleton(TicketBloc(locator()));
   locator.registerSingleton(CAVBloc(locator(), locator()));
-  locator.registerSingleton(InsuranceRequestBloc(locator()));
+  locator.registerSingleton(InsuranceRequestBloc(locator(), locator()));
   locator.registerSingleton(SRBloc(locator(), locator()));
+  locator.registerSingleton(SrDetailsBloc(locator()));
+  locator.registerSingleton(ShopDetailsBloc(locator(), locator()));
 }

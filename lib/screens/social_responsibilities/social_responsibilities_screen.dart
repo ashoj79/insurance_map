@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:insurance_map/core/app_navigator.dart';
+import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/remote/model/province_city.dart';
 import 'package:insurance_map/data/remote/model/social_responsibility.dart';
 import 'package:insurance_map/screens/social_responsibilities/bloc/s_r_bloc.dart';
+import 'package:insurance_map/screens/sr_details/bloc/sr_details_bloc.dart';
 
 class SocialResponsibilitiesScreen extends StatefulWidget {
   const SocialResponsibilitiesScreen({super.key});
@@ -119,14 +122,20 @@ class _SocialResponsibilitiesScreenState extends State<SocialResponsibilitiesScr
                 child: ListView.builder(
                   itemCount: _responsibilities.length,
                   itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12)
+                    return GestureDetector(
+                      onTap: () {
+                        BlocProvider.of<SrDetailsBloc>(context).add(SrDetailsGetProjects(_responsibilities[index].id));
+                        AppNavigator.push(Routes.SRDetailsRoute, args: _responsibilities[index]);
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12)
+                        ),
+                        child: Text('${_responsibilities[index].title} (${_responsibilities[index].province.name})', style: const TextStyle(color: Colors.black)),
                       ),
-                      child: Text('${_responsibilities[index].title} (${_responsibilities[index].province.name})', style: const TextStyle(color: Colors.black)),
                     );
                   },
                 ),

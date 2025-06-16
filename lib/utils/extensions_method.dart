@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 extension StingHelpers on String {
   Widget toLicenseWidget([double textSize = 16]) {
-    if (int.tryParse(this) != null) return Text(this);
+    if (int.tryParse(this) != null) return Text(toPersian(), textAlign: TextAlign.center);
 
     String part1 = '', part2 = '', part3 = '', part4 = '';
     part1 = this[0] + this[1];
@@ -15,13 +15,13 @@ extension StingHelpers on String {
       textDirection: TextDirection.ltr,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(part1, style: TextStyle(fontSize: textSize)),
+        Text(part1.toPersian(), style: TextStyle(fontSize: textSize)),
         const SizedBox(width: 4),
-        Text(part2, style: TextStyle(fontSize: textSize)),
+        Text(part2.toPersian(), style: TextStyle(fontSize: textSize)),
         const SizedBox(width: 4),
-        Text(part3, style: TextStyle(fontSize: textSize)),
+        Text(part3.toPersian(), style: TextStyle(fontSize: textSize)),
         const SizedBox(width: 4),
-        Text(part4, style: TextStyle(fontSize: textSize))
+        Text(part4.toPersian(), style: TextStyle(fontSize: textSize))
       ],
     );
   }
@@ -48,5 +48,11 @@ extension StingHelpers on String {
     }
 
     return '$seg1 $seg2 $seg3 $seg4';
+  }
+  
+  String toPersian() {
+    return replaceAll('0', '۰').replaceAll('1', '۱').replaceAll('2', '۲').replaceAll('3', '۳').replaceAll('4', '۴').replaceAll('5', '۵').replaceAll('6', '۶').replaceAll('7', '۷')
+        .replaceAll('8', '۸')
+        .replaceAll('9', '۹');
   }
 }

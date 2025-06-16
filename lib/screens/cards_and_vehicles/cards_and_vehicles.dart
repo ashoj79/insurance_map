@@ -218,7 +218,7 @@ class _CarLicense extends StatelessWidget {
     String l = license.replaceAll(part1 + part2, '');
     part3 = l[0] + l[1] + l[2];
     part4 = l[3] + l[4];
-    return [part1, part2, part3, part4];
+    return [part1.toPersian(), part2.toPersian(), part3.toPersian(), part4.toPersian()];
   }
 }
 
@@ -285,6 +285,6 @@ class _MotorLicense extends StatelessWidget {
     String part1 = '', part2 = '';
     part1 = license[0] + license[1] + license[2];
     part2 = license.replaceAll(part1, '');
-    return [part1, part2];
+    return [part1.toPersian(), part2.toPersian()];
   }
 }

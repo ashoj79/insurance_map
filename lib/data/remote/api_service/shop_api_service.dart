@@ -29,4 +29,9 @@ class ShopApiService {
     params += 'filters[latitude][\$between][0]=$fromLat&filters[longitude][\$between][0]=$fromLng&filters[latitude][\$between][1]=$toLat&filters[longitude][\$between][1]=$toLng';
     return await _dio.get('shops/vendors?$params');
   }
+
+  Future<Response<dynamic>> createCashRequest(int amount, String vendorId) async {
+    var data = FormData.fromMap({'amount': amount, 'vendor_id': vendorId});
+    return await _dio.post('shops/cash-back-requests', data: data);
+  }
 }

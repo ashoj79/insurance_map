@@ -4,7 +4,7 @@ import 'package:insurance_map/core/widget/show_snackbar.dart';
 import 'package:insurance_map/data/local/shared_preference_helper.dart';
 import 'package:insurance_map/data/local/temp_db.dart';
 import 'package:insurance_map/utils/di.dart';
-import 'package:social_share/social_share.dart';
+// import 'package:social_share/social_share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class InviteScreen extends StatelessWidget {
@@ -77,7 +77,7 @@ class InviteScreen extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  SocialShare.shareTelegram(_getMessage());
+                  // SocialShare.shareTelegram(_getMessage());
                 },
                 child: Column(
                   children: [
@@ -102,7 +102,7 @@ class InviteScreen extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  SocialShare.shareSms(_getMessage());
+                  // SocialShare.shareSms(_getMessage());
                 },
                 child: Column(
                   children: [
@@ -152,7 +152,7 @@ class InviteScreen extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  SocialShare.shareOptions(_getMessage());
+                  // SocialShare.shareOptions(_getMessage());
                 },
                 child: Column(
                   children: [

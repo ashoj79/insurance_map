@@ -12,7 +12,8 @@ class InsuranceRequestError extends InsuranceRequestState {
   InsuranceRequestError(this.message);
 }
 
-class InsuranceRequestShowVehicles extends InsuranceRequestState {
+class InsuranceRequestShowData extends InsuranceRequestState {
   final List<Vehicle> vehicles;
-  InsuranceRequestShowVehicles(this.vehicles);
+  final List<InsuranceCompany> companies;
+  InsuranceRequestShowData(this.vehicles, this.companies);
 }

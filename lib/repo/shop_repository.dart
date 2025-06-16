@@ -42,4 +42,15 @@ class ShopRepository {
       return DataError('مشکلی رخ داد لطفا مجدد امتحان کنید');
     }
   }
+
+  Future<DataState<void>> createCashRequest(int amount, String vendorId) async {
+    try {
+      await _apiService.createCashRequest(amount, vendorId);
+      return DataSucces();
+    } on DioException catch (e) {
+      return DataError(e.response?.data?.toString() ?? '');
+    } catch (_) {
+      return DataError('مشکلی رخ داد لطفا مجدد امتحان کنید');
+    }
+  }
 }

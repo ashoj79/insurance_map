@@ -7,6 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:insurance_map/core/app_navigator.dart';
+import 'package:insurance_map/core/routes.dart';
 import 'package:insurance_map/core/widget/wait_alert_dialog.dart';
 import 'package:insurance_map/data/remote/model/map_position.dart';
 import 'package:insurance_map/data/remote/model/province_city.dart';
@@ -244,11 +246,19 @@ class _MapScreenState extends State<MapScreen> {
           point: LatLng(pos.lat, pos.lng),
           child: InkWell(
               onTap: () {
-                _popupController.togglePopup(_markers[_markers.indexWhere((element) => (element.key as ValueKey).value == pos.id)]);
+                var p = _positions[_positions.indexWhere((element) => element.id == pos.id)];
+                if (p.type == MapPositionType.Insurance) {
+                  _popupController.togglePopup(_markers[_markers.indexWhere((element) => (element.key as ValueKey).value == pos.id)]);
+                } else {
+                  AppNavigator.push(Routes.ShopDetailsRoute, args: {
+                    'data': _positions[_positions.indexWhere((element) => element.id == pos.id)].getData(),
+                    'id': pos.id
+                  });
+                }
               },
-              child: Container(
-                height: 80,
-                width: 80,
+              child: SizedBox(
+                height: 100,
+                width: 100,
                 child: Image.asset(
                   "assets/img/marker.png",
                   height: double.infinity,

@@ -33,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
 
   BuildContext? _alertContext;
 
-  final CarouselController _controller = CarouselController();
+  final CarouselSliderController _controller = CarouselSliderController();
 
   int sliderIndex = 0;
   double itemWidth = 0, itemHeight = 80;
@@ -52,7 +52,7 @@ class _MainScreenState extends State<MainScreen> {
     var theme = Theme.of(context);
     Size screenSize = MediaQuery.of(context).size;
     itemWidth = (screenSize.width - 72) / 4;
-    double navItemsTextSize = screenSize.width < 350 ? 11 : 14;
+    double navItemsTextSize = screenSize.width < 350 ? 10 : 13;
 
     return BlocConsumer<MainBloc, MainState>(
       listener: (context, state) {
@@ -81,7 +81,6 @@ class _MainScreenState extends State<MainScreen> {
           width: double.infinity,
           height: double.infinity,
           color: theme.primaryColor,
-          padding: const EdgeInsets.only(top: 8),
           child: Container(
             decoration: const BoxDecoration(color: Color(0xFFF3F7FA), borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
             width: double.infinity,
@@ -350,9 +349,11 @@ class _MainScreenState extends State<MainScreen> {
                                   Container(
                                     decoration: BoxDecoration(color: Colors.purple, borderRadius: BorderRadius.circular(4)),
                                     padding: const EdgeInsets.all(4),
+                                    margin: const EdgeInsets.only(bottom: 4),
                                     child: const Icon(
                                       Icons.volunteer_activism,
                                       color: Colors.white,
+                                      size: 32,
                                     ),
                                   ),
                                   Text('مسئولیت اجتماعی', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
@@ -372,9 +373,11 @@ class _MainScreenState extends State<MainScreen> {
                                   Container(
                                     decoration: BoxDecoration(color: Colors.yellow[800], borderRadius: BorderRadius.circular(4)),
                                     padding: const EdgeInsets.all(4),
+                                    margin: const EdgeInsets.only(bottom: 4),
                                     child: const Icon(
                                       Icons.credit_card,
                                       color: Colors.white,
+                                      size: 32,
                                     ),
                                   ),
                                   Text('صدور بیمه', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
@@ -395,9 +398,11 @@ class _MainScreenState extends State<MainScreen> {
                                   Container(
                                     decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(4)),
                                     padding: const EdgeInsets.all(4),
+                                    margin: const EdgeInsets.only(bottom: 4),
                                     child: const Icon(
                                       Icons.payments_outlined,
                                       color: Colors.white,
+                                      size: 32,
                                     ),
                                   ),
                                   Text('کارت ها و وسایل نقلیه', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
@@ -414,9 +419,11 @@ class _MainScreenState extends State<MainScreen> {
                                     Container(
                                       decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(4)),
                                       padding: const EdgeInsets.all(4),
+                                      margin: const EdgeInsets.only(bottom: 4),
                                       child: const Icon(
                                         Icons.account_circle,
                                         color: Colors.white,
+                                        size: 32,
                                       ),
                                     ),
                                     Text('ثبت نام', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
@@ -434,9 +441,11 @@ class _MainScreenState extends State<MainScreen> {
                                     Container(
                                       decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(4)),
                                       padding: const EdgeInsets.all(4),
+                                      margin: const EdgeInsets.only(bottom: 4),
                                       child: const Icon(
                                         Icons.store,
                                         color: Colors.white,
+                                        size: 32,
                                       ),
                                     ),
                                     Text('فروشگاه ها', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))

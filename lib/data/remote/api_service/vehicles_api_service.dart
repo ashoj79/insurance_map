@@ -41,8 +41,8 @@ class VehiclesApiService{
     return await _dio.post('users/vehicles', data: data);
   }
 
-  Future<Response<dynamic>> saveRequest(String id, String description) async {
-    FormData data = FormData.fromMap({'user_vehicle_id': id, 'description': description});
+  Future<Response<dynamic>> saveRequest(String id, String description, String companyId, String type, String date) async {
+    FormData data = FormData.fromMap({'user_vehicle_id': id, 'description': description, 'insurance_company_id': companyId, 'insurance_type': type, 'insurance_due_date': date});
     return await _dio.post('insurances/vehicles/requests', data: data);
   }
 }

@@ -400,16 +400,16 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
     Jalali? picked;
 
     return PersianCalendar(
-      calendarHeight: 376,
-      calendarWidth: 360,
-      onDateChanged: (newDate) {
-        picked = newDate;
-      },
-      onConfirmButtonPressed: () {
-        Navigator.pop(context);
-        if (picked == null) return;
+        height: 376,
+        onDateChanged: (newDate) {
+          picked = newDate;
+        },
+        confirmButton: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+            if (picked == null) return;
 
-        String date =
+            String date =
             '${picked?.year}/${picked?.month.toString().padLeft(2, '0')}/${picked?.day.toString().padLeft(2, '0')}';
 
         if (isThirdParty) {
@@ -417,11 +417,13 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
         } else {
           carBodyInsuranceDate.text = date;
         }
-      },
-      calendarStartDate: Jalali(1300),
-      calendarEndDate: Jalali.max,
-      calendarTheme: PersianCalendarTheme(textStyle: const TextStyle(), backgroundColor: Colors.white),
-      selectedDate: Jalali.now()
+          },
+          child: const Text('تائید'),
+        ),
+        startingDate: Jalali(1300),
+        endingDate: Jalali.max,
+        backgroundColor: Colors.white,
+        initialDate: Jalali.now()
     );
   }
 }

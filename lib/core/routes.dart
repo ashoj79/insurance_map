@@ -12,4 +12,7 @@ class Routes {
   static const String cardsAndVehiclesRoute = '/cards_and_vehicles';
   static const String insuranceRequestRoute = '/insurance_request';
   static const String SRRoute = '/sr';
+  static const String SRDetailsRoute = '/sr_details';
+  static const String ProjectsDetailsRoute = '/project_details';
+  static const String ShopDetailsRoute = '/shop_details';
 }

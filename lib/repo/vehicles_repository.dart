@@ -79,9 +79,9 @@ class VehiclesRepository {
     }
   }
 
-  Future<DataState<void>> saveRequest(String id, String description) async {
+  Future<DataState<void>> saveRequest(String id, String description, String companyId, String type, String date) async {
     try{
-      await _apiService.saveRequest(id, description);
+      await _apiService.saveRequest(id, description, companyId, type, date);
       return DataSucces();
     } on DioException catch (e) {
       return DataError(e.response?.data?.toString() ?? '');

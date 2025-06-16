@@ -14,4 +14,8 @@ class SocialApiService {
 
     return await _dio.get('social-responsibilities$filter');
   }
+  
+  Future<Response<dynamic>> getProjects(String id) async {
+    return await _dio.get('social-responsibilities/projects?filters[socialResponsibility][id][\$eq]=$id');
+  }
 }

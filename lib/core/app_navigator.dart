@@ -9,8 +9,11 @@ import 'package:insurance_map/screens/insurance_request/insurance_request_screen
 import 'package:insurance_map/screens/invite/invite_screen.dart';
 import 'package:insurance_map/screens/main/main_screen.dart';
 import 'package:insurance_map/screens/map_screen/map_screen.dart';
+import 'package:insurance_map/screens/project_details/project_details_screen.dart';
+import 'package:insurance_map/screens/shop_details/ShopDetailsScreen.dart';
 import 'package:insurance_map/screens/signup/signup_screen.dart';
 import 'package:insurance_map/screens/social_responsibilities/social_responsibilities_screen.dart';
+import 'package:insurance_map/screens/sr_details/sr_details_screen.dart';
 import 'package:insurance_map/screens/ticket/ticket.dart';
 import 'package:insurance_map/screens/vehicles_screen/vehicles_screen.dart';
 
@@ -98,6 +101,12 @@ class AppNavigator {
         return const InsuranceRequestScreen();
       case Routes.SRRoute:
         return const SocialResponsibilitiesScreen();
+      case Routes.SRDetailsRoute:
+        return const SrDetailsScreen();
+      case Routes.ProjectsDetailsRoute:
+        return const ProjectDetailsScreen();
+      case Routes.ShopDetailsRoute:
+        return const ShopDetailsScreen();
     }
     return null;
   }

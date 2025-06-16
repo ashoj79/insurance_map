@@ -14,8 +14,10 @@ import 'package:insurance_map/screens/content_view/bloc/content_view_bloc.dart';
 import 'package:insurance_map/screens/insurance_request/bloc/insurance_request_bloc.dart';
 import 'package:insurance_map/screens/main/bloc/main_bloc.dart';
 import 'package:insurance_map/screens/map_screen/bloc/map_bloc.dart';
+import 'package:insurance_map/screens/shop_details/bloc/shop_details_bloc.dart';
 import 'package:insurance_map/screens/signup/bloc/signup_bloc.dart';
 import 'package:insurance_map/screens/social_responsibilities/bloc/s_r_bloc.dart';
+import 'package:insurance_map/screens/sr_details/bloc/sr_details_bloc.dart';
 import 'package:insurance_map/screens/ticket/bloc/ticket_bloc.dart';
 import 'package:insurance_map/screens/vehicles_screen/bloc/vehicles_bloc.dart';
 import 'package:insurance_map/utils/di.dart';
@@ -41,6 +43,8 @@ Future<void> main() async {
       BlocProvider<CAVBloc>(create: (context) => locator()),
       BlocProvider<InsuranceRequestBloc>(create: (context) => locator()),
       BlocProvider<SRBloc>(create: (context) => locator()),
+      BlocProvider<SrDetailsBloc>(create: (context) => locator()),
+      BlocProvider<ShopDetailsBloc>(create: (context) => locator()),
     ],
     child: const MyApp(),
   ));
@@ -485,7 +489,7 @@ class MyApp extends StatelessWidget {
       case Routes.vehiclesRoute:
         return const Text('وسایل نقلیه', style: TextStyle(color: Colors.white));
       default:
-        return Image.asset('assets/img/icon.png', fit: BoxFit.fill, height: 48,);
+        return Image.asset('assets/img/icon.png', fit: BoxFit.fill, height: 40, width: 120,);
     }
   }
 }

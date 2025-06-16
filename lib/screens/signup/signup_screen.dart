@@ -470,22 +470,24 @@ class __StepOneFormState extends State<_StepOneForm> {
     Jalali? picked;
 
     return PersianCalendar(
-        calendarHeight: 376,
-        calendarWidth: 360,
+        height: 376,
         onDateChanged: (newDate) {
           picked = newDate;
         },
-        onConfirmButtonPressed: () {
-          Navigator.pop(context);
-          if (picked == null) return;
+        confirmButton: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+            if (picked == null) return;
 
-          _birthDateController.text =
-          '${picked?.year}/${picked?.month.toString().padLeft(2, '0')}/${picked?.day.toString().padLeft(2, '0')}';
-        },
-        calendarStartDate: Jalali(1300),
-        calendarEndDate: Jalali.max,
-        calendarTheme: PersianCalendarTheme(textStyle: const TextStyle(), backgroundColor: Colors.white),
-        selectedDate: Jalali.now()
+            _birthDateController.text =
+            '${picked?.year}/${picked?.month.toString().padLeft(2, '0')}/${picked?.day.toString().padLeft(2, '0')}';
+          },
+          child: const Text('تائید'),
+        ),
+        startingDate: Jalali(1300),
+        endingDate: Jalali.max,
+        backgroundColor: Colors.white,
+        initialDate: Jalali.now()
     );
   }
 }

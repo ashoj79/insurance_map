@@ -1,10 +1,10 @@
 class MapPositionData {
-  final MapPositionType _type;
+  final MapPositionType type;
   final String id, name, address, officePhone, mobile, insurance, shopName;
   final double lat, lng;
 
   MapPositionData.insurance(Map<String, dynamic> data)
-      : _type = MapPositionType.Insurance,
+      : type = MapPositionType.Insurance,
         id = data['id'],
         name = data['user'] != null ? data['user']['name'] ?? '' : '',
         address = data['address'] ?? '',
@@ -16,7 +16,7 @@ class MapPositionData {
         lng = double.parse(data['longitude']);
 
   MapPositionData.vendor(Map<String, dynamic> data)
-      : _type = MapPositionType.Vendor,
+      : type = MapPositionType.Vendor,
         id = data['id'],
         name = data['user'] != null ? data['user']['name'] ?? '' : '',
         address = data['address'] ?? '',
@@ -28,7 +28,7 @@ class MapPositionData {
         lng = double.parse(data['longitude']);
 
   Map<String, String> getData() {
-    if (_type == MapPositionType.Insurance) {
+    if (type == MapPositionType.Insurance) {
       return {
         'نام و نام خانوادگی': name,
         'موبایل': mobile,
