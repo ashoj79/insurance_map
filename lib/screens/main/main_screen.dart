@@ -82,44 +82,46 @@ class _MainScreenState extends State<MainScreen> {
           height: double.infinity,
           color: theme.primaryColor,
           child: Container(
-            decoration: const BoxDecoration(color: Color(0xFFF3F7FA), borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+            decoration: const BoxDecoration(
+                color: Color(0xFFF3F7FA),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
             width: double.infinity,
             height: double.infinity,
             child: Stack(
               children: [
                 SingleChildScrollView(
-                  padding: EdgeInsets.only(
-                    top: 32,
-                    bottom: 120
-                  ),
+                  padding: EdgeInsets.only(top: 32, bottom: 120),
                   child: Column(
                     children: [
                       PreferenceBuilder<String>(
-                        preference: locator<SharedPreferenceHelper>().getTopMessage(),
-                        builder: (context, value) {
-                          if (value.isEmpty) return const SizedBox();
+                          preference:
+                              locator<SharedPreferenceHelper>().getTopMessage(),
+                          builder: (context, value) {
+                            if (value.isEmpty) return const SizedBox();
 
-                          return Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.red),
-                              color: Colors.red.withOpacity(0.4)
-                            ),
-                            margin: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
-                            padding: const EdgeInsets.all(8),
-                            child: Row(
-                              textDirection: TextDirection.rtl,
-                              children: [
-                                IconButton(onPressed: (){
-                                  locator<SharedPreferenceHelper>().saveTopMessage('');
-                                }, icon: const Icon(Icons.close)),
-                                const SizedBox(width: 8),
-                                Expanded(child: Text(value))
-                              ],
-                            ),
-                          );
-                        }
-                      ),
+                            return Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.red),
+                                  color: Colors.red.withOpacity(0.4)),
+                              margin: const EdgeInsets.only(
+                                  bottom: 16, left: 16, right: 16),
+                              padding: const EdgeInsets.all(8),
+                              child: Row(
+                                textDirection: TextDirection.rtl,
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        locator<SharedPreferenceHelper>()
+                                            .saveTopMessage('');
+                                      },
+                                      icon: const Icon(Icons.close)),
+                                  const SizedBox(width: 8),
+                                  Expanded(child: Text(value))
+                                ],
+                              ),
+                            );
+                          }),
                       SizedBox(
                         height: 200,
                         child: Stack(
@@ -138,8 +140,11 @@ class _MainScreenState extends State<MainScreen> {
                               ),
                               items: sliders.map<Widget>((e) {
                                 return Container(
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-                                    margin: const EdgeInsets.symmetric(horizontal: 24),
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(16)),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 24),
                                     clipBehavior: Clip.antiAlias,
                                     child: Image.network(
                                       e.logo,
@@ -155,7 +160,11 @@ class _MainScreenState extends State<MainScreen> {
                                 child: AnimatedSmoothIndicator(
                                   activeIndex: sliderIndex,
                                   count: sliders.length,
-                                  effect: const ScrollingDotsEffect(activeDotColor: Colors.white, dotColor: Colors.grey, dotHeight: 10, dotWidth: 10),
+                                  effect: const ScrollingDotsEffect(
+                                      activeDotColor: Colors.white,
+                                      dotColor: Colors.grey,
+                                      dotHeight: 10,
+                                      dotWidth: 10),
                                 ),
                               ),
                             )
@@ -165,24 +174,36 @@ class _MainScreenState extends State<MainScreen> {
                       if (categories.isNotEmpty)
                         Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16), color: Colors.white, boxShadow: [BoxShadow(color: Colors.grey[300]!, spreadRadius: 1.3, offset: const Offset(0, 0.8))]),
+                              borderRadius: BorderRadius.circular(16),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.grey[300]!,
+                                    spreadRadius: 1.3,
+                                    offset: const Offset(0, 0.8))
+                              ]),
                           width: double.infinity,
                           margin: const EdgeInsets.all(24),
                           child: Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 16),
                                 child: Row(
                                   textDirection: TextDirection.rtl,
                                   children: [
                                     const Text(
                                       'فروشگاه های طرف قرارداد',
-                                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16),
                                     ),
                                     const Expanded(child: SizedBox()),
                                     GestureDetector(
                                       onTap: () {
-                                        AppNavigator.push(Routes.categoriesRoute, args: '');
+                                        AppNavigator.push(
+                                            Routes.categoriesRoute,
+                                            args: '');
                                       },
                                       child: const Text('نمایش همه'),
                                     ),
@@ -199,27 +220,48 @@ class _MainScreenState extends State<MainScreen> {
                               ),
                               const SizedBox(height: 16),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
                                 child: SizedBox(
                                   height: categories.length > 4 ? 200 : 100,
                                   child: GridView.builder(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, crossAxisSpacing: 8, mainAxisSpacing: 8, childAspectRatio: itemWidth / itemHeight),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 4,
+                                            crossAxisSpacing: 8,
+                                            mainAxisSpacing: 8,
+                                            childAspectRatio:
+                                                itemWidth / itemHeight),
                                     itemCount: categories.length,
                                     itemBuilder: (context, index) {
                                       return InkWell(
                                         onTap: () {
                                           if (categories[index].isHaveChild) {
-                                            AppNavigator.push(Routes.categoriesRoute, args: categories[index].id);
+                                            AppNavigator.push(
+                                                Routes.categoriesRoute,
+                                                args: categories[index].id);
                                           } else {
-                                            AppNavigator.push(Routes.mapRoute, args: {'type': 'vendor', 'id': categories[index].id});
+                                            AppNavigator.push(Routes.mapRoute,
+                                                args: {
+                                                  'type': 'vendor',
+                                                  'id': categories[index].id
+                                                });
                                           }
                                         },
                                         child: Column(
                                           children: [
                                             Expanded(
                                               child: Container(
-                                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!, width: 1.5), borderRadius: BorderRadius.circular(12)),
-                                                padding: const EdgeInsets.all(4),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color:
+                                                            Colors.grey[200]!,
+                                                        width: 1.5),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12)),
+                                                padding:
+                                                    const EdgeInsets.all(4),
                                                 clipBehavior: Clip.antiAlias,
                                                 child: Image.network(
                                                   categories[index].logo,
@@ -247,25 +289,37 @@ class _MainScreenState extends State<MainScreen> {
                       if (companies.isNotEmpty)
                         Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16), color: Colors.white, boxShadow: [BoxShadow(color: Colors.grey[300]!, spreadRadius: 1.3, offset: const Offset(0, 0.8))]),
+                              borderRadius: BorderRadius.circular(16),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.grey[300]!,
+                                    spreadRadius: 1.3,
+                                    offset: const Offset(0, 0.8))
+                              ]),
                           width: double.infinity,
                           margin: const EdgeInsets.symmetric(horizontal: 24),
                           child: Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 16),
                                 child: Row(
                                   textDirection: TextDirection.rtl,
                                   children: [
                                     const Text(
                                       'بیمه های طرف قرارداد',
-                                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16),
                                     ),
                                     const Expanded(child: SizedBox()),
                                     GestureDetector(
                                       onTap: () {
-                                        BlocProvider.of<CompaniesBloc>(context).add(CompaniesGetData());
-                                        AppNavigator.push(Routes.companiesRoute);
+                                        BlocProvider.of<CompaniesBloc>(context)
+                                            .add(CompaniesGetData());
+                                        AppNavigator.push(
+                                            Routes.companiesRoute);
                                       },
                                       child: const Text('نمایش همه'),
                                     ),
@@ -282,23 +336,42 @@ class _MainScreenState extends State<MainScreen> {
                               ),
                               const SizedBox(height: 16),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
                                 child: SizedBox(
                                   height: companies.length > 4 ? 200 : 100,
                                   child: GridView.builder(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, crossAxisSpacing: 8, mainAxisSpacing: 8, childAspectRatio: itemWidth / itemHeight),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 4,
+                                            crossAxisSpacing: 8,
+                                            mainAxisSpacing: 8,
+                                            childAspectRatio:
+                                                itemWidth / itemHeight),
                                     itemCount: companies.length,
                                     itemBuilder: (context, index) {
                                       return InkWell(
                                         onTap: () {
-                                          AppNavigator.push(Routes.mapRoute, args: {'type': 'insurance', 'id': companies[index].id});
+                                          AppNavigator.push(Routes.mapRoute,
+                                              args: {
+                                                'type': 'insurance',
+                                                'id': companies[index].id
+                                              });
                                         },
                                         child: Column(
                                           children: [
                                             Expanded(
                                               child: Container(
-                                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!, width: 1.5), borderRadius: BorderRadius.circular(12)),
-                                                padding: const EdgeInsets.all(4),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color:
+                                                            Colors.grey[200]!,
+                                                        width: 1.5),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12)),
+                                                padding:
+                                                    const EdgeInsets.all(4),
                                                 clipBehavior: Clip.antiAlias,
                                                 child: Image.network(
                                                   companies[index].logo,
@@ -333,6 +406,7 @@ class _MainScreenState extends State<MainScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     color: Colors.white,
+                    height: 120,
                     child: PreferenceBuilder<String>(
                       preference: locator<SharedPreferenceHelper>().getName(),
                       builder: (context, value) {
@@ -345,67 +419,68 @@ class _MainScreenState extends State<MainScreen> {
                                 AppNavigator.push(Routes.SRRoute);
                               },
                               child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  Container(
-                                    decoration: BoxDecoration(color: Colors.purple, borderRadius: BorderRadius.circular(4)),
-                                    padding: const EdgeInsets.all(4),
-                                    margin: const EdgeInsets.only(bottom: 4),
-                                    child: const Icon(
-                                      Icons.volunteer_activism,
-                                      color: Colors.white,
-                                      size: 32,
-                                    ),
-                                  ),
-                                  Text('مسئولیت اجتماعی', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
+                                  Image.asset('assets/img/help.png', width: 40,),
+                                  Text('مسئولیت\nاجتماعی',
+                                      style: TextStyle(
+                                          fontSize: navItemsTextSize,
+                                          fontWeight: FontWeight.w600))
                                 ],
                               ),
                             ),
                             InkWell(
                               onTap: () {
-                                if (locator<SharedPreferenceHelper>().getToken() == ''){
-                                  showSnackBar(context, 'لطفا وارد اکانت خود شوید');
+                                if (locator<SharedPreferenceHelper>()
+                                        .getToken() ==
+                                    '') {
+                                  showSnackBar(
+                                      context, 'لطفا وارد اکانت خود شوید');
                                 } else {
-                                  AppNavigator.push(Routes.insuranceRequestRoute);
+                                  AppNavigator.push(
+                                      Routes.insuranceRequestRoute);
                                 }
                               },
                               child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  Container(
-                                    decoration: BoxDecoration(color: Colors.yellow[800], borderRadius: BorderRadius.circular(4)),
-                                    padding: const EdgeInsets.all(4),
-                                    margin: const EdgeInsets.only(bottom: 4),
-                                    child: const Icon(
-                                      Icons.credit_card,
-                                      color: Colors.white,
-                                      size: 32,
-                                    ),
-                                  ),
-                                  Text('صدور بیمه', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
+                                  Image.asset('assets/img/insurance.png', width: 40,),
+                                  Text('صدور بیمه',
+                                      style: TextStyle(
+                                          fontSize: navItemsTextSize,
+                                          fontWeight: FontWeight.w600))
                                 ],
                               ),
                             ),
                             InkWell(
                               onTap: () {
-                                if (locator<SharedPreferenceHelper>().getToken() == ''){
-                                  showSnackBar(context, 'لطفا وارد اکانت خود شوید');
+                                if (locator<SharedPreferenceHelper>()
+                                        .getToken() ==
+                                    '') {
+                                  showSnackBar(
+                                      context, 'لطفا وارد اکانت خود شوید');
                                 } else {
-                                  BlocProvider.of<CAVBloc>(context).add(CAVGetData());
-                                  AppNavigator.push(Routes.cardsAndVehiclesRoute);
+                                  BlocProvider.of<CAVBloc>(context)
+                                      .add(CAVGetData());
+                                  AppNavigator.push(
+                                      Routes.cardsAndVehiclesRoute);
                                 }
                               },
                               child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  Container(
-                                    decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(4)),
-                                    padding: const EdgeInsets.all(4),
-                                    margin: const EdgeInsets.only(bottom: 4),
-                                    child: const Icon(
-                                      Icons.payments_outlined,
-                                      color: Colors.white,
-                                      size: 32,
-                                    ),
-                                  ),
-                                  Text('کارت ها و وسایل نقلیه', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
+                                  Image.asset('assets/img/car.png', width: 40,),
+                                  Text('کارت ها و\nوسایل نقلیه',
+                                      style: TextStyle(
+                                          fontSize: navItemsTextSize,
+                                          fontWeight: FontWeight.w600),
+                                      textAlign: TextAlign.center,)
                                 ],
                               ),
                             ),
@@ -415,40 +490,34 @@ class _MainScreenState extends State<MainScreen> {
                                   _showAlertDialog();
                                 },
                                 child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    Container(
-                                      decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(4)),
-                                      padding: const EdgeInsets.all(4),
-                                      margin: const EdgeInsets.only(bottom: 4),
-                                      child: const Icon(
-                                        Icons.account_circle,
-                                        color: Colors.white,
-                                        size: 32,
-                                      ),
-                                    ),
-                                    Text('ثبت نام', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
+                                    Image.asset('assets/img/add-user.png', width: 40,),
+                                    Text('ثبت نام',
+                                        style: TextStyle(
+                                            fontSize: navItemsTextSize,
+                                            fontWeight: FontWeight.w600))
                                   ],
                                 ),
                               ),
-
                             if (value.isNotEmpty)
                               InkWell(
                                 onTap: () {
-                                  AppNavigator.push(Routes.categoriesRoute, args: '');
+                                  AppNavigator.push(Routes.categoriesRoute,
+                                      args: '');
                                 },
                                 child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    Container(
-                                      decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(4)),
-                                      padding: const EdgeInsets.all(4),
-                                      margin: const EdgeInsets.only(bottom: 4),
-                                      child: const Icon(
-                                        Icons.store,
-                                        color: Colors.white,
-                                        size: 32,
-                                      ),
-                                    ),
-                                    Text('فروشگاه ها', style: TextStyle(fontSize: navItemsTextSize, fontWeight: FontWeight.w600))
+                                    Image.asset('assets/img/location.png', width: 40,),
+                                    Text('فروشگاه ها',
+                                        style: TextStyle(
+                                            fontSize: navItemsTextSize,
+                                            fontWeight: FontWeight.w600))
                                   ],
                                 ),
                               ),
@@ -473,43 +542,47 @@ class _MainScreenState extends State<MainScreen> {
         return Directionality(
           textDirection: TextDirection.rtl,
           child: AlertDialog(
-            title: const Text('ثبت نام به عنوان:'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    AppNavigator.push(Routes.signupRoute, args: SignupTypes.representatives);
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text('نماینده بیمه'),
+              title: const Text('ثبت نام به عنوان:'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      AppNavigator.push(Routes.signupRoute,
+                          args: SignupTypes.representatives);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: Text('نماینده بیمه'),
+                    ),
                   ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    AppNavigator.push(Routes.signupRoute, args: SignupTypes.businesses);
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text('کسب و کار'),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      AppNavigator.push(Routes.signupRoute,
+                          args: SignupTypes.businesses);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: Text('کسب و کار'),
+                    ),
                   ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    AppNavigator.push(Routes.signupRoute, args: SignupTypes.vehicles);
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text('صاحبان وسیله نقلیه',),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      AppNavigator.push(Routes.signupRoute,
+                          args: SignupTypes.vehicles);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        'صاحبان وسیله نقلیه',
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            )
-          ),
+                ],
+              )),
         );
       },
     );
